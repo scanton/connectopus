@@ -1,3 +1,2 @@
 const tunnel = require('tunnel-ssh');
-
-console.log(tunnel);
+const mysql = require('mysql');
