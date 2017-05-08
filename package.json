@@ -1,0 +1,23 @@
+{
+  "name": "connectopus",
+  "version": "1.0.0",
+  "description": "Content Management System for manageing multiple MySQL databases",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scanton/connectopus.git"
+  },
+  "author": "Satori Canton",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/scanton/connectopus/issues"
+  },
+  "homepage": "https://github.com/scanton/connectopus#readme",
+  "dependencies": {
+    "electron-prebuilt": "^1.4.13"
+  }
+}
