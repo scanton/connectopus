@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/scanton/connectopus#readme",
   "dependencies": {
-    "electron-prebuilt": "^1.4.13"
+    "electron-prebuilt": "^1.4.13",
+    "tunnel-ssh": "^4.1.3"
   }
 }
