@@ -1,3 +1,20 @@
 .panel-body .form-control {
 	margin: .75em 0;
 }
+
+.server-list-group .input-group {
+	margin: .5em 0;
+}
+
+.server-list-group .input-group input {
+	width: 100%;
+	padding: .25em 1em;
+}
+
+.server-list-group .input-group .input-group-addon {
+	min-width: 100px;
+}
+
+.server-list-group .list-group-item {
+	cursor: pointer;
+}
