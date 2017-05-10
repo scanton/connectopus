@@ -1,3 +1,7 @@
+.clear-fix {
+	clear: both;
+}
+
 .panel-body .form-control {
 	margin: .75em 0;
 }
@@ -15,6 +19,16 @@
 	min-width: 140px;
 }
 
-.server-list-group .list-group-item {
+.server-list-group .server-name {
 	cursor: pointer;
+}
+
+.server-list-group .shortcut-buttons {
+	position: absolute;
+	right: 50px;
+	top: 2.5px;
+}
+
+.panel {
+	margin-bottom: 5px;
 }
