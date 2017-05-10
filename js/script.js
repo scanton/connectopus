@@ -30,7 +30,20 @@ module.exports = {
  **/
 var renderMysqlDetails = function(data) {
 	var s = '';
+	console.log(data);
+	if(data) {
+		s += '<div class="col-xs-6">';
+		s += '<div class="panel panel-default">';
+		s += '<div class="panel-heading"><h4 class="panel-title">' + data.name + '</h4></div>';
+		s += '<div class="panel-body">';
 
+		s += '<div class="input-group"><span class="input-group-addon">Host</span><input type="text" value="' + data.host + '" /></div>';
+		s += '<div class="input-group"><span class="input-group-addon">Database Name</span><input type="text" value="' + data.database + '" /></div>';
+		s += '<div class="input-group"><span class="input-group-addon">Userame</span><input type="text" value="' + data.username + '" /></div>';
+		s += '<div class="input-group"><span class="input-group-addon">Password</span><input type="password" value="' + data.password + '" /></div>';
+		s += '<button class="btn btn-default pull-right" type="submit">Connect</button>';
+		s += '</div></div></div>';
+	}
 	return s;
 }
 
@@ -40,11 +53,15 @@ var renderServerDetails = function(data) {
 		s += '<div class="input-group"><span class="input-group-addon">Server</span><input type="text" value="' + data.server + '" /></div>';
 		s += '<div class="input-group"><span class="input-group-addon">Port</span><input type="text" value="' + data.port + '" /></div>';
 		s += '<div class="input-group"><span class="input-group-addon">Username</span><input type="text" value="' + data.username + '" /></div>';
-		s += '<div class="input-group"><span class="input-group-addon">Password</span><input type="text" value="' + data.password + '" /></div>';
+		s += '<div class="input-group"><span class="input-group-addon">Password</span><input type="password" value="' + data.password + '" /></div>';
 		if(data.connections) {
+			s += '<div class="panel panel-default">';
+			s += '<div class="panel-heading"><h3 class="panel-title">Database Connections</h3></div>';
+			s += '<div class="panel-body">';
 			for(var i in data.connections) {
 				s+= renderMysqlDetails(data.connections[i]);
 			}
+			s += '</div></div>';
 		}
 	}
 	return s;
