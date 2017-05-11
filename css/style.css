@@ -21,6 +21,11 @@
 
 .server-list-group .server-name {
 	cursor: pointer;
+	transition: all 0.3s ease-out;
+}
+
+.server-list-group .server-name:hover {
+	color: #FF00FF;
 }
 
 .server-list-group .shortcut-buttons {

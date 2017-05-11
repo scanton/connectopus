@@ -1,4 +1,12 @@
 module.exports = class HtmlRenderer {
+	
+	constructor(inStr = '') {
+		this._s = inStr;
+		let HtmlString = require('./HtmlString.js');
+		this.htmlString = new HtmlString();
+		//let test = this.htmlString.div('Hello {name}!', {name: 'World'}, {class:'hello-div'}).a('click me', {}, {href:'#', class:'click-me-button'});
+		//console.log(test.toString());
+	}
 
 	renderMysqlDetails(data) {
 		var s = '';
@@ -27,7 +35,7 @@ module.exports = class HtmlRenderer {
 	 			var server = servers[i];
 	 			if(server) {
 	 				s += '<li class="list-group-item"><span class="server-name">' + server.name + '</span>';
-	 				s += '<div class="shortcut-buttons">' + html.renderShortcuts(server.connections) + '</div>';
+	 				s += '<div class="shortcut-buttons">' + this.renderShortcuts(server.connections) + '</div>';
 	 				s += '<span class="badge">' + server.connections.length + '</span>';
 	 				s += '<div class="server-details" style="display: none;">';
 	 				s += this.renderServerDetails(server);
