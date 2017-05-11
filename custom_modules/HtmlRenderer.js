@@ -1,12 +1,4 @@
 module.exports = class HtmlRenderer {
-	
-	constructor(inStr = '') {
-		this._s = inStr;
-		let HtmlString = require('./HtmlString.js');
-		this.htmlString = new HtmlString();
-		//let test = this.htmlString.div('Hello {name}!', {name: 'World'}, {class:'hello-div'}).a('click me', {}, {href:'#', class:'click-me-button'});
-		//console.log(test.toString());
-	}
 
 	renderMysqlDetails(data) {
 		var s = '';
@@ -69,11 +61,21 @@ module.exports = class HtmlRenderer {
 	
 	renderShortcuts(data) {
 		var s = '';
-		for(var i in data) {
+		for(let i in data) {
 			if(data[i] && data[i].name) {
 				s += '<button class="btn btn-default shortcut-button connect-to-db-shortcut-button" data-db="' + data[i].database + '">' + data[i].name + '</button>';
 			}
 		}
 		return s;
+	}
+
+	renderTables(data) {
+		var s = '<ul class="database-tables">';
+		for(let i in data) {
+			for(let i2 in data[i]) {
+				s += '<li><span class="glyphicon glyphicon-list-alt"></span> ' + data[i][i2] + '</li>';
+			}
+		}
+		return s + '</div>';
 	}
 }

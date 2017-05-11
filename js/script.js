@@ -48,6 +48,7 @@ module.exports = {
  **/
 
 const HtmlRenderer = require('./custom_modules/HtmlRenderer.js');
+var html = new HtmlRenderer();
 
 $(document).on("click", ".server-list-group .server-name", function (evt) {
 	let $parent = $(this).closest(".list-group-item");
@@ -56,6 +57,8 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	$parent.find(".server-update-button").slideToggle('slow');
 }).on("click", ".connect-to-db-shortcut-button", function(evt) {
 	evt.preventDefault();
+	let $this = $(this);
+	let $li = $this.closest(".list-group-item");
 
 }).on("click", ".connect-to-db-button", function(evt) {
 	evt.preventDefault();
@@ -81,23 +84,39 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 		}
 		let connection = mysql.createConnection(mySqlData);
 		connection.connect();
-		connection.query('SELECT * FROM admins', function(error, results, fields) {
+		connection.query('show tables', function(error, results, fields) {
 			if(error) {
 				console.error(error);
 			}
-			console.log(results);
+			$(".table-reference-column h4").show();
+			$(".table-reference-column .database-name").html('<span class="glyphicon glyphicon-hdd"></span> ' + mySqlData.database);
+			$(".table-reference-column .table-list").html(html.renderTables(results));
 		});
+		console.log(sshConn);
 		connection.end();
 	});
+}).on("click", ".database-tables li", function(evt) {
+	let $this = $(this);
+	let $parent = $this.closest('.database-tables');
+	$parent.find("li.selected").removeClass("selected");
+	$this.addClass("selected");
 });
 
 $(document).ready(function() {
-	var html = new HtmlRenderer();
  	$.ajax('./working_files/config.json').done(function(data) {
  		if(data) {
  			config = JSON.parse(data);
  			$(".server-list").html(html.renderServers(config));
  		}
+ 	});
+
+ 	$(".nav .option-link").click(function(evt) {
+ 		evt.preventDefault();
+ 		let $this = $(this);
+ 		$(".nav .option-link.active").removeClass("active")
+ 		$this.addClass("active");
+ 		$(".option-link-container").slideUp("slow");
+ 		$("." + $this.attr("data-target")).slideDown("slow");
  	});
 
  	$(".include-partial").each(function() {

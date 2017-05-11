@@ -1,42 +1,68 @@
+h4 {
+	color: #5e5e5e;
+}
 .clear-fix {
 	clear: both;
 }
-
 .panel-body .form-control {
 	margin: .75em 0;
 }
-
+.server-list-group {
+	margin-top: 20px;
+}
 .server-list-group .input-group {
 	margin: .5em 0;
 }
-
 .server-list-group .input-group input {
 	width: 100%;
 	padding: .25em 1em;
 }
-
 .server-list-group .input-group .input-group-addon {
-	min-width: 140px;
+	min-width: 130px;
 }
-
 .server-list-group .server-name {
 	cursor: pointer;
 	transition: all 0.1s ease;
 }
-
 .server-list-group .server-name:hover {
     padding: 3px 7px;
     background-color: #eee;
     border: 1px solid #777;
     border-radius: 10px;
 }
-
 .server-list-group .shortcut-buttons {
 	position: absolute;
 	right: 50px;
 	top: 2.5px;
 }
-
 .panel {
+	margin-bottom: 5px;
+}
+.table-reference-column {
+	background-image: linear-gradient(to bottom, #fff 0%, #f8f8f8 100%);
+	height: 100%;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 5px rgba(0, 0, 0, .075);
+}
+.navbar {
+	margin-bottom: 0;
+}
+.database-tables {
+	list-style: none;
+	overflow: scroll;
+	padding-left: 0;
+	white-space: nowrap;
+}
+.database-tables li {
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+.database-tables li:hover, .database-tables li.selected {
+	padding: 3px 7px;
+    background-color: #eee;
+    border: 1px solid #777;
+    border-radius: 10px;
+}
+.table-reference-column .database-name {
+	font-weight: bold;
 	margin-bottom: 5px;
 }
