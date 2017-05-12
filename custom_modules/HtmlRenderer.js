@@ -78,4 +78,41 @@ module.exports = class HtmlRenderer {
 		}
 		return s + '</div>';
 	}
+
+	renderServerLinks(data, isVisible = 1) {
+		var s = '';
+		if(data) {
+			for(let i in data) {
+				let d = data[i];
+				s += '<li class="server-link" data-id="' + d.id + '" ' + (!isVisible ? ' style="display: none;" ' : '') + '>' + d.name + ' <span class="status-icon pull-right"></span></li>';
+			}
+		}
+		return s
+	}
+
+	renderServerFolder(name, data) {
+		var s = '';
+		if(name && data) {
+			s += '<ul class="server-folder"><span class="glyphicon glyphicon-folder-close"></span> ' + name;
+			s += this.renderServerLinks(data, 0);
+			s += '</ul>';
+		}
+		return s;
+	}
+
+	renderServerReference(data) {
+		var s = '<ul class="server-reference">';
+		if(data.folders) {
+			for(let i in data.folders) {
+				var folder = data.folders[i];
+				if(folder.servers) {
+					s += this.renderServerFolder(folder.name, folder.servers);
+				}
+			}
+		}
+		if(data.servers) {
+			s += this.renderServerLinks(data.servers);
+		}
+		return s + '</ul>';
+	}
 }

@@ -17,35 +17,7 @@ window.addEventListener('contextmenu', (e) => {
 	e.preventDefault()
 	rightClickPosition = {x: e.x, y: e.y}
 	menu.popup(remote.getCurrentWindow())
-}, false)
-
-var config = {};
-
-//const config = require('./working_files/config.js');
-
-/** config.js (example)
-module.exports = {
-	servers: [
-		{
-			name: 'Server Name',
-			host: '<server url>.com',
-			port: 80,
-			username: '<username>',
-			password: '<password>',
-			connections: [
-				{
-					name: 'MySQL on <Server Name>',
-					type: 'MySQL',
-					host: 'localhost',
-					database: '<db name>',
-					username: '<db user>',
-					password: '<db password>'
-				}
-			]
-		}
-	]
-}
- **/
+}, false);
 
 const HtmlRenderer = require('./custom_modules/HtmlRenderer.js');
 var html = new HtmlRenderer();
@@ -100,12 +72,25 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	let $parent = $this.closest('.database-tables');
 	$parent.find("li.selected").removeClass("selected");
 	$this.addClass("selected");
+}).on("click", ".server-folder", function(evt) {
+	let $this = $(this);
+	let $icon = $this.find(".glyphicon");
+	if($icon.hasClass("glyphicon-folder-close")) {
+		$icon.removeClass("glyphicon-folder-close");
+		$icon.addClass("glyphicon-folder-open");
+		$this.find("li").slideDown("fast");
+	} else {
+		$icon.removeClass("glyphicon-folder-open");
+		$icon.addClass("glyphicon-folder-close");
+		$this.find("li").slideUp("fast");
+	}
 });
 
 $(document).ready(function() {
  	$.ajax('./working_files/config.json').done(function(data) {
  		if(data) {
- 			config = JSON.parse(data);
+ 			let config = JSON.parse(data);
+ 			$(".server-list-left").html(html.renderServerReference(config));
  			$(".server-list").html(html.renderServers(config));
  		}
  	});
