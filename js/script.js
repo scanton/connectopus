@@ -1,23 +1,8 @@
+let enableContextMenu = require('./custom_modules/enableContextMenu.js');
+enableContextMenu();
+
 const tunnel = require('tunnel-ssh');
 const mysql = require('mysql');
-
-const remote = require('electron').remote;
-const {Menu, MenuItem} = remote;
-
-const menu = new Menu()
-const menuItem = new MenuItem({
-	label: 'Inspect Element',
-	click: () => {
-		remote.getCurrentWindow().inspectElement(rightClickPosition.x, rightClickPosition.y);
-	}
-})
-menu.append(menuItem);
-
-window.addEventListener('contextmenu', (e) => {
-	e.preventDefault()
-	rightClickPosition = {x: e.x, y: e.y}
-	menu.popup(remote.getCurrentWindow())
-}, false);
 
 const HtmlRenderer = require('./custom_modules/HtmlRenderer.js');
 var html = new HtmlRenderer();
