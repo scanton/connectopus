@@ -8,14 +8,17 @@ const HtmlRenderer = require('./custom_modules/HtmlRenderer.js');
 var html = new HtmlRenderer();
 
 $(document).on("click", ".server-list-group .server-name", function (evt) {
+	evt.preventDefault();
 	let $parent = $(this).closest(".list-group-item");
 	$parent.find(".server-details").slideToggle('slow');
 	$parent.find(".shortcut-buttons").slideToggle('slow');
 	$parent.find(".server-update-button").slideToggle('slow');
+
 }).on("click", ".connect-to-db-shortcut-button", function(evt) {
 	evt.preventDefault();
 	let $this = $(this);
 	let $li = $this.closest(".list-group-item");
+
 
 }).on("click", ".connect-to-db-button", function(evt) {
 	evt.preventDefault();
@@ -36,6 +39,7 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 		dstPort: 3306
 	}
 	let sshConn = tunnel(sshData, function(error, server) {
+		$(".server-avatars").slideDown("fast");
 		if(error) {
 			console.error(error);
 		}
@@ -52,12 +56,16 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 		console.log(sshConn);
 		connection.end();
 	});
+
 }).on("click", ".database-tables li", function(evt) {
+	evt.preventDefault();
 	let $this = $(this);
 	let $parent = $this.closest('.database-tables');
 	$parent.find("li.selected").removeClass("selected");
 	$this.addClass("selected");
+
 }).on("click", ".server-folder", function(evt) {
+	evt.preventDefault();
 	let $this = $(this);
 	let $icon = $this.find(".glyphicon");
 	if($icon.hasClass("glyphicon-folder-close")) {
@@ -69,6 +77,12 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 		$icon.addClass("glyphicon-folder-close");
 		$this.find("li").slideUp("fast");
 	}
+
+}).on("click", ".server-list-left .server-link", function(evt) {
+	evt.preventDefault();
+	$(".server-list-left .server-link.selected").removeClass("selected");
+	let $this = $(this);
+	$this.addClass("selected");
 });
 
 $(document).ready(function() {

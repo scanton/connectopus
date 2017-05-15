@@ -16,6 +16,4 @@ module.exports = function() {
 		rightClickPosition = {x: e.x, y: e.y}
 		menu.popup(remote.getCurrentWindow())
 	}, false);
-		
-	
 };

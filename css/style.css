@@ -1,9 +1,38 @@
+.blink-me {
+  animation: blinker 1s linear infinite;
+}
+@keyframes blinker {  
+  50% { opacity: 0; }
+}
+
 h4 {
 	color: #5e5e5e;
 }
+
 .clear-fix {
 	clear: both;
 }
+
+.modal-overlay {
+	position: absolute;
+	background-color: rgba(0, 0, 0, .25);
+	left: 0;
+	right: 0;
+	bottom: 0;
+	top: 52px;
+}
+.modal-dialog {
+	position: absolute;
+	top: 100px;
+	left: 100px;
+	right: 100px;
+	min-height: 100px;
+	background-color: white;
+	border-radius: 10px;
+	padding: 1em 2em;
+	box-shadow: 3px 3px 3px rgba(0, 0, 0, .33);
+}
+
 .panel-body .form-control {
 	margin: .75em 0;
 }
@@ -96,4 +125,49 @@ h4 {
 	border: 2px solid red;
 	background-color: red;
 	border-radius: 50%;
+}
+.server-avatars {
+	background-color: #DBDBDB;
+	padding: 2px;
+}
+.server-avatars .server-avatar {
+	padding: 3px 7px;
+    background-color: #eee;
+    border: 1px solid #BBB;
+    border-radius: 10px;
+	display: inline-block;
+}
+.server-avatars .server-status {
+	height: 10px;
+	width: 10px;
+	border: 2px solid #CCC;
+	border-radius: 50%;
+	margin: 5px 0 0 15px;
+	display: inline-block;
+}
+.server-avatars .server-status.active {
+	border-color: green;
+	background-color: #0C0;
+}
+.server-avatars .server-status.error {
+	border-color: red;
+	background-color: #C00;
+}
+.server-avatars .server-status.pending {
+	border-color: #d2b44f;
+	background-color: yellow;
+	animation: blinker .2s linear infinite;
+}
+.active-server-notice {
+	font-weight: bold;
+	font-size: 12pt;
+	color: black;
+	padding-top: 3px;
+	color: #555;
+}
+.active-server-notice .glyphicon {
+	padding-top: 3px;
+}
+.dialog-buttons button {
+	margin: 0 .67em;
 }

@@ -25,10 +25,30 @@
 						<li class="mysql-option-link option-link" data-target="mysql-container"><a href="#"><span class="glyphicon glyphicon-hdd"></span> Content</a></li>
 						<li class="sftp-option-link option-link" data-target="sftp-container"><a href="#"><span class="glyphicon glyphicon-duplicate"></span> Code</a></li>
 						<li class="media-option-link option-link" data-target="media-container"><a href="#"><span class="glyphicon glyphicon-film"></span> Media</a></li>
+						<li class="media-option-link option-link" data-target="preview-container"><a href="#"><span class="glyphicon glyphicon-eye-open"></span> Preview</a></li>
 					</ul>
 				</div>
 			</div><!-- /.container-fluid -->
 		</nav>
+
+		<div class="container-fluid active-servers-container">
+			<div class="row server-avatars" style="display: none;">
+				<div class="col-xs-4 col-sm-3 col-lg-2">
+					<div class="active-server-notice">
+						<span class="pull-right glyphicon glyphicon-circle-arrow-right"></span>
+						Active Connections
+					</div>
+						
+				</div>
+				<div class="col-xs-8 col-sm-9 col-lg-10">
+					<div class="text-center">
+						<div class="server-avatar">XLP<span class="server-status pending"></span></div>
+						<div class="server-avatar">Doctor<span class="server-status active"></span></div>
+						<div class="server-avatar">ww1 on Dev<span class="server-status error"></span></div>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<div class="container-fluid media-container option-link-container" style="display: none;">
 			<div class="row">
@@ -69,12 +89,12 @@
 		<div class="container-fluid connections-container option-link-container">
 			<div class="row">
 				<div class="col-xs-4 col-sm-3 col-lg-2 server-reference-column">
-					<h4>Servers</h4>
+					<h4>Connections</h4>
 					<div class="server-list-left"></div>
 				</div>
 				<div class="col-xs-8 col-sm-9 col-lg-10">
-					<h3>Connections</h3>
-					<div class="server-list"></div>
+					<div class="server-list" style=""></div>
+					<div class="include-partial" data-target="./partials/new-connection.html"></div>
 				</div>
 			</div>
 		</div>
@@ -97,5 +117,16 @@
 		<script>if (window.module) module = window.module;</script>
 		<script type="text/javascript" src="js/bootstrap.min.js"></script>
 		<script type="text/javascript" src="js/script.js"></script>
+
+		<div class="modal-overlay" style="display: none;"></div>
+		<div class="modal-dialog" style="display: none;">
+			<h1>Title</h1>
+			<div class="message">Modal dialog message</div>
+			<div class="dialog-buttons">
+				<button type="button" class="btn btn-primary ok-button pull-right">OK</button>
+				<button type="button" class="btn btn-default cancel-button pull-right">Cancel</button>
+			</div>
+		</div>
+		<div class="modal-loader"></div>
 	</body>
 </html>
