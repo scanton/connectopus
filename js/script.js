@@ -1,6 +1,12 @@
 let enableContextMenu = require('./custom_modules/enableContextMenu.js');
 enableContextMenu();
 
+const ConnectopusModel = require('./custom_modules/ConnectopusModel.js');
+const model = new ConnectopusModel();
+
+const ConnectionManager = require('./custom_modules/ConnectionManager.js');
+const connections = new ConnectionManager();
+
 const tunnel = require('tunnel-ssh');
 const mysql = require('mysql');
 
@@ -39,13 +45,21 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 		dstPort: 3306
 	}
 	let sshConn = tunnel(sshData, function(error, server) {
-		$(".server-avatars").slideDown("fast");
+		$(".server-avatars").slideDown("normal");
+		setTimeout(function() {
+			$(window).resize();
+		}, 400);
 		if(error) {
 			console.error(error);
 		}
 		let connection = mysql.createConnection(mySqlData);
 		connection.connect();
 		connection.query('show tables', function(error, results, fields) {
+			/**
+			select * from information_schema.columns
+			where table_schema = 'ww2lpspl_content'
+			order by table_name,ordinal_position
+			 **/
 			if(error) {
 				console.error(error);
 			}
@@ -64,9 +78,9 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	$parent.find("li.selected").removeClass("selected");
 	$this.addClass("selected");
 
-}).on("click", ".server-folder", function(evt) {
+}).on("click", ".server-folder .name", function(evt) {
 	evt.preventDefault();
-	let $this = $(this);
+	let $this = $(this).closest(".server-folder");
 	let $icon = $this.find(".glyphicon");
 	if($icon.hasClass("glyphicon-folder-close")) {
 		$icon.removeClass("glyphicon-folder-close");
@@ -83,12 +97,31 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	$(".server-list-left .server-link.selected").removeClass("selected");
 	let $this = $(this);
 	$this.addClass("selected");
+	let connectionData = model.getConnection($(this).attr("data-id"));
+	$(".server-connection-detail").html(html.renderSingleServer(connectionData));
+	$(".server-connection-detail .server-name").click();
+
+}).on("click", ".server-avatar .close-icon", function(evt) {
+	evt.preventDefault();
+	console.log("remove server");
+});
+
+$(window).resize(function() {
+	$(".side-bar").each(function() {
+		let $sb = $(this);
+		let wHeight = $(window).height();
+		let sHeight = $sb.height();
+		let sPos = $sb.offset();
+		let targetHeight = wHeight - 33 - sPos.top;
+		$sb.attr("style", "height: " + targetHeight + "px");
+	});
 });
 
 $(document).ready(function() {
  	$.ajax('./working_files/config.json').done(function(data) {
  		if(data) {
  			let config = JSON.parse(data);
+ 			model.setConfig(config);
  			$(".server-list-left").html(html.renderServerReference(config));
  			$(".server-list").html(html.renderServers(config));
  		}
@@ -110,3 +143,9 @@ $(document).ready(function() {
  	});
 });
 
+let renderServerAvatars = function(data) {
+	console.log("server update");
+	console.log(data);
+}
+connections.addListener("add-server", renderServerAvatars);
+connections.addListener("remove-server", renderServerAvatars);

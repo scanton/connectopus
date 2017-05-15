@@ -26,7 +26,7 @@ module.exports = class HtmlRenderer {
 	 		for(var i in servers) {
 	 			var server = servers[i];
 	 			if(server) {
-	 				s += '<li class="list-group-item"><span class="server-name">' + server.name + '</span>';
+	 				s += '<li class="list-group-item" data-id="' + server.id + '"><span class="server-name">' + server.name + '</span>';
 	 				s += '<div class="shortcut-buttons">' + this.renderShortcuts(server.connections) + '</div>';
 	 				s += '<span class="badge">' + server.connections.length + '</span>';
 	 				s += '<div class="server-details" style="display: none;">';
@@ -93,7 +93,7 @@ module.exports = class HtmlRenderer {
 	renderServerFolder(name, data) {
 		var s = '';
 		if(name && data) {
-			s += '<ul class="server-folder"><span class="glyphicon glyphicon-folder-close"></span> ' + name;
+			s += '<ul class="server-folder"><span class="name"><span class="glyphicon glyphicon-folder-close"></span> ' + name + '</span>';
 			s += this.renderServerLinks(data, 0);
 			s += '</ul>';
 		}
@@ -114,5 +114,9 @@ module.exports = class HtmlRenderer {
 			s += this.renderServerLinks(data.servers);
 		}
 		return s + '</ul>';
+	}
+
+	renderSingleServer(data) {
+		return this.renderServers({servers: [data]});
 	}
 }

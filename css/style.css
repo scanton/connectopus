@@ -94,6 +94,7 @@ h4 {
 .database-tables li, .server-list-left li {
 	cursor: pointer;
 	transition: all 0.2s ease;
+	margin: 2px 0;
 }
 .database-tables li:hover, .database-tables li.selected, .server-list-left li:hover, .server-list-left li.selected {
 	padding: 3px 7px;
@@ -137,12 +138,21 @@ h4 {
     border-radius: 10px;
 	display: inline-block;
 }
+.server-avatars .server-avatar .close-icon{
+	display: none;
+}
+.server-avatars .server-avatar:hover .close-icon{
+	display: inline;
+	cursor: pointer;
+}
+.server-avatars .server-avatar:hover .server-status{
+	display: none;
+}
 .server-avatars .server-status {
 	height: 10px;
 	width: 10px;
 	border: 2px solid #CCC;
 	border-radius: 50%;
-	margin: 5px 0 0 15px;
 	display: inline-block;
 }
 .server-avatars .server-status.active {
@@ -170,4 +180,23 @@ h4 {
 }
 .dialog-buttons button {
 	margin: 0 .67em;
+}
+.side-bar-footer {
+	padding: 3px;
+	min-height: 36px;
+	margin: 0 -16px;
+	background-color: #DBDBDB;
+}
+.side-bar-footer button {
+	padding: 2px 5px;
+}
+.button-with-overlay {
+	position: relative;
+}
+.button-with-overlay .icon-overlay {
+	position: absolute;
+	color: white;
+	top: 9px;
+	left: 9px;
+	font-size: 5pt;
 }
