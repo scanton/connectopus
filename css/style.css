@@ -182,7 +182,7 @@ h4 {
 	margin: 0 .67em;
 }
 .side-bar-footer {
-	padding: 3px;
+	padding: 3px 3px 3px 5px;
 	min-height: 36px;
 	margin: 0 -16px;
 	background-color: #DBDBDB;
