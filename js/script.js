@@ -7,6 +7,8 @@ const model = new ConnectopusModel();
 const ConnectionManager = require('./custom_modules/ConnectionManager.js');
 const connections = new ConnectionManager();
 
+const ActiveConnectionViewController = require('./custom_modules/ActiveConnectionViewController.js');
+
 const tunnel = require('tunnel-ssh');
 const mysql = require('mysql');
 
@@ -118,6 +120,12 @@ $(window).resize(function() {
 });
 
 $(document).ready(function() {
+	const activeConnections = new ActiveConnectionViewController(".server-avatars .text-center");
+	activeConnections.renderServerAvatars(connections.getConnections());
+	connections.addListener("change", function(data) {
+		activeConnections.renderServerAvatars(data);
+	});
+	
  	$.ajax('./working_files/config.json').done(function(data) {
  		if(data) {
  			let config = JSON.parse(data);
