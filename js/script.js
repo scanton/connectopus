@@ -120,16 +120,27 @@ $(window).resize(function() {
 });
 
 $(document).ready(function() {
+
 	const activeConnections = new ActiveConnectionViewController(".server-avatars .text-center");
 	activeConnections.renderServerAvatars(connections.getConnections());
 	connections.addListener("change", function(data) {
 		activeConnections.renderServerAvatars(data);
 	});
 	
- 	$.ajax('./working_files/config.json').done(function(data) {
- 		if(data) {
- 			let config = JSON.parse(data);
- 			model.setConfig(config);
+ 	
+ 	$.ajax({
+ 		url: './working_files/config.json',
+ 		success: function(data) {
+	 		if(data) {
+	 			let config = JSON.parse(data);
+	 			model.setConfig(config);
+	 			$(".server-list-left").html(html.renderServerReference(config));
+	 			$(".server-list").html(html.renderServers(config));
+	 		}
+	 	},
+ 		error: function(err) {
+ 			console.log("Initializing new model {} (no config.json file found)");
+ 			let config = model.getConfig();
  			$(".server-list-left").html(html.renderServerReference(config));
  			$(".server-list").html(html.renderServers(config));
  		}
