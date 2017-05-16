@@ -135,7 +135,7 @@ h4 {
 	padding: 3px 7px;
     background-color: #eee;
     border: 1px solid #BBB;
-    border-radius: 10px;
+    border-radius: 5px;
 	display: inline-block;
 }
 .server-avatars .server-avatar .close-icon{
@@ -182,7 +182,7 @@ h4 {
 	margin: 0 .67em;
 }
 .side-bar-footer {
-	padding: 3px;
+	padding: 3px 3px 3px 5px;
 	min-height: 36px;
 	margin: 0 -16px;
 	background-color: #DBDBDB;

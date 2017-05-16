@@ -1,9 +1,15 @@
 module.exports = class ConnectopusModel {
 
-	setConfig(config) {
-		if(config) {
-			this.config = config;
-		}
+	constructor(config = {}) {
+		this.config = config;
+	}
+
+	setConfig(config = {}) {
+		this.config = config;
+	}
+
+	getConfig() {
+		return this.config();
 	}
 
 	getConnection(id) {

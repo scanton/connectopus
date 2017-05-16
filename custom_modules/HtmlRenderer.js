@@ -42,6 +42,7 @@ module.exports = class HtmlRenderer {
 	renderServerDetails(data) {
 		var s = '';
 		if(data) {
+			s += '<div class="input-group" style="display: none;"><span class="input-group-addon">ID</span><input type="text" name="id" value="' + data.id + '" /></div>';
 			s += '<div class="input-group"><span class="input-group-addon">Host</span><input type="text" name="ssh-host" value="' + data.host + '" /></div>';
 			s += '<div class="input-group"><span class="input-group-addon">Port</span><input type="text" name="ssh-port" value="' + data.port + '" /></div>';
 			s += '<div class="input-group"><span class="input-group-addon">Username</span><input type="text" name="ssh-username" value="' + data.username + '" /></div>';
@@ -70,11 +71,25 @@ module.exports = class HtmlRenderer {
 	}
 
 	renderTables(data) {
-		var s = '<ul class="database-tables">';
-		for(let i in data) {
-			for(let i2 in data[i]) {
-				s += '<li><span class="glyphicon glyphicon-list-alt"></span> ' + data[i][i2] + '</li>';
+		var a = [];
+		if(data && data.length) {
+			for(let i in data) {
+				let d = data[i];
+				if(d.tables && d.tables.length) {
+					for(let i2 in d.tables) {
+						let name = d.tables[i2];
+						if(a.indexOf(name) == -1) {
+							a.push(name);
+						}
+					}
+				}
 			}
+		}
+		a.sort();
+
+		let s = '<ul class="database-tables">';
+		for(let i in a) {
+			s += '<li><span class="glyphicon glyphicon-list-alt"></span> ' + a[i] + '</li>';
 		}
 		return s + '</div>';
 	}

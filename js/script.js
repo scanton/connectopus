@@ -7,10 +7,7 @@ const model = new ConnectopusModel();
 const ConnectionManager = require('./custom_modules/ConnectionManager.js');
 const connections = new ConnectionManager();
 
-const ActiveConnectionViewController = require('./custom_modules/ActiveConnectionViewController.js');
-
-const tunnel = require('tunnel-ssh');
-const mysql = require('mysql');
+const ActiveConnectionViewController = require('./custom_modules/ActiveConnectionsViewController.js');
 
 const HtmlRenderer = require('./custom_modules/HtmlRenderer.js');
 var html = new HtmlRenderer();
@@ -27,9 +24,13 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	let $this = $(this);
 	let $li = $this.closest(".list-group-item");
 
-
 }).on("click", ".connect-to-db-button", function(evt) {
 	evt.preventDefault();
+	let id = $(this).closest("li").attr("data-id");
+	if(id) {
+		connections.addConnection(model.getConnection(id));
+	}
+	/*
 	$li = $(this).closest("li");
 	$panel = $(this).closest(".panel");
 	let mySqlData = {
@@ -57,11 +58,11 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 		let connection = mysql.createConnection(mySqlData);
 		connection.connect();
 		connection.query('show tables', function(error, results, fields) {
-			/**
-			select * from information_schema.columns
-			where table_schema = 'ww2lpspl_content'
-			order by table_name,ordinal_position
-			 **/
+			
+			//select * from information_schema.columns
+			//where table_schema = 'ww2lpspl_content'
+			//order by table_name,ordinal_position
+			 
 			if(error) {
 				console.error(error);
 			}
@@ -71,7 +72,8 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 		});
 		console.log(sshConn);
 		connection.end();
-	});
+		
+	});*/
 
 }).on("click", ".database-tables li", function(evt) {
 	evt.preventDefault();
@@ -105,7 +107,8 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 
 }).on("click", ".server-avatar .close-icon", function(evt) {
 	evt.preventDefault();
-	console.log("remove server");
+	let id = $(this).closest(".server-avatar").attr("data-id");
+	connections.removeConnection(id);
 });
 
 $(window).resize(function() {
@@ -125,8 +128,8 @@ $(document).ready(function() {
 	activeConnections.renderServerAvatars(connections.getConnections());
 	connections.addListener("change", function(data) {
 		activeConnections.renderServerAvatars(data);
+		$(".table-reference-column .table-list").html(html.renderTables(data));
 	});
-	
  	
  	$.ajax({
  		url: './working_files/config.json',
