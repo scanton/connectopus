@@ -118,14 +118,30 @@ $(window).resize(function() {
 });
 
 $(document).ready(function() {
- 	$.ajax('./working_files/config.json').done(function(data) {
+ 	$.ajax({
+ 		url: './working_files/config.json',
+ 		success: function(data) {
+	 		if(data) {
+	 			let config = JSON.parse(data);
+	 			model.setConfig(config);
+	 			$(".server-list-left").html(html.renderServerReference(config));
+	 			$(".server-list").html(html.renderServers(config));
+	 		}
+	 	},
+ 		error: function(err) {
+ 			console.log("Initializing new model {} (no config.json file found)");
+ 			let config = model.getConfig();
+ 			$(".server-list-left").html(html.renderServerReference(config));
+ 			$(".server-list").html(html.renderServers(config));
+ 		}
+ 	})/*.done(function(data) {
  		if(data) {
  			let config = JSON.parse(data);
  			model.setConfig(config);
  			$(".server-list-left").html(html.renderServerReference(config));
  			$(".server-list").html(html.renderServers(config));
  		}
- 	});
+ 	});*/
 
  	$(".nav .option-link").click(function(evt) {
  		evt.preventDefault();

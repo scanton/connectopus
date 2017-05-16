@@ -20,7 +20,7 @@ module.exports = class HtmlRenderer {
 
 	renderServers(data) {
 	 	var s = '';
-	 	if(data.servers) {
+	 	if(data && data.servers) {
 	 		var servers = data.servers;
 	 		s += '<ul class="list-group server-list-group">';
 	 		for(var i in servers) {
@@ -102,7 +102,7 @@ module.exports = class HtmlRenderer {
 
 	renderServerReference(data) {
 		var s = '<ul class="server-reference">';
-		if(data.folders) {
+		if(data && data.folders) {
 			for(let i in data.folders) {
 				var folder = data.folders[i];
 				if(folder.servers) {
@@ -110,7 +110,7 @@ module.exports = class HtmlRenderer {
 				}
 			}
 		}
-		if(data.servers) {
+		if(data && data.servers) {
 			s += this.renderServerLinks(data.servers);
 		}
 		return s + '</ul>';
