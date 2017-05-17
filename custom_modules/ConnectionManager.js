@@ -20,21 +20,26 @@ module.exports = class ConnectionManager {
 		if(!hasConnection) {
 			let setConnectionStatus = this.setConnectionStatus.bind(this);
 			let parseTables = this.parseTables.bind(this);
+			let parseSchema = this.parseSchema.bind(this);
 			data.status = 'pending';
 			this.connections.push(data);
 			this.dispatchEvent("add-connection", this.connections);
 			this.dispatchEvent("change", this.connections);
 			//let query = "SELECT * from information_schema.columns WHERE table_schema = '" + data.connections[0].database + "' ORDER BY table_name,ordinal_position";
 			let query = 'show tables';
+			query = 'select * from information_schema.columns WHERE table_schema = \'' + data.connections[0].database + '\' ORDER BY table_name, ordinal_position';
 			this.sqlRequest(data.id, query, function(error, results, fields) {
+				/*
 				if(results) {
 					data.tables = parseTables(results);
 					setConnectionStatus(data.id, "active");
 				}
+				*/
 				if(error) {
 					setConnectionStatus(data.id, "error");
 					console.error(error);
 				}
+				parseSchema(results);
 			});
 		}
 		return this.connections.length;
@@ -146,5 +151,30 @@ module.exports = class ConnectionManager {
 			}
 		}
 		return a;
+	}
+
+	parseSchema(schema) {
+		if(schema && schema.length) {
+			let o = {
+				names: [],
+				schema: {}
+			};
+			for(let i in schema) {
+				let table = schema[i];
+				if(o.names.indexOf(table.TABLE_NAME) == -1) {
+					o.names.push(table.TABLE_NAME);
+					o.schema[table.TABLE_NAME] = [];
+				}
+				let a = o.schema[table.TABLE_NAME];
+				a.push({
+					columnName: table.COLUMN_NAME,
+					columnType: table.COLUMN_TYPE,
+					dataType: table.DATA_TYPE,
+					isNullable: table.IS_NULLABLE !== 'NO',
+				});
+			}
+			console.log(o);
+			return o;
+		}
 	}
 }
