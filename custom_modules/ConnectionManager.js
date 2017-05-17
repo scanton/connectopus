@@ -62,6 +62,10 @@ module.exports = class ConnectionManager {
 		this.dispatchEvent("change", this.connections);
 	}
 
+	compareTables(tableName, callback) {
+		console.log(tableName);
+	}
+
 	sqlRequest(id, query, callback, dbConnection = 0) {
 		let conn = this.getConnection(id);
 		var mySqlClient = this.mysql;

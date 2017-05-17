@@ -30,50 +30,6 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	if(id) {
 		connections.addConnection(model.getConnection(id));
 	}
-	/*
-	$li = $(this).closest("li");
-	$panel = $(this).closest(".panel");
-	let mySqlData = {
-		host: $panel.find("input[name='mysql-host']").val(),
-		user: $panel.find("input[name='mysql-username']").val(),
-		password: $panel.find("input[name='mysql-password']").val(),
-		database: $panel.find("input[name='mysql-database']").val()
-	}
-	let sshData = {
-		host: $li.find("input[name='ssh-host']").val(),
-		port: $li.find("input[name='ssh-port']").val(),
-		username: $li.find("input[name='ssh-username']").val(),
-		password: $li.find("input[name='ssh-password']").val(),
-		dstHost: 'localhost',
-		dstPort: 3306
-	}
-	let sshConn = tunnel(sshData, function(error, server) {
-		$(".server-avatars").slideDown("normal");
-		setTimeout(function() {
-			$(window).resize();
-		}, 400);
-		if(error) {
-			console.error(error);
-		}
-		let connection = mysql.createConnection(mySqlData);
-		connection.connect();
-		connection.query('show tables', function(error, results, fields) {
-			
-			//select * from information_schema.columns
-			//where table_schema = 'ww2lpspl_content'
-			//order by table_name,ordinal_position
-			 
-			if(error) {
-				console.error(error);
-			}
-			$(".table-reference-column h4").show();
-			$(".table-reference-column .database-name").html('<span class="glyphicon glyphicon-hdd"></span> ' + mySqlData.database);
-			$(".table-reference-column .table-list").html(html.renderTables(results));
-		});
-		console.log(sshConn);
-		connection.end();
-		
-	});*/
 
 }).on("click", ".database-tables li", function(evt) {
 	evt.preventDefault();
@@ -81,6 +37,10 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	let $parent = $this.closest('.database-tables');
 	$parent.find("li.selected").removeClass("selected");
 	$this.addClass("selected");
+
+	connections.compareTables($this.text().trim(), function(tables) {
+		console.log(tables);
+	});
 
 }).on("click", ".server-folder .name", function(evt) {
 	evt.preventDefault();
@@ -164,10 +124,3 @@ $(document).ready(function() {
  		$this.load(uri);
  	});
 });
-
-let renderServerAvatars = function(data) {
-	console.log("server update");
-	console.log(data);
-}
-connections.addListener("add-server", renderServerAvatars);
-connections.addListener("remove-server", renderServerAvatars);

@@ -1,15 +1,18 @@
 module.exports = class ConnectopusModel {
 
 	constructor(config = {}) {
+		this.md5 = require('md5');
 		this.config = config;
+		this._processConfig();
 	}
 
 	setConfig(config = {}) {
 		this.config = config;
+		this._processConfig();
 	}
 
 	getConfig() {
-		return this.config();
+		return this.config;
 	}
 
 	getConnection(id) {
@@ -31,6 +34,29 @@ module.exports = class ConnectopusModel {
 						}
 					}
 				}
+			}
+		}
+	}
+
+	_processConfig() {
+		let c = this.getConfig();
+		if(c.servers && c.servers.length) {
+			this._includeIds(c.servers);
+		}
+		if(c.folders && c.folders.length) {
+			for(let i in c.folders) {
+				let f = c.folders[i];
+				if(f.servers && f.servers.length) {
+					this._includeIds(f.servers);
+				}
+			}
+		}
+	}
+	_includeIds(serverList) {
+		if(serverList && serverList.length) {
+			for(let i in serverList) {
+				let srv = serverList[i];
+				srv.id = this.md5(srv.host + String(srv.port) + srv.username + srv.password);
 			}
 		}
 	}
