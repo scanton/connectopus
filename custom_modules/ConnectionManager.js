@@ -5,9 +5,13 @@ module.exports = class ConnectionManager {
 		this.listeners = {};
 		this.tunnel = require('tunnel-ssh');
 		this.mysql = require('mysql');
+		this.hasPendingQueue = false;
+		this.currentQueueItem;
+		this.pendingQueue = [];
+		this.queueResults = [];
 	}
 
-	addConnection(data) {
+	addConnection(data, callback) {
 		var hasConnection = false;
 		if(data) {
 			for(let i in this.connections) {
@@ -29,17 +33,15 @@ module.exports = class ConnectionManager {
 			let query = 'show tables';
 			query = 'select * from information_schema.columns WHERE table_schema = \'' + data.connections[0].database + '\' ORDER BY table_name, ordinal_position';
 			this.sqlRequest(data.id, query, function(error, results, fields) {
-				/*
 				if(results) {
-					data.tables = parseTables(results);
+					data.tables = parseSchema(results);
 					setConnectionStatus(data.id, "active");
 				}
-				*/
 				if(error) {
 					setConnectionStatus(data.id, "error");
 					console.error(error);
 				}
-				parseSchema(results);
+				callback(results);
 			});
 		}
 		return this.connections.length;
@@ -68,7 +70,15 @@ module.exports = class ConnectionManager {
 	}
 
 	compareTables(tableName, callback) {
-		console.log(tableName);
+		let queue = [];
+		let cons = this.getConnections();
+		let query = ' SELECT * FROM ' + tableName + ' LIMIT 100000 '; 
+		let nextQueue = this._nextQueue.bind(this);
+		for(let i in cons) {
+			let c = cons[i];
+			queue.push(this._createQueueItem(c.id, query, nextQueue));
+		}
+		this._processQueue(queue, callback);
 	}
 
 	sqlRequest(id, query, callback, dbConnection = 0) {
@@ -110,8 +120,11 @@ module.exports = class ConnectionManager {
 						console.error(error);
 						dispatch("mysql-error", error);
 						setConnectionStatus(id, "error");
+					} else {
+						setConnectionStatus(id, 'active');
 					}
 					callback(error, results, fields);
+					server.close();
 				});
 				connection.end();
 			});
@@ -173,8 +186,35 @@ module.exports = class ConnectionManager {
 					isNullable: table.IS_NULLABLE !== 'NO',
 				});
 			}
-			console.log(o);
 			return o;
+		}
+	}
+
+	_createQueueItem(id, query, callback, dbConnection = 0) {
+		return { id: id, query: query, callback: callback, dbConnection: dbConnection };
+	}
+
+	_processQueue(queue, callback) {
+		if(queue && queue.length) {
+			this.queueCallback = callback;
+			this.queueResults = [];
+			this.pendingQueue = queue;
+			this.dispatchEvent("queue-begin", queue);
+			let q = this.currentQueueItem = this.pendingQueue.shift();
+			this.sqlRequest(q.id, q.query, q.callback, q.dbConnection);
+		}
+	}
+
+	_nextQueue(error, results, fields) {
+		this.currentQueueItem;
+		this.queueResults.push({id: this.currentQueueItem.id, results: results, error: error, fields: fields});
+		if(this.pendingQueue.length) {
+			let q = this.currentQueueItem = this.pendingQueue.shift();
+			this.sqlRequest(q.id, q.query, q.callback, q.dbConnection);
+			this.dispatchEvent("queue-progress", this.pendingQueue);
+		} else {
+			this.dispatchEvent("queue-complete", this.queueResults);
+			this.queueCallback(this.queueResults);
 		}
 	}
 }

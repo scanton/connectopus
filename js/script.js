@@ -1,5 +1,12 @@
+window.onerror = function(errorMsg, url, lineNumber) {
+	console.log("Error occured: " + errorMsg);
+	return false;
+}
+
 let enableContextMenu = require('./custom_modules/enableContextMenu.js');
 enableContextMenu();
+
+const DataUtils = require('./custom_modules/DataUtils.js');
 
 const ConnectopusModel = require('./custom_modules/ConnectopusModel.js');
 const model = new ConnectopusModel();
@@ -27,8 +34,11 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 }).on("click", ".connect-to-db-button", function(evt) {
 	evt.preventDefault();
 	let id = $(this).closest("li").attr("data-id");
+	$(".modal-overlay").fadeIn("slow");
 	if(id) {
-		connections.addConnection(model.getConnection(id));
+		connections.addConnection(model.getConnection(id), function(data) {
+			$(".modal-overlay").fadeOut("slow");
+		});
 	}
 
 }).on("click", ".database-tables li", function(evt) {
@@ -38,8 +48,10 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	$parent.find("li.selected").removeClass("selected");
 	$this.addClass("selected");
 
+	$(".modal-overlay").fadeIn("slow");
 	connections.compareTables($this.text().trim(), function(tables) {
-		console.log(tables);
+		DataUtils.diff(tables);
+		$(".modal-overlay").fadeOut("slow");
 	});
 
 }).on("click", ".server-folder .name", function(evt) {

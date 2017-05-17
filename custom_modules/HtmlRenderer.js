@@ -75,9 +75,9 @@ module.exports = class HtmlRenderer {
 		if(data && data.length) {
 			for(let i in data) {
 				let d = data[i];
-				if(d.tables && d.tables.length) {
-					for(let i2 in d.tables) {
-						let name = d.tables[i2];
+				if(d.tables && d.tables.names && d.tables.names.length) {
+					for(let i2 in d.tables.names) {
+						let name = d.tables.names[i2];
 						if(a.indexOf(name) == -1) {
 							a.push(name);
 						}
