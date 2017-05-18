@@ -1,5 +1,9 @@
 window.onerror = function(errorMsg, url, lineNumber) {
 	console.log("Error occured: " + errorMsg);
+	
+	$(".server-status.pending").removeClass("pending").addClass("error");
+	$(".modal-overlay").fadeOut("slow");
+
 	return false;
 }
 
