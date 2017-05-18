@@ -85,6 +85,11 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	evt.preventDefault();
 	let id = $(this).closest(".server-avatar").attr("data-id");
 	connections.removeConnection(id);
+
+}).on("click", ".server-avatar .make-king-icon", function(evt) {
+	evt.preventDefault();
+	var id = $(this).closest(".server-avatar").attr("data-id");
+	connections.makeMaster(id);
 });
 
 $(window).resize(function() {

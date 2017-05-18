@@ -17,6 +17,7 @@ module.exports = class ConnectionManager {
 			for(let i in this.connections) {
 				if(this.connections[i].id == data.id) {
 					hasConnection = true;
+					callback();
 					break;
 				}
 			}
@@ -67,6 +68,19 @@ module.exports = class ConnectionManager {
 	setConnectionStatus(id, status) {
 		this.getConnection(id).status = status;
 		this.dispatchEvent("change", this.connections);
+	}
+
+	makeMaster(id) {
+		let cons = this.getConnections();
+		for(let i in cons) {
+			if(cons[i].id == id) {
+				let a = cons.splice(i, 1);
+				for(let i in cons) {
+					a.push(cons[i]);
+				}
+				return this.setConnections(a);
+			}
+		}
 	}
 
 	compareTables(tableName, callback) {
@@ -133,6 +147,12 @@ module.exports = class ConnectionManager {
 
 	getConnections() {
 		return this.connections;
+	}
+
+	setConnections(connections) {
+		this.connections = connections;
+		this.dispatchEvent("change", this.connections);
+		return connections.length;
 	}
 
 	getConnectionCount() {
