@@ -121,6 +121,11 @@ $(document).ready(function() {
  		}
  	});
 
+ 	$(".refresh-browser-link").click(function(evt) {
+ 		evt.preventDefault();
+ 		location.reload();
+ 	});
+
  	$(".nav .option-link").click(function(evt) {
  		evt.preventDefault();
  		let $this = $(this);
