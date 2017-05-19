@@ -1,5 +1,66 @@
 module.exports = class HtmlRenderer {
 
+	renderDiffs(tables) {
+		let t, idColumnName, rowId, row, r;
+		let o = {};
+		let counter = 1;
+		let findMatch = function(idField, value, arr) {
+			for(let i in arr) {
+				if(arr[i][idField] == value) {
+					return arr[i];
+				}
+			}
+		}
+		if(tables && tables.length) {
+			for(let i in tables) {
+				t = tables[i];
+				if(t[0].results && t[0].results.length && t[0].fields && t[0].fields.length) {
+					idColumnName = t[0].fields[0].name;
+					
+					for(let j in t[0].results) {
+						rowId = t[0].results[j][idColumnName];
+						if(!o[rowId]) {
+							o[rowId] = [{id:t[0].id}];
+						}
+						row = o[rowId];
+						if(!row[counter]) {
+							row[counter] = {id:t[1].id};
+						}
+						r = t[0].results[j];
+						let match = findMatch(idColumnName, r[idColumnName], t[1].results);
+						if(match) {
+							for(let k in match) {
+								if(match[k] != r[k]) {
+									row[0][k] = r[k];
+									row[counter][k] = match[k];								
+								}
+							}
+						}
+					}
+					/*
+					for(let j in t[1].results) {
+						let rowId = t[1].results[j][idColumnName];
+						if(!o[rowId]) {
+							o[rowId] = [{id: t[1].id}];
+						}
+						let row = o[rowId];
+						if(!row[counter]) {
+							row[counter] = {id:t[1].id};
+						}
+						let r = t[1].results[j];
+						let match = findMatch(idColumnName, r[idColumnName], 1[0].results);
+						if(!match) {
+							row[counter] = r;
+						}
+					}
+					*/
+				}
+				++counter;
+			}
+		}
+		console.log(o);
+	}
+
 	renderMysqlDetails(data) {
 		var s = '';
 		if(data) {

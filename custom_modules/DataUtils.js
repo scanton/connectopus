@@ -39,16 +39,34 @@ module.exports = class DataUtils {
 	}
 
 	static diff(tables) {
-		console.log(this.clone(tables));
-		/*
-		let t1 = this.clone(table1);
-		let t2 = this.clone(table2);
 		let a = [];
-		let l = t1.length;
-		for(let i in t1) {
-
+		let data = this.clone(tables);
+		let l = data.length;
+		if(l > 1) {
+			for(let i = 1; i < l; i++) {
+				a.push(this._removeMatches(data[0], data[i]));
+			}
 		}
 		return a;
-		*/
+	}
+
+	static _removeMatches(table1, table2) {
+		if(table1 && table1.results && table2 && table2.results) {
+			table1 = this.clone(table1);
+			table2 = this.clone(table2);
+			var l2;
+			var l = table1.results.length;
+			while(l--) {
+				l2 = table2.results.length;
+				while(l2--) {
+					if(this.objectsMatch(table1.results[l], table2.results[l2])) {
+						table1.results.splice(l, 1);
+						table2.results.splice(l2, 1);
+						break;
+					}
+				}
+			}
+		}
+		return [table1, table2];
 	}
 }

@@ -2,7 +2,7 @@ window.onerror = function(errorMsg, url, lineNumber) {
 	console.log("Error occured: " + errorMsg);
 	
 	$(".server-status.pending").removeClass("pending").addClass("error");
-	$(".modal-overlay").fadeOut("slow");
+	$(".modal-overlay").fadeOut("fast");
 
 	return false;
 }
@@ -26,9 +26,9 @@ var html = new HtmlRenderer();
 $(document).on("click", ".server-list-group .server-name", function (evt) {
 	evt.preventDefault();
 	let $parent = $(this).closest(".list-group-item");
-	$parent.find(".server-details").slideToggle('slow');
-	$parent.find(".shortcut-buttons").slideToggle('slow');
-	$parent.find(".server-update-button").slideToggle('slow');
+	$parent.find(".server-details").slideToggle('fast');
+	$parent.find(".shortcut-buttons").slideToggle('fast');
+	$parent.find(".server-update-button").slideToggle('fast');
 
 }).on("click", ".connect-to-db-shortcut-button", function(evt) {
 	evt.preventDefault();
@@ -38,10 +38,10 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 }).on("click", ".connect-to-db-button", function(evt) {
 	evt.preventDefault();
 	let id = $(this).closest("li").attr("data-id");
-	$(".modal-overlay").fadeIn("slow");
+	$(".modal-overlay").fadeIn("fast");
 	if(id) {
 		connections.addConnection(model.getConnection(id), function(data) {
-			$(".modal-overlay").fadeOut("slow");
+			$(".modal-overlay").fadeOut("fast");
 		});
 	}
 
@@ -52,10 +52,10 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	$parent.find("li.selected").removeClass("selected");
 	$this.addClass("selected");
 
-	$(".modal-overlay").fadeIn("slow");
+	$(".modal-overlay").fadeIn("fast");
 	connections.compareTables($this.text().trim(), function(tables) {
-		DataUtils.diff(tables);
-		$(".modal-overlay").fadeOut("slow");
+		$(".table-content-column").html(html.renderDiffs(DataUtils.diff(tables)));
+		$(".modal-overlay").fadeOut("fast");
 	});
 
 }).on("click", ".server-folder .name", function(evt) {
@@ -140,8 +140,8 @@ $(document).ready(function() {
  		let $this = $(this);
  		$(".nav .option-link.active").removeClass("active")
  		$this.addClass("active");
- 		$(".option-link-container").slideUp("slow");
- 		$("." + $this.attr("data-target")).slideDown("slow");
+ 		$(".option-link-container").slideUp("fast");
+ 		$("." + $this.attr("data-target")).slideDown("fast");
  	});
 
  	$(".include-partial").each(function() {
