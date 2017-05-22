@@ -220,3 +220,24 @@ h4 {
 	left: 9px;
 	font-size: 5pt;
 }
+.diffs td {
+	border: 1px solid #ccc;
+}
+.diffs .index-1 {
+	background-color: hsl(0, 100%, 90%);
+}
+.diffs .index-2 {
+	background-color: hsl(60, 100%, 90%);
+}
+.diffs .index-3 {
+	background-color: hsl(120, 100%, 90%);
+}
+.diffs .index-4 {
+	background-color: hsl(180, 100%, 90%);
+}
+.diffs .index-5 {
+	background-color: hsl(240, 100%, 90%);
+}
+.diffs .index-6 {
+	background-color: hsl(300, 100%, 90%);
+}

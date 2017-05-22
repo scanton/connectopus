@@ -63,6 +63,7 @@ module.exports = class DataUtils {
 				this._addRows(o.rows, tableGroup[1], i + 1, primaryKeyFieldName);
 			}
 		}
+		o.tableCount = tables.length + 1;
 		return o;
 	}
 

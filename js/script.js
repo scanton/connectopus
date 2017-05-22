@@ -23,6 +23,16 @@ const ActiveConnectionViewController = require('./custom_modules/ActiveConnectio
 const HtmlRenderer = require('./custom_modules/HtmlRenderer.js');
 var html = new HtmlRenderer();
 
+let highlightCollumnDifferences = function() {
+	$(".table-content-column").find(".diffs").find("tr").each(function() {
+		let $row = $(this);
+		$row.find("td").each(function() {
+			let $td = $(this);
+			console.log($td.attr("class"));
+		});
+	});
+}
+
 $(document).on("click", ".server-list-group .server-name", function (evt) {
 	evt.preventDefault();
 	let $parent = $(this).closest(".list-group-item");
@@ -54,7 +64,8 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 
 	$(".modal-overlay").fadeIn("fast");
 	connections.compareTables($this.text().trim(), function(tables) {
-		$(".table-content-column").html(html.renderDiffs(DataUtils.diff(tables)));
+		$(".table-content-column").html(html.renderDiffs(DataUtils.diff(tables), connections.getConnections()));
+		highlightCollumnDifferences();
 		$(".modal-overlay").fadeOut("fast");
 	});
 

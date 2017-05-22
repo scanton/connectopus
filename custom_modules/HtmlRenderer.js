@@ -1,7 +1,42 @@
 module.exports = class HtmlRenderer {
 
-	renderDiffs(tables) {
-		console.log('renderDiffs', tables);
+	renderDiffs(tables, cons) {
+		let s = '<div class="diffs"><table>';
+		let count = tables.tableCount;
+		let fields = tables.fields;
+		let rows = tables.rows;
+		let l = rows.length;
+		let fieldsLength = fields.length;
+		s += '<tr>';
+		for(let i = 0; i < count; i++) {
+			for(let i2 = 0; i2 < fieldsLength; i2++) {
+				s += '<th>' + fields[i2].name + '</th>';
+			}
+		}
+		s += '</tr>';
+
+		for(let i = 0; i < l; i++) {
+			let l2 = count;
+			s += '<tr>';
+			for(let i2 = 0; i2 < l2; i2++) {
+				s += this.renderRow(rows[i][i2], cons[i2], fields, i2);
+			}
+			s += '</tr>';
+		}
+		return s + '</table></div>';
+	}
+
+	renderRow(row, con, fields, index) {
+		let s = '';
+		let l = fields.length;
+		for(let i = 0; i < l; i++) {
+			if(row) {
+				s += '<td class="collumn-' + fields[i].name + ' connection-' + con.id + ' index-' + index + '">' + row[fields[i].name] + '</td>';
+			} else {
+				s += '<td></td>';
+			}
+		}
+		return s + '';
 	}
 
 	renderMysqlDetails(data) {
