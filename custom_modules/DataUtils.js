@@ -47,7 +47,53 @@ module.exports = class DataUtils {
 				a.push(this._removeMatches(data[0], data[i]));
 			}
 		}
-		return a;
+		return this._formatRows(a);
+	}
+
+	static _formatRows(tables) {
+		let o = {rows: []}
+		if(tables && tables.length && tables[0][0].fields[0]) {
+			let primaryKeyFieldName = tables[0][0].fields[0].name;
+			o.fields = tables[0][0].fields;
+			o.primaryKey = primaryKeyFieldName;
+			let l = tables.length;
+			for(let i = 0; i < l; i++) {
+				let tableGroup = tables[i];
+				this._addRows(o.rows, tableGroup[0], 0, primaryKeyFieldName);
+				this._addRows(o.rows, tableGroup[1], i + 1, primaryKeyFieldName);
+			}
+		}
+		return o;
+	}
+
+	static _addRows(arr, table, index, key) {
+		if(table && table.results) {
+			let l = table.results.length;
+			while(l--) {
+				let r = table.results[l];
+				let i = this._getRowIndex(arr, r[key]);
+				if(i != -1) {
+					arr[i][index] = r;
+				} else {
+					let a = [];
+					a.id = r[key];
+					a[index] = r;
+					arr.push(a);
+				}
+			}
+		}
+	}
+
+	static _getRowIndex(arr, id) {
+		if(arr && arr.length) {
+			let l = arr.length;
+			while(l--) {
+				if(arr[l].id == id) {
+					return l;
+				}
+			}
+		}
+		return -1;
 	}
 
 	static _removeMatches(table1, table2) {
