@@ -1,9 +1,12 @@
+const ConnectionManager = require('./custom_modules/ConnectionManager.js');
+const connections = new ConnectionManager();
+
 window.onerror = function(errorMsg, url, lineNumber) {
 	console.log("Error occured: " + errorMsg);
 	
 	$(".server-status.pending").removeClass("pending").addClass("error");
 	$(".modal-overlay").fadeOut("fast");
-
+	connections.close();
 	return false;
 }
 
@@ -14,9 +17,6 @@ const DataUtils = require('./custom_modules/DataUtils.js');
 
 const ConnectopusModel = require('./custom_modules/ConnectopusModel.js');
 const model = new ConnectopusModel();
-
-const ConnectionManager = require('./custom_modules/ConnectionManager.js');
-const connections = new ConnectionManager();
 
 const ActiveConnectionViewController = require('./custom_modules/ActiveConnectionsViewController.js');
 

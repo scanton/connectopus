@@ -9,6 +9,7 @@ module.exports = class ConnectionManager {
 		this.currentQueueItem;
 		this.pendingQueue = [];
 		this.queueResults = [];
+		this.server = null;
 	}
 
 	addConnection(data, callback) {
@@ -100,6 +101,13 @@ module.exports = class ConnectionManager {
 		var mySqlClient = this.mysql;
 		var dispatch = this.dispatchEvent;
 		var setConnectionStatus = this.setConnectionStatus.bind(this);
+
+		var setServer = (function(context) {
+			return function(server) {
+				context.server = server;
+			}
+		})(this);
+
 		setConnectionStatus(id, 'pending');
 		if(conn && conn.connections[dbConnection]) {
 			let dbConn = conn.connections[dbConnection];
@@ -118,6 +126,7 @@ module.exports = class ConnectionManager {
 				dstPort: 3306
 			}
 			let sshCon = this.tunnel(sshData, function(error, server) {
+				setServer(server);
 				if(error) {
 					console.error(error);
 					dispatch("ssh-error", error);
@@ -142,6 +151,7 @@ module.exports = class ConnectionManager {
 				});
 				connection.end();
 			});
+			this.server = sshCon;
 		}
 	}
 
@@ -207,6 +217,12 @@ module.exports = class ConnectionManager {
 				});
 			}
 			return o;
+		}
+	}
+
+	close() {
+		if(this.server && this.server.close) {
+			this.server.close();
 		}
 	}
 
