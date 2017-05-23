@@ -26,12 +26,16 @@ module.exports = class HtmlRenderer {
 		return s + '</table></div>';
 	}
 
-	renderRow(row, con, fields, index) {
+	renderRow(row, con, fields, index, wrapOverLength = 260) {
 		let s = '';
 		let l = fields.length;
 		for(let i = 0; i < l; i++) {
 			if(row) {
-				s += '<td class="collumn-' + fields[i].name + ' connection-' + con.id + ' index-' + index + '">' + row[fields[i].name] + '</td>';
+				let content = this.htmlEncode(row[fields[i].name]);
+				if(content.length > wrapOverLength) {
+					content = '<div class="cell-container">' + content + '</div>';
+				}
+				s += '<td class="collumn-' + fields[i].name + ' connection-' + con.id + ' index-' + index + '">' + content + '</td>';
 			} else {
 				s += '<td></td>';
 			}
@@ -172,5 +176,13 @@ module.exports = class HtmlRenderer {
 
 	renderSingleServer(data) {
 		return this.renderServers({servers: [data]});
+	}
+
+	htmlEncode(str) {
+		return $('<div/>').text(str).html();
+	}
+
+	htmlDecode(str){
+		return $('<div/>').html(str).text();
 	}
 }

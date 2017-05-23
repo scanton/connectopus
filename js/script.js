@@ -23,12 +23,38 @@ const ActiveConnectionViewController = require('./custom_modules/ActiveConnectio
 const HtmlRenderer = require('./custom_modules/HtmlRenderer.js');
 var html = new HtmlRenderer();
 
+let getClassData = function(prefix, classAttr) {
+	if(prefix && classAttr) {
+		let a = classAttr.split(" ");
+		let l = a.length;
+		while(l--) {
+			if(a && a[l] && a[l].indexOf(prefix + '-') > -1) {
+				return a[l];
+			}
+		}
+	}
+}
+
 let highlightCollumnDifferences = function() {
 	$(".table-content-column").find(".diffs").find("tr").each(function() {
 		let $row = $(this);
 		$row.find("td").each(function() {
+			/*
 			let $td = $(this);
-			console.log($td.attr("class"));
+			let col = getClassData('column', $td.attr("class"));
+			let $cols = $td.closest("tr").find('.' + col);
+			$cols.removeClass("is-different");
+			let l = $cols.length;
+			if(l > 1) {
+				let val = $($cols[0]).html();
+				for(let i = 1; i < l; i++) {
+					let h = $($cols[i]).html();
+					if(h != val) {
+						$cols.addClass("is-different");
+					}
+				}
+			}
+			*/
 		});
 	});
 }
@@ -99,8 +125,18 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 
 }).on("click", ".server-avatar .make-king-icon", function(evt) {
 	evt.preventDefault();
-	var id = $(this).closest(".server-avatar").attr("data-id");
+	let id = $(this).closest(".server-avatar").attr("data-id");
 	connections.makeMaster(id);
+
+}).on("click", "table .cell-container", function(evt) {
+	evt.preventDefault();
+	let $this = $(this);
+	if($this.hasClass("scrollable")) {
+		$this.removeClass("scrollable");
+	} else {
+		$this.addClass("scrollable");
+	}
+
 });
 
 $(window).resize(function() {
