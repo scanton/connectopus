@@ -264,46 +264,46 @@ table .cell-container.scrollable {
 	border: 1px solid #ccc;
 }
 .diffs .index-0 {
-	background-color: hsl(270, 100%, 90%);
+	background-color: hsl(270, 100%, 95%);
 }
 .diffs .index-0.is-different {
-	background-color: hsl(270, 100%, 80%);
-	color: hsl(270, 100%, 40%);
+	background-color: hsl(270, 100%, 90%);
+	color: hsl(270, 100%, 25%);
 }
 .diffs .index-1 {
-	background-color: hsl(0, 100%, 90%);
+	background-color: hsl(0, 100%, 95%);
 }
 .diffs .index-1.is-different {
-	background-color: hsl(0, 100%, 80%);
-	color: hsl(0, 100%, 40%);
+	background-color: hsl(0, 100%, 90%);
+	color: hsl(0, 100%, 25%);
 }
 .diffs .index-2 {
-	background-color: hsl(60, 100%, 90%);
+	background-color: hsl(60, 100%, 95%);
 }
 .diffs .index-2.is-different {
-	background-color: hsl(60, 100%, 80%);
-	color: hsl(60, 100%, 40%);
+	background-color: hsl(60, 100%, 90%);
+	color: hsl(60, 100%, 25%);
 }
 .diffs .index-3 {
-	background-color: hsl(120, 100%, 90%);
+	background-color: hsl(120, 100%, 95%);
 }
 .diffs .index-3.is-different {
-	background-color: hsl(120, 100%, 80%);
-	color: hsl(120, 100%, 40%);
+	background-color: hsl(120, 100%, 90%);
+	color: hsl(120, 100%, 25%);
 }
 .diffs .index-4 {
-	background-color: hsl(180, 100%, 90%);
+	background-color: hsl(180, 100%, 95%);
 }
 .diffs .index-4.is-different {
-	background-color: hsl(180, 100%, 80%);
-	color: hsl(180, 100%, 40%);
+	background-color: hsl(180, 100%, 90%);
+	color: hsl(180, 100%, 25%);
 }
 .diffs .index-5 {
-	background-color: hsl(240, 100%, 90%);
+	background-color: hsl(240, 100%, 95%);
 }
 .diffs .index-5.is-different {
-	background-color: hsl(240, 100%, 80%);
-	color: hsl(240, 100%, 40%);
+	background-color: hsl(240, 100%, 90%);
+	color: hsl(240, 100%, 25%);
 }
 .diffs .index-6 {
 	background-color: hsl(300, 100%, 90%);
@@ -317,8 +317,18 @@ table .cell-container.scrollable {
 	font-weight: bold;
 }
 
+.table-content-column {
+	padding: 0;
+}
+
+.table-content-column .table-container {
+	overflow: scroll;
+}
+
 .table-content-column .table-toolbar {
 	background-color: #E2E2E2;
     padding: 2px 1em;
-    margin: 0 -15px;
+}
+.diffs .tools-column, .diffs .table-headers {
+	background-color: #E2E2E2;
 }

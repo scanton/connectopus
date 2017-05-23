@@ -9,6 +9,7 @@ module.exports = class HtmlRenderer {
 		let fieldsLength = fields.length;
 		s += '<tr class="table-headers">';
 		for(let i = 0; i < count; i++) {
+			s += '<th class="tools-column"></th>';
 			for(let i2 = 0; i2 < fieldsLength; i2++) {
 				s += '<th data-field-id="' + i + "-" + i2 + '" class="diff-header field-id-' + i + "-" + i2 + '">' + fields[i2].name + '<div class="controls"></div></th>';
 			}
@@ -27,7 +28,7 @@ module.exports = class HtmlRenderer {
 	}
 
 	renderRow(row, con, fields, index, wrapOverLength = 260) {
-		let s = '';
+		let s = '<td class="tools-column"><input type="checkbox" /></td>';
 		let l = fields.length;
 		for(let i = 0; i < l; i++) {
 			if(row) {
