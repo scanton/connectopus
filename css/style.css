@@ -263,8 +263,12 @@ table .cell-container.scrollable {
 .diffs td {
 	border: 1px solid #ccc;
 }
-.diffs .index-0.is-different {
+.diffs .index-0 {
 	background-color: hsl(270, 100%, 90%);
+}
+.diffs .index-0.is-different {
+	background-color: hsl(270, 100%, 80%);
+	color: hsl(270, 100%, 40%);
 }
 .diffs .index-1 {
 	background-color: hsl(0, 100%, 90%);
@@ -311,4 +315,10 @@ table .cell-container.scrollable {
 
 .is-different {
 	font-weight: bold;
+}
+
+.table-content-column .table-toolbar {
+	background-color: #E2E2E2;
+    padding: 2px 1em;
+    margin: 0 -15px;
 }

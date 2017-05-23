@@ -18,9 +18,11 @@
   },
   "homepage": "https://github.com/scanton/connectopus#readme",
   "dependencies": {
+    "diff": "^3.2.0",
     "electron-prebuilt": "^1.4.13",
     "md5": "^2.2.1",
     "mysql": "^2.13.0",
+    "ssh2": "^0.5.4",
     "tunnel-ssh": "^4.1.3"
   }
 }

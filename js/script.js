@@ -59,17 +59,29 @@ let highlightCollumnDifferences = function(fields) {
 	});
 }
 
+let initialzeFilterDropDowns = function() {
+	let $headers = $(".diffs tr.table-headers");
+	let $rows = $(".diffs tr").not(".table-headers");
+	$headers.find("th").each(function() {
+		$(this).find(".controls").html('<select></select>');
+	});
+}
+
 let hideUnaffectedColumns = function() {
 	$(".diff-header").each(function() {
 		let fieldId = $(this).attr("data-field-id");
 		if(fieldId != 0) {
 			let $diffItems = $(".field-id-" + fieldId + ".is-different");
 			if(!$diffItems.length) {
-				$(".field-id-" + fieldId).hide("slow");
+				$(".field-id-" + fieldId).hide();
 			}
 		}
 	});
+}
 
+let showUnaffectedColumns = function() {
+	$(".diffs td").show();
+	$(".diffs th").show();
 }
 
 $(document).on("click", ".server-list-group .server-name", function (evt) {
@@ -103,10 +115,11 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 
 	$(".modal-overlay").fadeIn("fast");
 	connections.compareTables($this.text().trim(), function(tables) {
-		$(".table-content-column").html(html.renderDiffs(DataUtils.diff(tables), connections.getConnections()));
+		$(".table-content-column .table-container").html(html.renderDiffs(DataUtils.diff(tables), connections.getConnections()));
 		if(tables && tables[0] && tables[0].fields) {
 			highlightCollumnDifferences(tables[0].fields);
-			hideUnaffectedColumns();
+			//hideUnaffectedColumns();
+			initialzeFilterDropDowns();
 		}
 		$(".modal-overlay").fadeOut("fast");
 	});
@@ -205,6 +218,18 @@ $(document).ready(function() {
  		$this.addClass("active");
  		$(".option-link-container").slideUp("fast");
  		$("." + $this.attr("data-target")).slideDown("fast");
+ 	});
+
+ 	$(".show-matching-columns-button").click(function() {
+ 		$(".hide-matching-columns-button").show("fast");
+ 		$(this).hide("fast");
+ 		showUnaffectedColumns();
+ 	});
+
+ 	$(".hide-matching-columns-button").click(function() {
+ 		$(".show-matching-columns-button").show("fast");
+ 		$(this).hide("fast");
+ 		hideUnaffectedColumns();
  	});
 
  	$(".include-partial").each(function() {
