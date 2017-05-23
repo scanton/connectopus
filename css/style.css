@@ -29,11 +29,6 @@ table .cell-container.scrollable {
 	clear: both;
 }
 
-.is-different {
-	font-weight: bold;
-	color: red;
-}
-
 .modal-overlay {
 	position: fixed;
 	background-color: rgba(0, 0, 0, .25);
@@ -268,21 +263,52 @@ table .cell-container.scrollable {
 .diffs td {
 	border: 1px solid #ccc;
 }
+.diffs .index-0.is-different {
+	background-color: hsl(270, 100%, 90%);
+}
 .diffs .index-1 {
 	background-color: hsl(0, 100%, 90%);
+}
+.diffs .index-1.is-different {
+	background-color: hsl(0, 100%, 80%);
+	color: hsl(0, 100%, 40%);
 }
 .diffs .index-2 {
 	background-color: hsl(60, 100%, 90%);
 }
+.diffs .index-2.is-different {
+	background-color: hsl(60, 100%, 80%);
+	color: hsl(60, 100%, 40%);
+}
 .diffs .index-3 {
 	background-color: hsl(120, 100%, 90%);
+}
+.diffs .index-3.is-different {
+	background-color: hsl(120, 100%, 80%);
+	color: hsl(120, 100%, 40%);
 }
 .diffs .index-4 {
 	background-color: hsl(180, 100%, 90%);
 }
+.diffs .index-4.is-different {
+	background-color: hsl(180, 100%, 80%);
+	color: hsl(180, 100%, 40%);
+}
 .diffs .index-5 {
 	background-color: hsl(240, 100%, 90%);
 }
+.diffs .index-5.is-different {
+	background-color: hsl(240, 100%, 80%);
+	color: hsl(240, 100%, 40%);
+}
 .diffs .index-6 {
 	background-color: hsl(300, 100%, 90%);
+}
+.diffs .index-6.is-different {
+	background-color: hsl(300, 100%, 80%);
+	color: hsl(300, 100%, 40%);
+}
+
+.is-different {
+	font-weight: bold;
 }

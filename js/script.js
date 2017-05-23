@@ -35,28 +35,41 @@ let getClassData = function(prefix, classAttr) {
 	}
 }
 
-let highlightCollumnDifferences = function() {
+let highlightCollumnDifferences = function(fields) {
 	$(".table-content-column").find(".diffs").find("tr").each(function() {
 		let $row = $(this);
-		$row.find("td").each(function() {
-			/*
-			let $td = $(this);
-			let col = getClassData('column', $td.attr("class"));
-			let $cols = $td.closest("tr").find('.' + col);
+		let l = fields.length;
+		while(l--) {
+			$cols = $row.find(".column-" + fields[l].name);
 			$cols.removeClass("is-different");
-			let l = $cols.length;
-			if(l > 1) {
-				let val = $($cols[0]).html();
-				for(let i = 1; i < l; i++) {
-					let h = $($cols[i]).html();
-					if(h != val) {
+			let val = null;
+			let l2 = $cols.length;
+			while(l2--) {
+				let tmp = $($cols[l2]).html();
+				if(val == null) {
+					val = tmp;
+				} else {
+					if(val != tmp) {
 						$cols.addClass("is-different");
 					}
 				}
 			}
-			*/
-		});
+		}
+		
 	});
+}
+
+let hideUnaffectedColumns = function() {
+	$(".diff-header").each(function() {
+		let fieldId = $(this).attr("data-field-id");
+		if(fieldId != 0) {
+			let $diffItems = $(".field-id-" + fieldId + ".is-different");
+			if(!$diffItems.length) {
+				$(".field-id-" + fieldId).hide("slow");
+			}
+		}
+	});
+
 }
 
 $(document).on("click", ".server-list-group .server-name", function (evt) {
@@ -91,7 +104,10 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	$(".modal-overlay").fadeIn("fast");
 	connections.compareTables($this.text().trim(), function(tables) {
 		$(".table-content-column").html(html.renderDiffs(DataUtils.diff(tables), connections.getConnections()));
-		highlightCollumnDifferences();
+		if(tables && tables[0] && tables[0].fields) {
+			highlightCollumnDifferences(tables[0].fields);
+			hideUnaffectedColumns();
+		}
 		$(".modal-overlay").fadeOut("fast");
 	});
 

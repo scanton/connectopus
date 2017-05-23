@@ -10,7 +10,7 @@ module.exports = class HtmlRenderer {
 		s += '<tr>';
 		for(let i = 0; i < count; i++) {
 			for(let i2 = 0; i2 < fieldsLength; i2++) {
-				s += '<th>' + fields[i2].name + '</th>';
+				s += '<th data-field-id="' + i2 + '" class="diff-header field-id-' + i2 + '">' + fields[i2].name + '</th>';
 			}
 		}
 		s += '</tr>';
@@ -35,7 +35,7 @@ module.exports = class HtmlRenderer {
 				if(content.length > wrapOverLength) {
 					content = '<div class="cell-container">' + content + '</div>';
 				}
-				s += '<td class="collumn-' + fields[i].name + ' connection-' + con.id + ' index-' + index + '">' + content + '</td>';
+				s += '<td data-field-id="' + i + '" class="column-' + fields[i].name + ' connection-' + con.id + ' index-' + index + ' field-id-' + i + '">' + content + '</td>';
 			} else {
 				s += '<td></td>';
 			}
