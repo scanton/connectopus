@@ -260,10 +260,11 @@ table .cell-container.scrollable {
 	left: 9px;
 	font-size: 5pt;
 }
-.diffs td {
+.diffs td, .diffs th {
 	border: 1px solid #ccc;
 	padding: .4em;
 }
+
 .diffs .index-0 {
 	background-color: hsl(270, 100%, 95%);
 }
