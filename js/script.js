@@ -105,7 +105,18 @@ let showUnaffectedColumns = function() {
 	$(".diffs th").show();
 }
 
-$(document).on("click", ".server-list-group .server-name", function (evt) {
+$(document).on("click", ".connect-to-db-button", function(evt) {
+	evt.preventDefault();
+	evt.stopPropagation();
+	let id = $(this).closest("li").attr("data-id");
+	if(id) {
+		$(".modal-overlay").fadeIn("fast");
+		connections.addConnection(model.getConnection(id), function(data) {
+			$(".modal-overlay").fadeOut("fast");
+		});
+	}
+
+}).on("click", ".server-list-group .server-name", function (evt) {
 	evt.preventDefault();
 	let $parent = $(this).closest(".list-group-item");
 	$parent.find(".server-details").slideToggle('fast');
@@ -116,16 +127,6 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 	evt.preventDefault();
 	let $this = $(this);
 	let $li = $this.closest(".list-group-item");
-
-}).on("click", ".connect-to-db-button", function(evt) {
-	evt.preventDefault();
-	let id = $(this).closest("li").attr("data-id");
-	$(".modal-overlay").fadeIn("fast");
-	if(id) {
-		connections.addConnection(model.getConnection(id), function(data) {
-			$(".modal-overlay").fadeOut("fast");
-		});
-	}
 
 }).on("click", ".database-tables li", function(evt) {
 	evt.preventDefault();
@@ -187,6 +188,18 @@ $(document).on("click", ".server-list-group .server-name", function (evt) {
 		$this.addClass("scrollable");
 	}
 
+}).on("click", ".server-link .quick-connect-button", function(evt) {
+	evt.preventDefault();
+	let id = $(this).closest("li").attr("data-id");
+	if(id) {
+		$(".modal-overlay").fadeIn("fast");
+		connections.addConnection(model.getConnection(id), function(data) {
+			$(".modal-overlay").fadeOut("fast");
+		});
+	}
+
+}).on("change", ".diffs .filter-select", function(evt) {
+	console.log($(this).val())
 });
 
 $(window).resize(function() {
@@ -207,6 +220,14 @@ $(document).ready(function() {
 	connections.addListener("change", function(data) {
 		activeConnections.renderServerAvatars(data);
 		$(".table-reference-column .table-list").html(html.renderTables(data));
+		let cons = connections.getConnections();
+		let l = cons.length;
+		for(let i = 0; i < l; i++) {
+			let c = cons[i];
+			let link = $(".server-link[data-id='" + c.id + "']");
+			link.removeClass("pending active error");
+			link.addClass(c.status);
+		}
 	});
  	
  	$.ajax({

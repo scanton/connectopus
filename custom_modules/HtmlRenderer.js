@@ -20,7 +20,7 @@ module.exports = class HtmlRenderer {
 			let l2 = count;
 			s += '<tr>';
 			for(let i2 = 0; i2 < l2; i2++) {
-				s += this.renderRow(rows[i][i2], cons[i2], fields, i2, 300, i);
+				s += this.renderRow(rows[i][i2], cons[i2], fields, i2, 200, i);
 			}
 			s += '</tr>';
 		}
@@ -143,7 +143,7 @@ module.exports = class HtmlRenderer {
 		if(data) {
 			for(let i in data) {
 				let d = data[i];
-				s += '<li class="server-link" data-id="' + d.id + '" ' + (!isVisible ? ' style="display: none;" ' : '') + '>' + d.name + ' <span class="status-icon pull-right"></span></li>';
+				s += '<li class="server-link" data-id="' + d.id + '" ' + (!isVisible ? ' style="display: none;" ' : '') + '>' + d.name + ' <button class="btn btn-success pull-right quick-connect-button">Connect</button><span class="status-icon pull-right"></span></li>';
 			}
 		}
 		return s
