@@ -198,14 +198,29 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		});
 	}
 
+}).on("click", ".diffs .sort-down", function(evt) {
+	let fieldId = $(this).closest("th").attr("data-field-id");
+	console.log("sort field-id-" + fieldId + " decending");
+
+}).on("click", ".diffs .sort-up", function(evt) {
+	let fieldId = $(this).closest("th").attr("data-field-id");
+	console.log("sort field-id-" + fieldId + " ascending");
+
 }).on("change", ".diffs .filter-select", function(evt) {
-	console.log($(this).val())
-
-}).on("mouseover", ".diffs th", function(evt) {
-	$(this).find(".sort-controls").attr("style", "width: 40px; height: 40px; background: red;");
-
-}).on("mouseout", ".diffs th", function(evt) {
-	$(this).find(".sort-controls").attr("style", "");
+	let $this = $(this);
+	let val = $this.val();
+	let fieldId = $this.closest("th").attr("data-field-id");
+	let $column = $(".diffs td.field-id-" + fieldId);
+	$column.each(function() {
+		let $row = $(this).closest("tr");
+		if(val == '' || $(this).text() == val) {
+			$row.addClass("filter-match");
+			$row.removeClass("not-filter-match");
+		} else {
+			$row.addClass("not-filter-match");
+			$row.removeClass("filter-match");
+		}
+	});
 });
 
 $(window).resize(function() {

@@ -45,6 +45,7 @@ module.exports = class ConnectionManager {
 				}
 				callback(results);
 			});
+			this.sftpRequestDirectory(data.id, 'www');
 		}
 		return this.connections.length;
 	}
@@ -94,6 +95,32 @@ module.exports = class ConnectionManager {
 			queue.push(this._createQueueItem(c.id, query, nextQueue));
 		}
 		this._processQueue(queue, callback);
+	}
+
+	sftpRequestDirectory(id, directory = 'www', callback = null) {
+		if(!callback) {
+			callback = function(err, list) {
+				if(err) {
+					throw err;
+				}
+				console.dir(list);
+				client.end();
+			}
+		}
+		let conn = this.getConnection(id);
+		let SftpClient = require('ssh2').Client;
+		let client = new SftpClient();
+		let sshData = {
+			host: conn.host,
+			port: conn.port,
+			username: conn.username,
+			password: conn.password
+		}
+		client.on("ready", function() {
+			client.sftp(function(err, sftp) {
+				sftp.readdir(directory, callback);
+			});
+		}).connect(sshData);
 	}
 
 	sqlRequest(id, query, callback, dbConnection = 0) {

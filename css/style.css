@@ -354,3 +354,21 @@ table .cell-container.scrollable {
 	min-width: 25px;
     text-align: center;
 }
+.diffs .diff-header {
+	position: relative;
+}
+.diffs .diff-header .sort-controls {
+	position: absolute;
+	top: 0;
+	right: 0;
+	display: none;
+}
+.diffs .diff-header:hover .sort-controls {
+	display: inline-block;
+}
+.diffs .diff-header .sort-controls button {
+	padding: 3px 6px 0;
+}
+.diffs .not-filter-match {
+	display: none;
+}

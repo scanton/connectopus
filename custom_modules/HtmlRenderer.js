@@ -11,7 +11,7 @@ module.exports = class HtmlRenderer {
 		for(let i = 0; i < count; i++) {
 			s += '<th class="tools-column"></th>';
 			for(let i2 = 0; i2 < fieldsLength; i2++) {
-				s += '<th data-field-id="' + i + "-" + i2 + '" class="diff-header field-id-' + i + "-" + i2 + '">' + fields[i2].name + '<div class="sort-controls"></div><div class="controls"></div></th>';
+				s += '<th data-field-id="' + i + "-" + i2 + '" class="diff-header field-id-' + i + "-" + i2 + '">' + fields[i2].name + '<div class="sort-controls">Sort: <button class="btn btn-default sort-down"><span class="glyphicon glyphicon-menu-down"></span></button><button class="btn btn-default sort-up"><span class="glyphicon glyphicon-menu-up"></span></button></div><div class="controls"></div></th>';
 			}
 		}
 		s += '</tr>';
