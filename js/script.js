@@ -61,9 +61,30 @@ let highlightCollumnDifferences = function(fields) {
 
 let initialzeFilterDropDowns = function() {
 	let $headers = $(".diffs tr.table-headers");
-	let $rows = $(".diffs tr").not(".table-headers");
+	//let $rows = $(".diffs tr").not(".table-headers");
 	$headers.find("th").each(function() {
-		$(this).find(".controls").html('<select></select>');
+		let $this = $(this);
+		let fieldId = $this.attr("data-field-id");
+		var a = [];
+		$(".diffs .field-id-" + fieldId).not($this).each(function() {
+			let s = $(this).text();
+			let sl = s.length;
+			if(sl < 100 && sl > 0 && a.indexOf(s) == -1) {
+				a.push(s);
+			}
+		});
+		if(a.length) {
+			a.sort();
+			let l = a.length;
+			let options = '<select class="filter-select">';
+			for(let i = 0; i < l; i++) {
+				options += '<option>' + a[i] + '</options>';
+			}
+			$this.find(".controls").html(options + '</select>');
+		} else {
+			$this.find(".controls").html('<input type="text" class="search-column-input" placeholder="filter" />');
+		}
+		
 	});
 }
 

@@ -262,6 +262,7 @@ table .cell-container.scrollable {
 }
 .diffs td {
 	border: 1px solid #ccc;
+	padding: .4em;
 }
 .diffs .index-0 {
 	background-color: hsl(270, 100%, 95%);
@@ -323,6 +324,7 @@ table .cell-container.scrollable {
 
 .table-content-column .table-container {
 	overflow: scroll;
+
 }
 
 .table-content-column .table-toolbar {
@@ -331,4 +333,6 @@ table .cell-container.scrollable {
 }
 .diffs .tools-column, .diffs .table-headers {
 	background-color: #E2E2E2;
+	min-width: 25px;
+    text-align: center;
 }
