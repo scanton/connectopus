@@ -20,14 +20,14 @@ module.exports = class HtmlRenderer {
 			let l2 = count;
 			s += '<tr>';
 			for(let i2 = 0; i2 < l2; i2++) {
-				s += this.renderRow(rows[i][i2], cons[i2], fields, i2, i);
+				s += this.renderRow(rows[i][i2], cons[i2], fields, i2, 300, i);
 			}
 			s += '</tr>';
 		}
 		return s + '</table></div>';
 	}
 
-	renderRow(row, con, fields, index, wrapOverLength = 260) {
+	renderRow(row, con, fields, index, wrapOverLength = 260, index2 = 0) {
 		let s = '<td class="tools-column"><input type="checkbox" /></td>';
 		let l = fields.length;
 		for(let i = 0; i < l; i++) {
@@ -38,7 +38,7 @@ module.exports = class HtmlRenderer {
 				}
 				s += '<td data-field-id="' + index + '-' + i + '" class="column-' + fields[i].name + ' connection-' + con.id + ' index-' + index + ' field-id-' + index + '-' + i + '">' + content + '</td>';
 			} else {
-				s += '<td></td>';
+				s += '<td data-field-id="' + index + '-' + i + '" class="null-value column-' + fields[i].name + ' connection-' + con.id + ' index-' + index + ' field-id-' + index + '-' + i + '"></td>';
 			}
 		}
 		return s + '';

@@ -76,7 +76,7 @@ let initialzeFilterDropDowns = function() {
 		if(a.length) {
 			a.sort();
 			let l = a.length;
-			let options = '<select class="filter-select">';
+			let options = '<select class="filter-select"><option></options>';
 			for(let i = 0; i < l; i++) {
 				options += '<option>' + a[i] + '</options>';
 			}
