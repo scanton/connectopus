@@ -200,6 +200,12 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 
 }).on("change", ".diffs .filter-select", function(evt) {
 	console.log($(this).val())
+
+}).on("mouseover", ".diffs th", function(evt) {
+	$(this).find(".sort-controls").attr("style", "width: 40px; height: 40px; background: red;");
+
+}).on("mouseout", ".diffs th", function(evt) {
+	$(this).find(".sort-controls").attr("style", "");
 });
 
 $(window).resize(function() {
