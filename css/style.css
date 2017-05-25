@@ -146,12 +146,14 @@ table .cell-container.scrollable {
 	font-weight: bold;
 	margin-bottom: 5px;
 }
+
 .server-link {
 	position: relative;
 }
 .server-link.active:hover .quick-connect-button {
 	display: none;
 }
+
 .server-link .quick-connect-button {
 	position: absolute;
 	right: 2px;
@@ -163,6 +165,7 @@ table .cell-container.scrollable {
 .server-link:hover .quick-connect-button {
 	display: inline-block;
 }
+
 .server-link .status-icon {
 	height: 15px;
 	width: 15px;
@@ -285,51 +288,58 @@ table .cell-container.scrollable {
 .diffs .index-0 {
 	background-color: hsl(120, 100%, 95%);
 }
-.diffs .index-0.is-different {
+.diffs .index-0.is-different, .server-avatars .server-avatar-0 {
 	background-color: hsl(120, 100%, 90%);
 	color: hsl(120, 100%, 25%);
+	border-color: hsl(120, 100%, 25%);
 }
 .diffs .index-1 {
 	background-color: hsl(0, 100%, 95%);
 }
-.diffs .index-1.is-different {
+.diffs .index-1.is-different, .server-avatars .server-avatar-1 {
 	background-color: hsl(0, 100%, 90%);
 	color: hsl(0, 100%, 25%);
+	border-color: hsl(0, 100%, 25%);
 }
 .diffs .index-2 {
 	background-color: hsl(60, 100%, 95%);
 }
-.diffs .index-2.is-different {
+.diffs .index-2.is-different, .server-avatars .server-avatar-2 {
 	background-color: hsl(60, 100%, 90%);
 	color: hsl(60, 100%, 25%);
+	border-color: hsl(60, 100%, 25%);
 }
 .diffs .index-3 {
 	background-color: hsl(120, 100%, 95%);
 }
-.diffs .index-3.is-different {
+.diffs .index-3.is-different, .server-avatars .server-avatar-3 {
 	background-color: hsl(120, 100%, 90%);
 	color: hsl(120, 100%, 25%);
+	border-color: hsl(120, 100%, 25%);
 }
 .diffs .index-4 {
 	background-color: hsl(180, 100%, 95%);
 }
-.diffs .index-4.is-different {
+.diffs .index-4.is-different, .server-avatars .server-avatar-4 {
 	background-color: hsl(180, 100%, 90%);
 	color: hsl(180, 100%, 25%);
+	border-color: hsl(180, 100%, 25%);
 }
 .diffs .index-5 {
 	background-color: hsl(240, 100%, 95%);
 }
-.diffs .index-5.is-different {
+.diffs .index-5.is-different, .server-avatars .server-avatar-6 {
 	background-color: hsl(240, 100%, 90%);
 	color: hsl(240, 100%, 25%);
+	border-color: hsl(240, 100%, 25%);
 }
 .diffs .index-6 {
 	background-color: hsl(300, 100%, 90%);
 }
-.diffs .index-6.is-different {
+.diffs .index-6.is-different, .server-avatars .server-avatar-6 {
 	background-color: hsl(300, 100%, 80%);
 	color: hsl(300, 100%, 40%);
+	border-color: hsl(300, 100%, 40%);
 }
 
 .is-different {
