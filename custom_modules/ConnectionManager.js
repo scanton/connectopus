@@ -5,6 +5,8 @@ module.exports = class ConnectionManager {
 		this.listeners = {};
 		this.tunnel = require('tunnel-ssh');
 		this.mysql = require('mysql');
+		let Ssh2SftpClient = require('ssh2-sftp-client');
+		this.sftp = new Ssh2SftpClient();
 		this.hasPendingQueue = false;
 		this.currentQueueItem;
 		this.pendingQueue = [];
@@ -45,7 +47,9 @@ module.exports = class ConnectionManager {
 				}
 				callback(results);
 			});
-			this.sftpRequestDirectory(data.id, 'www');
+			this.sftpRequestDirectory(data.id, 'www', function(list) {
+				console.log(list, 'list');
+			});
 		}
 		return this.connections.length;
 	}
@@ -97,19 +101,37 @@ module.exports = class ConnectionManager {
 		this._processQueue(queue, callback);
 	}
 
-	sftpRequestDirectory(id, directory = 'www', callback = null) {
+	sftpRequestDirectory(id, directory = 'www', callback = null, errorHandler = null) {
+		let conn = this.getConnection(id);
+		let sshData = {
+			host: conn.host,
+			port: conn.port,
+			username: conn.username,
+			password: conn.password
+		}
+		this.sftp.connect(sshData).then(() => {
+			this.sftp.list(directory);
+		}).then((evt, data) => {
+			if(data) {
+				callback(data);
+			}
+		}).catch((err) => {
+			if(errorHandler) {
+				errorHandler(err);
+			}
+		});
+		/*
+		let SftpClient = require('ssh2').Client;
+		let client = new SftpClient();
 		if(!callback) {
 			callback = function(err, list) {
 				if(err) {
 					throw err;
 				}
 				console.dir(list);
-				client.end();
 			}
 		}
 		let conn = this.getConnection(id);
-		let SftpClient = require('ssh2').Client;
-		let client = new SftpClient();
 		let sshData = {
 			host: conn.host,
 			port: conn.port,
@@ -121,6 +143,7 @@ module.exports = class ConnectionManager {
 				sftp.readdir(directory, callback);
 			});
 		}).connect(sshData);
+		*/
 	}
 
 	sqlRequest(id, query, callback, dbConnection = 0) {

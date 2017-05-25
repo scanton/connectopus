@@ -1,6 +1,8 @@
 const ConnectionManager = require('./custom_modules/ConnectionManager.js');
 const connections = new ConnectionManager();
 
+const remote = require('electron').remote;
+
 window.onerror = function(errorMsg, url, lineNumber) {
 	console.log("Error occured: " + errorMsg);
 	
@@ -137,7 +139,8 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 
 	$(".modal-overlay").fadeIn("fast");
 	connections.compareTables($this.text().trim(), function(tables) {
-		$(".table-content-column .table-container").html(html.renderDiffs(DataUtils.diff(tables), connections.getConnections()));
+		let diffResult = DataUtils.diff(tables);
+		$(".table-content-column .table-container").html(html.renderDiffs(diffResult, connections.getConnections()));
 		if(tables && tables[0] && tables[0].fields) {
 			highlightCollumnDifferences(tables[0].fields);
 			//hideUnaffectedColumns();
@@ -272,6 +275,10 @@ $(document).ready(function() {
  	$(".refresh-browser-link").click(function(evt) {
  		evt.preventDefault();
  		location.reload();
+ 	});
+
+ 	$(".toggle-dev-tools-link").click(function(evt) {
+ 		remote.getCurrentWindow().toggleDevTools();
  	});
 
  	$(".nav .option-link").click(function(evt) {

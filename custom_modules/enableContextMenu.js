@@ -1,5 +1,7 @@
 module.exports = function() {
-	remote = require('electron').remote;
+	if(!remote) {
+		let remote = require('electron').remote;
+	}
 	let {Menu, MenuItem} = remote;
 
 	let menu = new Menu()
