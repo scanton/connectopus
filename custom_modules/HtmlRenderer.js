@@ -9,7 +9,7 @@ module.exports = class HtmlRenderer {
 		let fieldsLength = fields.length;
 		s += '<tr class="table-headers">';
 		for(let i = 0; i < count; i++) {
-			s += '<th class="tools-column">';
+			s += '<th class="tools-column tools-column-' + i + '">';
 			if(i ==0) {
 				s += '<input type="checkbox" class="check-all-visible-rows-checkbox" />';
 			}
@@ -32,7 +32,7 @@ module.exports = class HtmlRenderer {
 	}
 
 	renderRow(row, con, fields, index, wrapOverLength = 260, index2 = 0) {
-		let s = '<td class="tools-column"><input type="checkbox" class="row-checkbox row-checkbox-' + index + '" /></td>';
+		let s = '<td class="tools-column tools-column-' + index + '"><input type="checkbox" class="row-checkbox row-checkbox-' + index + '" /></td>';
 		let l = fields.length;
 		for(let i = 0; i < l; i++) {
 			if(row) {

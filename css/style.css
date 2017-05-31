@@ -386,3 +386,9 @@ table .cell-container.scrollable {
 	font-weight: bold;
 	font-style: italic;
 }
+.diffs .tools-column-1, .diffs .tools-column-2, .diffs .tools-column-3, .diffs .tools-column-4, .diffs .tools-column-5, .diffs .tools-column-6, .diffs .tools-column-7, .diffs .tools-column-8, .diffs .tools-column-9 {
+	display: none;
+}
+.diffs tr.selected .tools-column-0 {
+	background-color: #0cea08;
+}

@@ -327,6 +327,17 @@ $(document).ready(function() {
  		hideUnaffectedColumns();
  	});
 
+ 	$(".sql-view-button").click(function(evt) {
+ 		evt.preventDefault();
+ 		let $checks = $(".row-checkbox-0:checked");
+ 		let rowIds = [];
+ 		$checks.each(function() {
+ 			let $row = $(this).closest("tr");
+ 			rowIds.push($row.find(".field-id-0-0").text());
+ 		});
+ 		console.log(rowIds);
+ 	});
+
  	$(".include-partial").each(function() {
  		let $this = $(this);
  		let uri = $this.attr("data-target");
