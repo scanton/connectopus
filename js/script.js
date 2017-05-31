@@ -209,6 +209,31 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 	let fieldId = $(this).closest("th").attr("data-field-id");
 	console.log("sort field-id-" + fieldId + " ascending");
 
+}).on("change", ".diffs .check-all-visible-rows-checkbox", function(evt) {
+	let $this = $(this);
+	let val = $this.is(":checked");
+	if(val) {
+		$(".diffs .row-checkbox:hidden").prop("checked", false);
+		$(".diffs .row-checkbox:visible").prop("checked", true);
+		$(".diffs tr:hidden").removeClass("selected");
+		$(".diffs tr:visible").addClass("selected");
+	} else {
+		$(".diffs .row-checkbox").prop("checked", false);
+		$(".diffs tr").removeClass("selected");
+	}
+
+}).on("change", ".diffs .row-checkbox-0", function(evt) {
+	let $this = $(this);
+	let val = $this.is(":checked");
+	let $row = $this.closest("tr");
+	if(val) {
+		$row.addClass("selected");
+		$row.find(".row-checkbox").prop("checked", true);
+	} else {
+		$row.removeClass("selected");
+		$row.find(".row-checkbox").prop("checked", false);
+	}
+	
 }).on("change", ".diffs .filter-select", function(evt) {
 	let $this = $(this);
 	let val = $this.val();

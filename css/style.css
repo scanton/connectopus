@@ -382,3 +382,7 @@ table .cell-container.scrollable {
 .diffs .not-filter-match {
 	display: none;
 }
+.diffs tr.selected {
+	font-weight: bold;
+	font-style: italic;
+}
