@@ -1,9 +1,12 @@
 module.exports = class ConnectopusController {
 
-	constructor(model) {
-		if(!model) {
-			console.error("No ConnectopusModel provided to ConnectopusController constructor.");
-		}
+	constructor(model, connectionManager) {
 		this.model = model;
+		this.connections = connectionManager;
+	}
+
+	syncRows(rowIds) {
+		console.log('Sync rows', rowIds);
+		console.log(this.connections.getLastResult());
 	}
 }

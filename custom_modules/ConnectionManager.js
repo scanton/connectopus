@@ -12,10 +12,7 @@ module.exports = class ConnectionManager {
 		this.pendingQueue = [];
 		this.queueResults = [];
 		this.server = null;
-	}
-
-	syncRows(rowIds) {
-		console.log('Sync rows', rowIds);
+		this.activeTableName = '';
 	}
 
 	addConnection(data, callback) {
@@ -58,6 +55,10 @@ module.exports = class ConnectionManager {
 		return this.connections.length;
 	}
 
+	getLastResult() {
+		return { name: this.activeTableName, data: this.queueResults };
+	}
+
 	getConnection(id) {
 		for(let i in this.connections) {
 			if(this.connections[i].id == id) {
@@ -94,6 +95,7 @@ module.exports = class ConnectionManager {
 	}
 
 	compareTables(tableName, callback) {
+		this.activeTableName = tableName;
 		let queue = [];
 		let cons = this.getConnections();
 		let query = ' SELECT * FROM ' + tableName + ' LIMIT 100000 '; 
@@ -183,7 +185,7 @@ module.exports = class ConnectionManager {
 				setServer(server);
 				if(error) {
 					console.error(error);
-					dispatch("ssh-error", error);
+					dispatchEvent("ssh-error", error);
 					setConnectionStatus(id, "error");
 				}
 				let connection = mySqlClient.createConnection(mySqlData);
@@ -195,7 +197,7 @@ module.exports = class ConnectionManager {
 					 **/
 					if(error) {
 						console.error(error);
-						dispatch("mysql-error", error);
+						dispatchEvent("mysql-error", error);
 						setConnectionStatus(id, "error");
 					} else {
 						setConnectionStatus(id, 'active');

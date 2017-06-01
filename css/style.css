@@ -193,6 +193,7 @@ table .cell-container.scrollable {
 }
 .server-avatars .server-avatar {
 	padding: 3px 7px;
+	margin: 0 .2em;
     background-color: #eee;
     border: 1px solid #BBB;
     border-radius: 5px;
@@ -412,4 +413,25 @@ table .cell-container.scrollable {
 }
 .diffs tr.selected .tools-column-0 {
 	background-color: #0cea08;
+}
+.side-bar {
+	overflow: scroll;
+}
+.table-name-container {
+	position: absolute;
+	text-align: center;
+	width: 100%;
+	font-weight: bold;
+	font-size: 14pt;
+	top: 4pt;
+	pointer-events: none;
+}
+.mysql-footer-toolbar {
+	position: absolute;
+	width: 100%;
+	height: 33px;
+	bottom: 0;
+	background: #DBDBDB;
+
+
 }

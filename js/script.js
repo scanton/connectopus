@@ -1,7 +1,13 @@
+const remote = require('electron').remote;
+
 const ConnectionManager = require('./custom_modules/ConnectionManager.js');
 const connections = new ConnectionManager();
 
-const remote = require('electron').remote;
+const ConnectopusModel = require('./custom_modules/ConnectopusModel.js');
+const model = new ConnectopusModel();
+
+const ConnectopusController = require('./custom_modules/ConnectopusController.js');
+const controller = new ConnectopusController(model, connections);
 
 window.onerror = function(errorMsg, url, lineNumber) {
 	console.log("Error occured: " + errorMsg);
@@ -12,18 +18,15 @@ window.onerror = function(errorMsg, url, lineNumber) {
 	return false;
 }
 
-let enableContextMenu = require('./custom_modules/enableContextMenu.js');
-enableContextMenu();
 
 const DataUtils = require('./custom_modules/DataUtils.js');
-
-const ConnectopusModel = require('./custom_modules/ConnectopusModel.js');
-const model = new ConnectopusModel();
 
 const ActiveConnectionViewController = require('./custom_modules/ActiveConnectionsViewController.js');
 
 const HtmlRenderer = require('./custom_modules/HtmlRenderer.js');
 var html = new HtmlRenderer();
+
+require('./custom_modules/enableContextMenu.js')();
 
 let getClassData = function(prefix, classAttr) {
 	if(prefix && classAttr) {
@@ -138,7 +141,9 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 	$this.addClass("selected");
 
 	$(".modal-overlay").fadeIn("fast");
-	connections.compareTables($this.text().trim(), function(tables) {
+	let tableName = $this.text().trim();
+	$(".table-name-container").text(tableName);
+	connections.compareTables(tableName, function(tables) {
 		let diffResult = DataUtils.diff(tables);
 		$(".table-content-column .table-container").html(html.renderDiffs(diffResult, connections.getConnections()));
 		if(tables && tables[0] && tables[0].fields) {
@@ -252,13 +257,20 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 });
 
 $(window).resize(function() {
+	let wHeight = $(window).height();
 	$(".side-bar").each(function() {
 		let $sb = $(this);
-		let wHeight = $(window).height();
 		let sHeight = $sb.height();
 		let sPos = $sb.offset();
 		let targetHeight = wHeight - 33 - sPos.top;
 		$sb.attr("style", "height: " + targetHeight + "px");
+	});
+	$(".table-container").each(function() {
+		let $tc = $(this);
+		let tHeight = $tc.height();
+		let tPos = $tc.offset();
+		let targetHeight = wHeight - 33 - tPos.top;
+		$tc.attr("style", "height: " + targetHeight + "px");
 	});
 });
 
@@ -268,7 +280,8 @@ $(document).ready(function() {
 	activeConnections.renderServerAvatars(connections.getConnections());
 	connections.addListener("change", function(data) {
 		activeConnections.renderServerAvatars(data);
-		$(".table-reference-column .table-list").html(html.renderTables(data));
+		let tableName = connections.getLastResult().name;
+		$(".table-reference-column .table-list").html(html.renderTables(data, tableName));
 		let cons = connections.getConnections();
 		let l = cons.length;
 		for(let i = 0; i < l; i++) {
@@ -312,7 +325,7 @@ $(document).ready(function() {
  		$(".nav .option-link.active").removeClass("active")
  		$this.addClass("active");
  		$(".option-link-container").slideUp("fast");
- 		$("." + $this.attr("data-target")).slideDown("fast");
+ 		$("." + $this.attr("data-target")).slideDown("fast", function() { $(window).resize(); });
  	});
 
  	$(".show-matching-columns-button").click(function() {
@@ -327,7 +340,7 @@ $(document).ready(function() {
  		hideUnaffectedColumns();
  	});
 
- 	$(".sql-view-button").click(function(evt) {
+ 	$(".sync-rows-button").click(function(evt) {
  		evt.preventDefault();
  		let $checks = $(".row-checkbox-0:checked");
  		let rowIds = [];
@@ -335,7 +348,7 @@ $(document).ready(function() {
  			let $row = $(this).closest("tr");
  			rowIds.push($row.find(".field-id-0-0").text());
  		});
- 		connections.syncRows(rowIds);
+ 		controller.syncRows(rowIds);
  	});
 
  	$(".include-partial").each(function() {

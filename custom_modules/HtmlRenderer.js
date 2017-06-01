@@ -118,7 +118,7 @@ module.exports = class HtmlRenderer {
 		return s;
 	}
 
-	renderTables(data) {
+	renderTables(data, selectedItem) {
 		var a = [];
 		if(data && data.length) {
 			for(let i in data) {
@@ -137,7 +137,11 @@ module.exports = class HtmlRenderer {
 
 		let s = '<ul class="database-tables">';
 		for(let i in a) {
-			s += '<li><span class="glyphicon glyphicon-list-alt"></span> ' + a[i] + '</li>';
+			let cssClass = '';
+			if(a[i] == selectedItem) {
+				cssClass = ' class="selected" ';
+			}
+			s += '<li' + cssClass + '><span class="glyphicon glyphicon-list-alt"></span> ' + a[i] + '</li>';
 		}
 		return s + '</div>';
 	}
