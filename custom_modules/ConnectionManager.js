@@ -14,6 +14,10 @@ module.exports = class ConnectionManager {
 		this.server = null;
 	}
 
+	syncRows(rowIds) {
+		console.log('Sync rows', rowIds);
+	}
+
 	addConnection(data, callback) {
 		var hasConnection = false;
 		if(data) {

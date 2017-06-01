@@ -335,7 +335,7 @@ $(document).ready(function() {
  			let $row = $(this).closest("tr");
  			rowIds.push($row.find(".field-id-0-0").text());
  		});
- 		console.log(rowIds);
+ 		connections.syncRows(rowIds);
  	});
 
  	$(".include-partial").each(function() {
