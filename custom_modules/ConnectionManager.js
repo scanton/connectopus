@@ -275,23 +275,41 @@ module.exports = class ConnectionManager {
 			}
 		}
 		if(dataItem == null) {
-			dataItem = {id: id, children: []};
+			dataItem = {id: id, directory: []};
 			this.directories.push(dataItem);
 		}
-		l = dataItem.children.length;
+		l = dataItem.directory.length;
 		let hasDirectory = false;
 		for(i = 0; i < l; i++) {
-			if(dataItem.children[i].path == directory) {
-				dataItem.children[i].children = data;
+			if(dataItem.directory[i].path == directory) {
+				dataItem.directory[i].listing = data.sort(this._sortByName);
 				hasDirectory = true;
 				break;
 			}
 		}
 		if(!hasDirectory) {
-			dataItem.children.push({path: directory, children: data});
+			dataItem.directory.push({ path: directory, listing: data.sort(this._sortByName) });
 		}
+		dataItem.directory.sort(this._sortByPath);
 
 		this.dispatchEvent("add-directory", {id: id, directory: directory, data: data});
+	}
+
+	_sortByName(a, b) {
+		if(a.name.toLowerCase() > b.name.toLowerCase()) {
+			return 1;
+		} else if(a.name.toLowerCase() < b.name.toLowerCase()) {
+			return -1;
+		}
+		return 0;
+	}
+	_sortByPath(a, b) {
+		if(a.path.toLowerCase() > b.path.toLowerCase()) {
+			return 1;
+		} else if(a.path.toLowerCase() < b.path.toLowerCase()) {
+			return -1;
+		}
+		return 0;
 	}
 
 	_createQueueItem(id, query, callback, dbConnection = 0) {

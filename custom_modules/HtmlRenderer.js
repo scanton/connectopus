@@ -1,13 +1,60 @@
 module.exports = class HtmlRenderer {
 
 	renderDirectories(data) {
-		let s = '';
-		let l = 0;
-		console.log(data);
-		for(let i in data) {
-			++l;
+		let s = '<div class="all-sftp-directories">';
+		let l = data.length;
+		for(let i = 0; i < l; i++) {
+			s += this._renderDirectory(data[i]);
 		}
-		return s;
+		return s + '</div>';
+	}
+
+	_renderDirectory(dir) { 
+		let s = '<div class="directory connection-' + dir.id + '" data-connection="' + dir.id + '">';
+		let l = dir.directory.length;
+		for(let i = 0; i < l; i++) {
+			s += this._renderListings(dir.directory[i]);
+		}
+		return s + '</div>';
+	}
+
+	_renderListings(list) {
+		let s = '<ul class="listing">';
+		let fileList = '';
+		let l = list.listing.length;
+		for(let i = 0; i < l; i++) {
+			let item = list.listing[i];
+			let itemString = '';
+			itemString += '<li class="listing-item listing-type-' + item.type + '" data-accessTime="' + item.accessTime + '"';
+			itemString += ' data-group="' + item.group + '"';
+			itemString += ' data-modifyTime="' + item.modifyTime + '"';
+			itemString += ' data-name="' + item.name + '"';
+			itemString += ' data-owner="' + item.owner + '"';
+			itemString += ' data-rights-user="' + item.rights.user + '"';
+			itemString += ' data-rights-group="' + item.rights.group + '"'
+			itemString += ' data-rights-other="' + item.rights.other + '"';
+			itemString += ' data-size="' + item.size + '"';
+			itemString += ' data-type="' + item.type + '"';
+			itemString += ' data-path="' + list.path + '/' + item.name + '"';
+			itemString += ' >';
+			if(item.type == 'd') {
+				itemString += '<span class="glyphicon glyphicon-triangle-right"> </span><span class="glyphicon glyphicon-folder-close"></span> ';
+			} else if (item.type == '-') {
+				itemString += '<span class="glyphicon glyphicon-file"></span> ';
+			} else {
+				itemString += '<span class="glyphicon glyphicon-question-sign"></span> ';
+			}
+			itemString += item.name;
+			itemString += '</li>';
+
+			if(item.type == 'd') {
+				s += itemString;
+			} else {
+				fileList += itemString;
+			}
+		}
+		s += fileList;
+		return s + '</ul>';
 	}
 
 	renderDiffs(tables, cons) {

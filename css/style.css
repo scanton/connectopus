@@ -434,6 +434,25 @@ table .cell-container.scrollable {
 	height: 33px;
 	bottom: 0;
 	background: #DBDBDB;
-
-
 }
+
+.all-sftp-directories .listing {
+	list-style: none;
+	padding-left: 0;
+	color: #777;
+	cursor: pointer;
+	float: left;
+}
+
+.all-sftp-directories .glyphicon-triangle-right {
+	font-size: 8pt;
+}
+
+.all-sftp-directories .listing .listing-type-- {
+	padding-left: 20px;
+}
+
+.all-sftp-directories .listing .listing-type-d .glyphicon-folder-close{
+	margin-left: 9px;
+}
+
