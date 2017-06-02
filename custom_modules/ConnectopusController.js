@@ -1,10 +1,11 @@
 module.exports = class ConnectopusController {
 
-	constructor(model, connectionManager) {
+	constructor(model, connectionManager, htmlRenderer) {
 		this.model = model;
 		this.connections = connectionManager;
+		this.html = htmlRenderer;
 		this.connections.addListener("add-directory", (data) => {
-			console.log(this.connections.getDirectories());
+			$(".sftp-tree-view").html(this.html.renderDirectories(this.connections.getDirectories()));
 		});
 	}
 

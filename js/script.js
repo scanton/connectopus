@@ -6,8 +6,11 @@ const connections = new ConnectionManager();
 const ConnectopusModel = require('./custom_modules/ConnectopusModel.js');
 const model = new ConnectopusModel();
 
+const HtmlRenderer = require('./custom_modules/HtmlRenderer.js');
+var html = new HtmlRenderer();
+
 const ConnectopusController = require('./custom_modules/ConnectopusController.js');
-const controller = new ConnectopusController(model, connections);
+const controller = new ConnectopusController(model, connections, html);
 
 window.onerror = function(errorMsg, url, lineNumber) {
 	console.log("Error occured: " + errorMsg);
@@ -22,9 +25,6 @@ window.onerror = function(errorMsg, url, lineNumber) {
 const DataUtils = require('./custom_modules/DataUtils.js');
 
 const ActiveConnectionViewController = require('./custom_modules/ActiveConnectionsViewController.js');
-
-const HtmlRenderer = require('./custom_modules/HtmlRenderer.js');
-var html = new HtmlRenderer();
 
 require('./custom_modules/enableContextMenu.js')();
 

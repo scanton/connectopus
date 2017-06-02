@@ -13,7 +13,7 @@ module.exports = class ConnectionManager {
 		this.queueResults = [];
 		this.server = null;
 		this.activeTableName = '';
-		this.directories = {};
+		this.directories = [];
 	}
 
 	addConnection(data, callback) {
@@ -50,7 +50,10 @@ module.exports = class ConnectionManager {
 				callback(results);
 			});
 			this.sftpRequestDirectory(data.id, 'www', function(list) {
-				console.log(list, 'list');
+				//console.log(list, 'list');
+				/**
+				 * This event is handled in ConnectopusController "add-directory" handler
+				 **/
 			});
 		}
 		return this.connections.length;
@@ -122,6 +125,7 @@ module.exports = class ConnectionManager {
 		}
 		this.sftp.connect(sshData).then(() => {
 			this.sftp.list(directory).then((data) => {
+				callback(data);
 				this._addDirectory(id, directory, data);
 			});
 		}).catch((err) => {
@@ -262,10 +266,31 @@ module.exports = class ConnectionManager {
 	}
 
 	_addDirectory(id, directory, data) {
-		if(!this.directories[id]) {
-			this.directories[id] = {};
+		let dataItem = null;
+		let l = this.directories.length;
+		let i;
+		for(i = 0; i < l; i++) {
+			if(this.directories[i].id == id) {
+				dataItem = this.directories[i];
+			}
 		}
-		this.directories[id][directory] = data;
+		if(dataItem == null) {
+			dataItem = {id: id, children: []};
+			this.directories.push(dataItem);
+		}
+		l = dataItem.children.length;
+		let hasDirectory = false;
+		for(i = 0; i < l; i++) {
+			if(dataItem.children[i].path == directory) {
+				dataItem.children[i].children = data;
+				hasDirectory = true;
+				break;
+			}
+		}
+		if(!hasDirectory) {
+			dataItem.children.push({path: directory, children: data});
+		}
+
 		this.dispatchEvent("add-directory", {id: id, directory: directory, data: data});
 	}
 

@@ -1,5 +1,15 @@
 module.exports = class HtmlRenderer {
 
+	renderDirectories(data) {
+		let s = '';
+		let l = 0;
+		console.log(data);
+		for(let i in data) {
+			++l;
+		}
+		return s;
+	}
+
 	renderDiffs(tables, cons) {
 		let s = '<div class="diffs"><table>';
 		let count = tables.tableCount;
