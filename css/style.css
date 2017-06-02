@@ -111,6 +111,8 @@ table .cell-container.scrollable {
 	background-image: linear-gradient(to bottom, #fff 0%, #f8f8f8 100%);
 	height: 100%;
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 5px rgba(0, 0, 0, .075);
+	padding-right: 5px;
+	padding-left: 10px;
 }
 .navbar {
 	margin-bottom: 0;

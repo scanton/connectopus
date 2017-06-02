@@ -13,6 +13,7 @@ module.exports = class ConnectionManager {
 		this.queueResults = [];
 		this.server = null;
 		this.activeTableName = '';
+		this.directories = {};
 	}
 
 	addConnection(data, callback) {
@@ -67,6 +68,10 @@ module.exports = class ConnectionManager {
 		}
 	}
 
+	getDirectories() {
+		return this.directories;
+	}
+
 	removeConnection(id) {
 		for(let i in this.connections) {
 			if(this.connections[i].id == id) {
@@ -116,40 +121,14 @@ module.exports = class ConnectionManager {
 			password: conn.password
 		}
 		this.sftp.connect(sshData).then(() => {
-			this.sftp.list(directory);
-		}).then((evt, data) => {
-			if(data) {
-				callback(data);
-			}
+			this.sftp.list(directory).then((data) => {
+				this._addDirectory(id, directory, data);
+			});
 		}).catch((err) => {
 			if(errorHandler) {
 				errorHandler(err);
 			}
 		});
-		/*
-		let SftpClient = require('ssh2').Client;
-		let client = new SftpClient();
-		if(!callback) {
-			callback = function(err, list) {
-				if(err) {
-					throw err;
-				}
-				console.dir(list);
-			}
-		}
-		let conn = this.getConnection(id);
-		let sshData = {
-			host: conn.host,
-			port: conn.port,
-			username: conn.username,
-			password: conn.password
-		}
-		client.on("ready", function() {
-			client.sftp(function(err, sftp) {
-				sftp.readdir(directory, callback);
-			});
-		}).connect(sshData);
-		*/
 	}
 
 	sqlRequest(id, query, callback, dbConnection = 0) {
@@ -280,6 +259,14 @@ module.exports = class ConnectionManager {
 		if(this.server && this.server.close) {
 			this.server.close();
 		}
+	}
+
+	_addDirectory(id, directory, data) {
+		if(!this.directories[id]) {
+			this.directories[id] = {};
+		}
+		this.directories[id][directory] = data;
+		this.dispatchEvent("add-directory", {id: id, directory: directory, data: data});
 	}
 
 	_createQueueItem(id, query, callback, dbConnection = 0) {
