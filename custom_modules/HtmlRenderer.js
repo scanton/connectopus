@@ -1,25 +1,49 @@
 module.exports = class HtmlRenderer {
 
-	renderDirectories(data) {
-		let s = '<div class="all-sftp-directories">';
-		let l = data.length;
-		for(let i = 0; i < l; i++) {
-			s += this._renderDirectory(data[i]);
-		}
-		return s + '</div>';
+	renderDirectories(data, path) {
+		//if(data && path) {
+			let s = '<div class="all-sftp-directories">';
+			let l = data.length;
+			for(let i = 0; i < l; i++) {
+				s += this._renderDirectory(data[i], i, path);
+			}
+			return s + '</div>';
+		//}
 	}
 
-	_renderDirectory(dir) { 
+	renderPathLinks(path) {
+		if(path && path.length) {
+			let s = '<span class="path-links">';
+			let a = path.split('/');
+			let l = a.length;
+			for(let i = 0; i < l; i++) {
+				let a2 = a.slice(0, i + 1);
+				if(i > 0) {
+					s += ' / ';
+				}
+				if(i < l - 1) {
+					s += '<span class="path-history" data-path="' + a2.join("/") + '">' + a[i] + '</span>';
+				} else {
+					s += '<span class="current-path">' + a[i] + '</span>';
+				}
+			}
+			return s + '</span>';
+		}
+	}
+
+	_renderDirectory(dir, index, path) { 
 		let s = '<div class="directory connection-' + dir.id + '" data-connection="' + dir.id + '">';
 		let l = dir.directory.length;
 		for(let i = 0; i < l; i++) {
-			s += this._renderListings(dir.directory[i]);
+			if(dir.directory[i].path == path) {
+				s += this._renderListings(dir.directory[i], index);
+			}
 		}
 		return s + '</div>';
 	}
 
-	_renderListings(list) {
-		let s = '<ul class="listing">';
+	_renderListings(list, index) {
+		let s = '<ul class="listing index-' + index + '">';
 		let fileList = '';
 		let l = list.listing.length;
 		for(let i = 0; i < l; i++) {
@@ -46,12 +70,14 @@ module.exports = class HtmlRenderer {
 			}
 			itemString += item.name;
 			itemString += '</li>';
-
+			
 			if(item.type == 'd') {
 				s += itemString;
 			} else {
 				fileList += itemString;
 			}
+			
+			//s += itemString;
 		}
 		s += fileList;
 		return s + '</ul>';

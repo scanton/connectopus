@@ -14,6 +14,25 @@ module.exports = class ConnectionManager {
 		this.server = null;
 		this.activeTableName = '';
 		this.directories = [];
+
+		this.paths = [];
+		this.activePath = '';
+		this.hasPendingSftpQueue = false;
+		this.currentSftpQueueItem;
+		this.pendingSftpQueue = [];
+		this.sftpQueueResults = [];
+	}
+
+	hasPath(path) {
+		return this.paths.indexOf(path) > -1;
+	}
+
+	setActivePath(path) {
+		this.activePath = path;
+		if(!this.hasPath(path)) {
+			this.paths.push(path);
+		}
+		this.dispatchEvent("active-path-change", path);
 	}
 
 	addConnection(data, callback) {
@@ -115,7 +134,20 @@ module.exports = class ConnectionManager {
 		this._processQueue(queue, callback);
 	}
 
+	compareDirectory(path, callback) {
+		this.setActivePath(path);
+		let queue = [];
+		let cons = this.getConnections();
+		let nextSftpQueue = this._nextSftpQueue.bind(this);
+		for(let i in cons) {
+			let c = cons[i];
+			queue.push(this._createSftpQueueItem(c.id, path, nextSftpQueue));
+		}
+		this._processSftpQueue(queue, callback);
+	}
+
 	sftpRequestDirectory(id, directory = 'www', callback = null, errorHandler = null) {
+		this.setActivePath(directory);
 		let conn = this.getConnection(id);
 		let sshData = {
 			host: conn.host,
@@ -125,7 +157,7 @@ module.exports = class ConnectionManager {
 		}
 		this.sftp.connect(sshData).then(() => {
 			this.sftp.list(directory).then((data) => {
-				callback(data);
+				callback(id, directory, data);
 				this._addDirectory(id, directory, data);
 			});
 		}).catch((err) => {
@@ -312,6 +344,31 @@ module.exports = class ConnectionManager {
 		return 0;
 	}
 
+	_createSftpQueueItem(id, path, callback) {
+		return { id: id, path: path, callback: callback };
+	}
+	_processSftpQueue(queue, callback) {
+		if(queue && queue.length) {
+			this.sftpQueueCallback = callback;
+			this.sftpQueueResults = [];
+			this.pendingSftpQueue = queue;
+			this.dispatchEvent("sftp-queue-begin", queue);
+			let q = this.currentSftpQueueItem = this.pendingSftpQueue.shift();
+			this.sftpRequestDirectory(q.id, q.path, q.callback);
+		}
+	}
+	_nextSftpQueue(id, directory, data) {
+		this.sftpQueueResults.push({id: id, directory: directory, data: data});
+		if(this.pendingSftpQueue.length) {
+			let q = this.currentSftpQueueItem = this.pendingSftpQueue.shift();
+			this.sftpRequestDirectory(q.id, q.path, q.callback);
+			this.dispatchEvent("sftp-queue-progress", this.pendingSftpQueue);
+		} else {
+			this.dispatchEvent("sftp-queue-complete", this.sftpQueueResults);
+			this.sftpQueueCallback(this.sftpQueueResults);
+		}
+	}
+
 	_createQueueItem(id, query, callback, dbConnection = 0) {
 		return { id: id, query: query, callback: callback, dbConnection: dbConnection };
 	}
@@ -328,7 +385,7 @@ module.exports = class ConnectionManager {
 	}
 
 	_nextQueue(error, results, fields) {
-		this.currentQueueItem;
+		//this.currentQueueItem;
 		this.queueResults.push({id: this.currentQueueItem.id, results: results, error: error, fields: fields});
 		if(this.pendingQueue.length) {
 			let q = this.currentQueueItem = this.pendingQueue.shift();
@@ -339,4 +396,5 @@ module.exports = class ConnectionManager {
 			this.queueCallback(this.queueResults);
 		}
 	}
+
 }

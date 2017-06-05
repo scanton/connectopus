@@ -1,3 +1,5 @@
+process.setMaxListeners(1000);
+
 const remote = require('electron').remote;
 
 const ConnectionManager = require('./custom_modules/ConnectionManager.js');
@@ -207,12 +209,24 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 	}
 
 }).on("click", ".diffs .sort-down", function(evt) {
+	evt.preventDefault();
 	let fieldId = $(this).closest("th").attr("data-field-id");
 	console.log("sort field-id-" + fieldId + " decending");
 
 }).on("click", ".diffs .sort-up", function(evt) {
+	evt.preventDefault();
 	let fieldId = $(this).closest("th").attr("data-field-id");
 	console.log("sort field-id-" + fieldId + " ascending");
+
+}).on("click", ".all-sftp-directories .listing-item", function(evt) {
+	evt.preventDefault();
+	if($(this).attr("data-type") == 'd') {
+		controller.addDirectory($(this).attr("data-path"));
+	}
+
+}).on("click", ".path-links .path-history", function(evt) {
+	evt.preventDefault();
+	controller.addDirectory($(this).attr("data-path"));
 
 }).on("change", ".diffs .check-all-visible-rows-checkbox", function(evt) {
 	let $this = $(this);
