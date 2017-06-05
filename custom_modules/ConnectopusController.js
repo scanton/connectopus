@@ -19,7 +19,6 @@ module.exports = class ConnectopusController {
 	}
 
 	addDirectory(path) {
-		console.log(path, this.connections.hasPath(path), this.connections.paths);
 		if(this.connections.hasPath(path)) {
 			this.connections.setActivePath(path);
 			$(".sftp-tree-view").html(this.html.renderDirectories(this.connections.getDirectories(), path));

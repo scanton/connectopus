@@ -5,8 +5,8 @@ module.exports = class ConnectionManager {
 		this.listeners = {};
 		this.tunnel = require('tunnel-ssh');
 		this.mysql = require('mysql');
-		let Ssh2SftpClient = require('ssh2-sftp-client');
-		this.sftp = new Ssh2SftpClient();
+		this.Ssh2SftpClient = require('ssh2-sftp-client');
+		this.sftp = new this.Ssh2SftpClient();
 		this.hasPendingQueue = false;
 		this.currentQueueItem;
 		this.pendingQueue = [];
@@ -147,6 +147,7 @@ module.exports = class ConnectionManager {
 	}
 
 	sftpRequestDirectory(id, directory = 'www', callback = null, errorHandler = null) {
+		this.sftp = new this.Ssh2SftpClient();
 		this.setActivePath(directory);
 		let conn = this.getConnection(id);
 		let sshData = {
