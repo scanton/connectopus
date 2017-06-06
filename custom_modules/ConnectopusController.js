@@ -22,12 +22,12 @@ module.exports = class ConnectopusController {
 		if(this.connections.hasPath(path)) {
 			this.connections.setActivePath(path);
 			$(".sftp-tree-view").html(this.html.renderDirectories(this.connections.getDirectories(), path));
+			this._diffSftpTree();
 		} else {
 			this.connections.compareDirectory(path, function(data) {
 				//console.log(data);
 			});
 		}
-		
 	}
 
 	_diffSftpTree() {

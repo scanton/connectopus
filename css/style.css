@@ -267,7 +267,7 @@ table .cell-container.scrollable {
 .side-bar-footer {
 	padding: 3px 3px 3px 5px;
 	min-height: 36px;
-	margin: 0 -16px;
+	margin: 0 -6px 0 -10px;
 	background-color: #DBDBDB;
 }
 .side-bar-footer button {
