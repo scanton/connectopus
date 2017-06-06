@@ -222,11 +222,25 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 	evt.preventDefault();
 	if($(this).attr("data-type") == 'd') {
 		controller.addDirectory($(this).attr("data-path"));
+	} else {
+		console.log("controller.compareFiles()");
+	}
+
+}).on("click", ".sftp-filtered-directories .listing-item", function(evt) {
+	evt.preventDefault();
+	if($(this).attr("data-type") == 'd') {
+		controller.addDirectory($(this).attr("data-path"));
+	} else {
+		console.log("controller.compareFiles()");
 	}
 
 }).on("click", ".path-links .path-history", function(evt) {
 	evt.preventDefault();
 	controller.addDirectory($(this).attr("data-path"));
+
+}).on("click", ".settings-link", function(evt) {
+	evt.preventDefault();
+	$(".settings-panel").slideToggle("fast");
 
 }).on("change", ".diffs .check-all-visible-rows-checkbox", function(evt) {
 	let $this = $(this);

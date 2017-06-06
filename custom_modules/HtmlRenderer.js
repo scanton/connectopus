@@ -1,14 +1,14 @@
 module.exports = class HtmlRenderer {
 
 	renderDirectories(data, path) {
-		//if(data && path) {
+		if(data && path) {
 			let s = '<div class="all-sftp-directories">';
 			let l = data.length;
 			for(let i = 0; i < l; i++) {
 				s += this._renderDirectory(data[i], i, path);
 			}
 			return s + '</div>';
-		//}
+		}
 	}
 
 	renderPathLinks(path) {
@@ -62,7 +62,7 @@ module.exports = class HtmlRenderer {
 			itemString += ' data-path="' + list.path + '/' + item.name + '"';
 			itemString += ' >';
 			if(item.type == 'd') {
-				itemString += '<span class="glyphicon glyphicon-triangle-right"> </span><span class="glyphicon glyphicon-folder-close"></span> ';
+				itemString += '<span class="glyphicon glyphicon-folder-close"></span> ';
 			} else if (item.type == '-') {
 				itemString += '<span class="glyphicon glyphicon-file"></span> ';
 			} else {
