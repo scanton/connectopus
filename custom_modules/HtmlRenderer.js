@@ -22,7 +22,7 @@ module.exports = class HtmlRenderer {
 					s += ' / ';
 				}
 				if(i < l - 1) {
-					s += '<span class="path-history" data-path="' + a2.join("/") + '">' + a[i] + '</span>';
+					s += '<button class="btn btn-default path-history" data-path="' + a2.join("/") + '">' + a[i] + '</button>';
 				} else {
 					s += '<span class="current-path">' + a[i] + '</span>';
 				}

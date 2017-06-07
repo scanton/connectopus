@@ -73,6 +73,9 @@ table .cell-container.scrollable {
 	margin-top: 10px;
 	border-radius: 10px;
 }
+.media-option-link .glyphicon-resize-small {
+	transform: rotate(45deg);
+}
 .panel-body .form-control {
 	margin: .75em 0;
 }
@@ -294,99 +297,114 @@ table .cell-container.scrollable {
 .diffs tr.selected .index-0 {
 	background-color: hsl(120, 100%, 80%);
 }
-.diffs .index-0.is-different, .server-avatars .server-avatar-0, .all-sftp-directories .listing.index-0 {
+.diffs .index-0.is-different, .server-avatars .server-avatar-0, .all-sftp-directories .listing.index-0, .tabelized-files .index-0 {
 	background-color: hsl(120, 100%, 90%);
 	color: hsl(120, 100%, 25%);
 	border-color: hsl(120, 100%, 25%);
 }
+
 .diffs .index-1 {
-	background-color: hsl(0, 100%, 95%);
-}
-.diffs tr.selected .index-1 {
-	background-color: hsl(0, 100%, 80%);
-}
-.diffs .index-1.is-different, .server-avatars .server-avatar-1, .all-sftp-directories .listing.index-1 {
-	background-color: hsl(0, 100%, 90%);
-	color: hsl(0, 100%, 25%);
-	border-color: hsl(0, 100%, 25%);
-}
-.diffs .index-2 {
-	background-color: hsl(60, 100%, 95%);
-}
-.diffs tr.selected .index-2 {
-	background-color: hsl(60, 100%, 80%);
-}
-.diffs .index-2.is-different, .server-avatars .server-avatar-2, .all-sftp-directories .listing.index-2 {
-	background-color: hsl(60, 100%, 90%);
-	color: hsl(60, 100%, 25%);
-	border-color: hsl(60, 100%, 25%);
-}
-.diffs .index-3 {
-	background-color: hsl(120, 100%, 95%);
-}
-.diffs tr.selected .index-3 {
-	background-color: hsl(120, 100%, 80%);
-}
-.diffs .index-3.is-different, .server-avatars .server-avatar-3, .all-sftp-directories .listing.index-3 {
-	background-color: hsl(120, 100%, 90%);
-	color: hsl(120, 100%, 25%);
-	border-color: hsl(120, 100%, 25%);
-}
-.diffs .index-4 {
 	background-color: hsl(180, 100%, 95%);
 }
-.diffs tr.selected .index-4 {
+.diffs tr.selected .index-1 {
 	background-color: hsl(180, 100%, 80%);
 }
-.diffs .index-4.is-different, .server-avatars .server-avatar-4, .all-sftp-directories .listing.index-4 {
+.diffs .index-1.is-different, .server-avatars .server-avatar-1, .all-sftp-directories .listing.index-1, .tabelized-files .index-1 {
 	background-color: hsl(180, 100%, 90%);
 	color: hsl(180, 100%, 25%);
 	border-color: hsl(180, 100%, 25%);
 }
-.diffs .index-5 {
+
+.diffs .index-2 {
 	background-color: hsl(240, 100%, 95%);
 }
-.diffs tr.selected .index-5 {
+.diffs tr.selected .index-2 {
 	background-color: hsl(240, 100%, 80%);
 }
-.diffs .index-5.is-different, .server-avatars .server-avatar-5, .all-sftp-directories .listing.index-5 {
+.diffs .index-2.is-different, .server-avatars .server-avatar-2, .all-sftp-directories .listing.index-2, .tabelized-files .index-2 {
 	background-color: hsl(240, 100%, 90%);
 	color: hsl(240, 100%, 25%);
 	border-color: hsl(240, 100%, 25%);
 }
-.diffs .index-6 {
+
+.diffs .index-3 {
+	background-color: hsl(300, 100%, 95%);
+}
+.diffs tr.selected .index-3 {
+	background-color: hsl(300, 100%, 80%);
+}
+.diffs .index-3.is-different, .server-avatars .server-avatar-3, .all-sftp-directories .listing.index-3, .tabelized-files .index-3 {
 	background-color: hsl(300, 100%, 90%);
+	color: hsl(300, 100%, 25%);
+	border-color: hsl(300, 100%, 25%);
+}
+
+.diffs .index-4 {
+	background-color: hsl(0, 100%, 95%);
+}
+.diffs tr.selected .index-4 {
+	background-color: hsl(0, 100%, 80%);
+}
+.diffs .index-4.is-different, .server-avatars .server-avatar-4, .all-sftp-directories .listing.index-4, .tabelized-files .index-4 {
+	background-color: hsl(0, 100%, 90%);
+	color: hsl(0, 100%, 25%);
+	border-color: hsl(0, 100%, 25%);
+}
+
+.diffs .index-5 {
+	background-color: hsl(60, 100%, 95%);
+}
+.diffs tr.selected .index-5 {
+	background-color: hsl(60, 100%, 80%);
+}
+.diffs .index-5.is-different, .server-avatars .server-avatar-5, .all-sftp-directories .listing.index-5, .tabelized-files .index-5 {
+	background-color: hsl(60, 100%, 90%);
+	color: hsl(60, 100%, 25%);
+	border-color: hsl(60, 100%, 25%);
+}
+
+.diffs .index-6 {
+	background-color: hsl(120, 100%, 90%);
 }
 .diffs tr.selected .index-6 {
-	background-color: hsl(300, 100%, 80%);
+	background-color: hsl(120, 100%, 80%);
 }
-.diffs .index-6.is-different, .server-avatars .server-avatar-6, .all-sftp-directories .listing.index-6 {
-	background-color: hsl(300, 100%, 80%);
-	color: hsl(300, 100%, 40%);
-	border-color: hsl(300, 100%, 40%);
+.diffs .index-6.is-different, .server-avatars .server-avatar-6, .all-sftp-directories .listing.index-6, .tabelized-files .index-6 {
+	background-color: hsl(120, 100%, 80%);
+	color: hsl(120, 100%, 25%);
+	border-color: hsl(120, 100%, 40%);
 }
 
 .is-different {
 	font-weight: bold;
 }
 
-.table-content-column {
+.table-content-column, .sftp-files-column {
 	padding: 0;
 }
 
-.table-content-column .table-container {
+.table-content-column .table-container, .sftp-files-column .sftp-tree-view {
 	overflow: scroll;
 }
 
-.sftp-files-column .sftp-tree-view {
-	overflow: scroll;
-}
-
-.table-content-column .table-toolbar {
+.table-content-column .table-toolbar, .sftp-files-column .sftp-toolbar {
 	background-color: #D6D6D6;
     padding: 2px 1em;
 }
-.diffs .tools-column, .diffs .table-headers {
+
+.tabelized-files th {
+	text-align: center;
+	border: 1px solid #ccc;
+}
+.tabelized-files td {
+	padding: .12em .75em;
+	border: 1px solid #ccc;
+}
+.tabelized-files .checkbox-column {
+	background-color: #E2E2E2;
+}
+
+.diffs .tools-column, .diffs .table-headers, .tabelized-files .sftp-row-checkbox {
 	background-color: #E2E2E2;
 	min-width: 25px;
     text-align: center;
@@ -441,13 +459,11 @@ table .cell-container.scrollable {
 
 .all-sftp-directories .listing {
 	list-style: none;
-	padding: 1em;
+	padding: 1em 2em;
 	color: #777;
 	cursor: pointer;
 	float: left;
-	margin: .5em .25em;
 	border: 1px solid #CCC;
-	border-radius: 5px;
 }
 
 .all-sftp-directories .glyphicon-triangle-right {
@@ -458,29 +474,26 @@ table .cell-container.scrollable {
 	margin-left: 9px;
 }
 
-.all-sftp-directories .listing li.does-not-exist-in-main-data-set {
+.all-sftp-directories .listing li.does-not-exist-in-main-data-set, .tabelized-files td.does-not-exist-in-main-data-set {
 	color: green !important;
 	font-weight: bold;
 }
 
-.all-sftp-directories .listing li.outdated {
+.all-sftp-directories .listing li.outdated, .tabelized-files td.outdated {
 	color: orange !important;
 	font-weight: bold;
 }
 
-.all-sftp-directories .listing li.different-size {
+.all-sftp-directories .listing li.different-size, .tabelized-files td.different-size {
 	color: red !important;
 	font-weight: bold;
 }
 
-.path-links .path-history {
-	color: #9F9F9F;
-}
-
-.path-links .path-history:hover {
-	text-decoration: underline;
+.path-links .current-path {
+	font-weight: bold;
 	color: black;
-	cursor: pointer;
+	padding: 6px;
+	display: inline-block;
 }
 
 .settings-panel {

@@ -58,10 +58,77 @@ module.exports = class ConnectopusController {
 		$container.html($filtered);
 	}
 
+	_tabelizeFiles() {
+		let $lists = $(".all-sftp-directories .listing");
+		let $lineItems = $lists.find("li");
+		let a = [];
+		$lineItems.each(function() {
+			let $this = $(this);
+			let path = $this.attr("data-path");
+			if(a.indexOf(path) == -1) {
+				a.push(path);
+			}
+		});
+		a.sort(function(a, b) {
+			let al = a.toLowerCase().trim();
+			let bl = b.toLowerCase().trim();
+			if(al > bl) {
+				return 1;
+			} else if (al < bl) {
+				return -1;
+			}
+			return 0;
+		});
+
+		let listLength = $lists.length;
+		let l = a.length;
+		let s = '<table class="tabelized-files"><tr><th class="checkbox-column"><input class="sftp-all-row-checkbox" type="checkbox" /></th>';
+		for(let k = 0; k < listLength; k++) {
+			s += '<th class="index-' + k + '">';
+			s += $(".server-avatar-" + k).text();
+			s += '</th>'
+		}
+		s += '</tr>'
+		for(let i = 0; i < l; i++) {
+			let p = a[i];
+			s += '<tr><td class="checkbox-column"><input class="sftp-row-checkbox" type="checkbox" /></td>';
+			for(let j = 0; j < listLength; j++) {
+				s += '<td ';
+
+				let $item = $($lists[j]).find(".listing-item[data-path='" + p + "']");
+				if($item.length > 0) {
+					s += ' class="' + $item.attr("class") + ' index-' + j + '" ';
+					s += ' data-accesstime="' + $item.attr("data-accesstime")  + '" ';
+					s += ' data-group="' + $item.attr("data-group")  + '" ';
+					s += ' data-modifytime="' + $item.attr("data-modifytime")  + '" ';
+					s += ' data-name="' + $item.attr("data-name")  + '" ';
+					s += ' data-owner="' + $item.attr("data-owner")  + '" ';
+					s += ' data-rights-user="' + $item.attr("data-rights-user")  + '" ';
+					s += ' data-rights-group="' + $item.attr("data-rights-group")  + '" ';
+					s += ' data-rights-owner="' + $item.attr("data-rights-owner")  + '" ';
+					s += ' data-size="' + $item.attr("data-size")  + '" ';
+					s += ' data-type="' + $item.attr("data-type")  + '" ';
+					s += ' data-path="' + $item.attr("data-path")  + '" ';
+					s += '>' + $item.text();
+				} else {
+					s += ' class="unfound index-' + j + '">';
+				}
+				
+				s += '</td>';
+			}
+			s += '</tr>';
+		}
+
+		s += '</table>';
+
+		$(".sftp-tree-view").html(s);
+	}
+
 	_renderDirectories(connects, path, domQuery = ".directory-list") {
 		$(".sftp-tree-view").html(this.html.renderDirectories(connects, path));
 		this._diffSftpTree();
 		this._moveDirectoryListToSideBar(domQuery);
+		this._tabelizeFiles();
 	}
 
 	_diffSftpTree() {

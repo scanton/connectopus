@@ -22,7 +22,7 @@
 				<div class="collapse navbar-collapse connectopus-navbar-collapse-0">
 					<!--<a class="navbar-brand" href="#">Connectopus</a>-->
 					<ul class="nav navbar-nav">
-						<li class="active media-option-link option-link" data-target="connections-container"><a href="#"><span class="glyphicon glyphicon-transfer"></span> Connections</a></li>
+						<li class="active media-option-link option-link" data-target="connections-container"><a href="#"><span class="glyphicon glyphicon glyphicon-resize-small"></span> Connections</a></li>
 						<li class="mysql-option-link option-link" data-target="mysql-container"><a href="#"><span class="glyphicon glyphicon-hdd"></span> Content</a></li>
 						<li class="sftp-option-link option-link" data-target="sftp-container"><a href="#"><span class="glyphicon glyphicon-duplicate"></span> Code</a></li>
 						<!--
@@ -79,7 +79,11 @@
 					<div class="directory-list side-bar"></div>
 				</div>
 				<div class="col-xs-8 col-sm-9 col-lg-10 sftp-files-column">
-					<h3 class="active-sftp-path">Code (SFTP)</h3>
+					<div class="sftp-toolbar">
+						<button class="btn btn-danger sync-selected-files pull-right"><span class="glyphicon glyphicon-transfer"></span> Sync Selected Files</button>
+						<div class="active-sftp-path">Code (SFTP)</div>
+						<div class="clear-fix"></div>
+					</div>
 					<div class="sftp-tree-view table-container"></div>
 				</div>
 			</div>
@@ -96,8 +100,12 @@
 				</div>
 				<div class="col-xs-8 col-sm-9 col-lg-10 table-content-column">
 					<div class="table-toolbar">
-						<button class="btn btn-default show-matching-columns-button pull-right" style="display: none;"><span class="glyphicon glyphicon-list"></span> Show Matching Columns</button>
-						<button class="btn btn-default hide-matching-columns-button pull-right"><span class="glyphicon glyphicon-list"></span> Hide Matching Columns</button>
+						<button class="btn btn-danger sync-rows-button pull-right"><span class="glyphicon glyphicon-transfer"></span> Sync Selected Rows</button>
+
+						<div class="table-name-container"></div>
+
+						<button class="btn btn-default show-matching-columns-button" style="display: none;"><span class="glyphicon glyphicon-list"></span> Show Matching Columns</button>
+						<button class="btn btn-default hide-matching-columns-button"><span class="glyphicon glyphicon-list"></span> Hide Matching Columns</button>
 						
 						<!--
 						<button class="btn btn-default show-inserts-button pull-right" style="display: none;"><span class="glyphicon glyphicon-indent-left"></span> Show Inserts</button>
@@ -106,8 +114,7 @@
 						<button class="btn btn-default show-updates-button pull-right" style="display: none;"><span class="glyphicon glyphicon-tasks"></span> Show Updates</button>
 						<button class="btn btn-default hide-updates-button pull-right"><span class="glyphicon glyphicon-tasks"></span> Hide Updates</button>
 						-->
-						<div class="table-name-container"></div>
-						<button class="btn btn-default sync-rows-button"><span class="glyphicon glyphicon-transfer"></span> Sync Selected Rows</button>
+						
 						<!--
 						<button class="btn btn-default sql-view-button"><span class="glyphicon glyphicon-modal-window"></span> SQL View</button>
 						-->
