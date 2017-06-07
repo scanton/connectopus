@@ -147,8 +147,10 @@ module.exports = class ConnectionManager {
 	}
 
 	sftpRequestDirectory(id, directory = 'www', callback = null, errorHandler = null) {
+		var setConnectionStatus = this.setConnectionStatus.bind(this);
 		this.sftp = new this.Ssh2SftpClient();
 		this.setActivePath(directory);
+		setConnectionStatus(id, 'pending');
 		let conn = this.getConnection(id);
 		let sshData = {
 			host: conn.host,
@@ -158,10 +160,12 @@ module.exports = class ConnectionManager {
 		}
 		this.sftp.connect(sshData).then(() => {
 			this.sftp.list(directory).then((data) => {
-				callback(id, directory, data);
+				setConnectionStatus(id, 'active');
 				this._addDirectory(id, directory, data);
+				callback(id, directory, data);
 			});
 		}).catch((err) => {
+			setConnectionStatus(id, "error");
 			if(errorHandler) {
 				errorHandler(err);
 			}

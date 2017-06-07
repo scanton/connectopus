@@ -19,8 +19,10 @@ module.exports = class ConnectopusController {
 			this.connections.setActivePath(path);
 			this._renderDirectories(this.connections.getDirectories(), path)
 		} else {
+			$(".modal-overlay").fadeIn("fast");
 			this.connections.compareDirectory(path, function(data) {
 				//console.log(data);
+				$(".modal-overlay").fadeOut("fast");
 			});
 		}
 	}
