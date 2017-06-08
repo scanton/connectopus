@@ -125,10 +125,36 @@ module.exports = class ConnectopusController {
 	}
 
 	_renderDirectories(connects, path, domQuery = ".directory-list") {
-		$(".sftp-tree-view").html(this.html.renderDirectories(connects, path));
+		let $tree = $(".sftp-tree-view");
+		$tree.html(this.html.renderDirectories(connects, path));
 		this._diffSftpTree();
 		this._moveDirectoryListToSideBar(domQuery);
+		this._removeMatches();
 		this._tabelizeFiles();
+	}
+
+	_removeMatches() {
+		let $main = $(".all-sftp-directories .listing.index-0");
+		var $listings = $(".all-sftp-directories .listing").not($main);
+		let l = $listings.length;
+		if(l) {
+			$main.find(".listing-item").each(function() {
+				let $this = $(this);
+				let path = $this.attr("data-path");
+				var allMatch = true;
+				for(let i = 0; i < l; i++) {
+					let $list = $($listings[i]);
+					let $item = $list.find(".listing-item[data-path='" + path + "']");
+					if(Number($item.attr("data-modifytime")) < Number($this.attr("data-modifytime")) || $item.attr("data-size") != $this.attr("data-size")) {
+						allMatch = false;
+						break;
+					}
+				}
+				if(allMatch) {
+					$(".all-sftp-directories .listing-item[data-path='" + path + "'").remove();
+				}
+			});
+		}
 	}
 
 	_diffSftpTree() {
