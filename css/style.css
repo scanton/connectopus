@@ -394,7 +394,9 @@ table .cell-container.scrollable {
 
 .tabelized-files th {
 	text-align: center;
-	border: 1px solid #ccc;
+	background: #ccc !important;
+    padding: .25em .5em;
+    color: #505050 !important;
 }
 .tabelized-files td {
 	padding: .12em .75em;
