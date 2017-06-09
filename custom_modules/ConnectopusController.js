@@ -32,6 +32,31 @@ module.exports = class ConnectopusController {
 		console.log(this.connections.getLastResult());
 	}
 
+	showModal(title, message, options) {
+		$(".modal-overlay").fadeIn("fast");
+		let $dialog = $(".modal-dialog");
+		
+		$dialog.find(".title").text(title);
+		$dialog.find(".message").html(message);
+		if(options && options.buttons && options.buttons.length) {
+			let $div = $("<div class='dynamic-button-container'></div>");
+			let obl = options.buttons.length;
+			for(let i = 0; i < obl; i++) {
+				let b = options.buttons[i];
+				let $btn = $('<button class="' + b.class + '">' + b.label + '</button> ');
+				$btn.click(b.callback);
+				$div.append($btn);
+			}
+			$dialog.find(".dialog-buttons").html($div);
+		}
+		$dialog.fadeIn("fast");
+	}
+
+	hideModal() {
+		$(".modal-overlay").fadeOut("fast");
+		$(".modal-dialog").fadeOut("fast");
+	}
+
 	_moveDirectoryListToSideBar(domQuery) {
 		let $container = $(domQuery);
 		let $list = $(".all-sftp-directories .listing-type-d").remove();
@@ -39,7 +64,7 @@ module.exports = class ConnectopusController {
 			let ap = a.getAttribute("data-path").toLowerCase();
 			let bp = b.getAttribute("data-path").toLowerCase();
 			if(ap > bp) {
-				return 1
+				return 1;
 			} else if(ap < bp) {
 				return -1;
 			}

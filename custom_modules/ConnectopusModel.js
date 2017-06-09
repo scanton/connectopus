@@ -38,6 +38,44 @@ module.exports = class ConnectopusModel {
 		}
 	}
 
+	removeServerFromConfig(id) {
+		let serverFound = false;
+		if(id) {
+			if(this.config.servers && this.config.servers.length) {
+				
+				let sl = this.config.servers.length;
+				for(let i = 0; i < sl; i++) {
+					let svr = this.config.servers[i];
+					if(svr && svr.id == id) {
+						this.config.servers.splice(i, 1);
+						serverFound = true;
+						break;
+					}
+				}
+				if(!serverFound) {
+					if(this.config.folders && this.config.folders.length) {
+						let fl = this.config.folders.length;
+						for(let i = 0; i < fl; i++) {
+							let fldr = this.config.folders[i];
+							if(fldr && fldr.servers && fldr.servers.length) {
+								let fsl = fldr.servers.length;
+								for(let j = 0; j < fsl; j++) {
+									let svr = fldr.servers[j];
+									if(svr && svr.id == id) {
+										this.config.folders[i].servers.splice(j, 1);
+										serverFound == true;
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return serverFound;
+	}
+
 	_processConfig() {
 		let c = this.getConfig();
 		if(c.servers && c.servers.length) {
@@ -56,7 +94,9 @@ module.exports = class ConnectopusModel {
 		if(serverList && serverList.length) {
 			for(let i in serverList) {
 				let srv = serverList[i];
-				srv.id = this.md5(srv.host + String(srv.port) + srv.username + srv.password);
+				if(!srv.id) {
+					srv.id = this.md5(srv.host + String(srv.port) + srv.username + srv.password);
+				}
 			}
 		}
 	}

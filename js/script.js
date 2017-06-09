@@ -271,7 +271,73 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		}
 	});
 	if(isValid) {
+		var config = model.getConfig();
+		if(!config) {
+			config = {};
+		}
+		if(!config.servers) {
+			config.servers = [];
+		}
+		let newId = model.md5($form.find("input[name='server']").val() + $form.find("input[name='port']").val() + $form.find("input[name='username']").val() + $form.find("input[name='password']").val());
+		let newServer = {
+			name: $form.find("input[name='name']").val(),
+			host: $form.find("input[name='server']").val(),
+			port: $form.find("input[name='port']").val(),
+			username: $form.find("input[name='username']").val(),
+			password: $form.find("input[name='password']").val(),
+			connections: [
+				{
+					name: $form.find("input[name='db-connection-name']").val(),
+					type: $form.find("select[name='database-type']").val(),
+					host: $form.find("input[name='db-connection-host']").val(),
+					database: $form.find("input[name='db-connection-database']").val(),
+					username: $form.find("input[name='db-connection-username']").val(),
+					password: $form.find("input[name='db-connection-password']").val()
+				}
+			],
+			id: newId
+		};
+		config.servers.push(newServer);
+		fs.writeJson(__dirname + '/working_files/config.json', config, () => {
+			$form.find("input.is-valid").removeClass("is-valid");
+			$form.find("input.is-not-valid").removeClass("is-not-valid");
+			model.setConfig(config);
+ 			$(".server-list-left").html(html.renderServerReference(config));
+ 			$(".server-list").html(html.renderServers(config));
+ 			$(".server-list-left .server-link[data-id='" + newId + "']").click();
+		});
+	}
 
+}).on("click", ".delete-config-button", function(evt) {
+	evt.preventDefault();
+	let $serverLink = $(".server-list-left .server-link.selected");
+	if($serverLink.length) {
+		controller.showModal("Warning", "Are you sure you want to delete " + $serverLink.text().slice(0, -8) + '?', {
+			buttons: [
+				{
+					label: 'OK', 
+					class: "btn btn-danger ok-button pull-right", 
+					callback: function(evt) {
+						evt.preventDefault();
+						let removed = model.removeServerFromConfig($serverLink.attr("data-id"));
+						controller.hideModal();
+						let config = model.getConfig();
+						fs.writeJson(__dirname + '/working_files/config.json', config, () => {
+				 			$(".server-list-left").html(html.renderServerReference(config));
+				 			$(".server-list").html(html.renderServers(config));
+						});
+					}
+				},
+				{
+					label: 'Cancel', 
+					class: "btn btn-default cancel-button pull-right", 
+					callback: function(evt) {
+						evt.preventDefault();
+						controller.hideModal();
+					}
+				}
+			]
+		});	
 	}
 
 }).on("change", ".diffs .check-all-visible-rows-checkbox", function(evt) {

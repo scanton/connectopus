@@ -5,7 +5,6 @@ module.exports = class FileSystem {
 	}
 
 	writeJson(path, object, callback, spaces = 4) {
-		console.log(object);
 		this.fs.writeJson(path, object, { spaces: spaces }, callback);
 	}
 

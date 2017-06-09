@@ -29,9 +29,13 @@
 					<h3 class="panel-title">Database Connection</h3>
 				</div>
 				<div class="panel-body">
+					<div class="input-group">
+						<span class="input-group-addon">Name</span>
+						<input type="text" class="form-control" placeholder="MySql on Your Website" name="db-connection-name" />
+					</div>
 					<div class="select-group">
 						<span class="select-group-label">Database Type</span>
-						<select>
+						<select name="database-type">
 							<option>Cassandra</option>
 							<option>CouchDB</option>
 							<option>MariaDB</option>
@@ -44,10 +48,6 @@
 							<option>Redis</option>
 							<option>SQLite</option>
 						</select>
-					</div>
-					<div class="input-group">
-						<span class="input-group-addon">Name</span>
-						<input type="text" class="form-control" placeholder="MySql on Your Website" name="db-connection-name" />
 					</div>
 					<div class="input-group">
 						<span class="input-group-addon">Host</span>
