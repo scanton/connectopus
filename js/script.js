@@ -1,5 +1,3 @@
-process.setMaxListeners(1000);
-
 const remote = require('electron').remote;
 
 const ConnectionManager = require('./custom_modules/ConnectionManager.js');
@@ -14,6 +12,15 @@ var html = new HtmlRenderer();
 const ConnectopusController = require('./custom_modules/ConnectopusController.js');
 const controller = new ConnectopusController(model, connections, html);
 
+const FileSystem = require('./custom_modules/FileSystem.js');
+const fs = new FileSystem();
+
+/*
+fs.writeJson(__dirname + '/working_files/test.json', {test: 'test', arr: [1, 2, 3]}, (o) => {
+	console.log(o);
+});
+*/
+
 window.onerror = function(errorMsg, url, lineNumber) {
 	console.log("Error occured: " + errorMsg);
 	
@@ -22,7 +29,6 @@ window.onerror = function(errorMsg, url, lineNumber) {
 	connections.close();
 	return false;
 }
-
 
 const DataUtils = require('./custom_modules/DataUtils.js');
 
