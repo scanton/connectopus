@@ -182,8 +182,15 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 	let $this = $(this);
 	$this.addClass("selected");
 	let connectionData = model.getConnection($(this).attr("data-id"));
-	$(".server-connection-detail").html(html.renderSingleServer(connectionData));
+	$(".server-connection-detail").html(html.renderSingleServer(connectionData)).slideDown("fast");
 	$(".server-connection-detail .server-name").click();
+	$(".add-new-server-container").slideUp("fast");
+
+}).on("click", ".add-server-button", function(evt) {
+	evt.preventDefault();
+	$(".add-new-server-container").slideDown("fast");
+	$(".server-connection-detail").slideUp("fast");
+	$(".server-list-left .server-link.selected").removeClass("selected");
 
 }).on("click", ".server-avatar .close-icon", function(evt) {
 	evt.preventDefault();
@@ -247,6 +254,25 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 }).on("click", ".settings-link", function(evt) {
 	evt.preventDefault();
 	$(".settings-panel").slideToggle("fast");
+
+}).on("click", ".add-new-server-button", function(evt) {
+	evt.preventDefault();
+	var isValid = true;
+	let $form = $(this).closest("form");
+	$form.find("input").each(function() {
+		let $this = $(this);
+		if($this.val().length) {
+			$this.addClass("is-valid");
+			$this.removeClass("is-not-valid");
+		} else {
+			$this.removeClass("is-valid");
+			$this.addClass("is-not-valid");
+			isValid = false;
+		}
+	});
+	if(isValid) {
+
+	}
 
 }).on("change", ".diffs .check-all-visible-rows-checkbox", function(evt) {
 	let $this = $(this);

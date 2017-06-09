@@ -1,15 +1,73 @@
-<div class="panel panel-default">
+<div class="panel panel-default add-new-server-container">
 	<div class="panel-heading">
 		<h3 class="panel-title">Add New Server</h3>
 	</div>
 	<div class="panel-body">
 		<form>
-			<input type="text" class="form-control" placeholder="Name" name="name">
-			<input type="text" class="form-control" placeholder="Server" name="server">
-			<input type="number" class="form-control" placeholder="Port" name="port">
-			<input type="text" class="form-control" placeholder="Username" name="username">
-			<input type="password" class="form-control" placeholder="Password" name="password">
-			<button type="button" class="btn btn-default pull-right">Add Server</button>
+			<div class="input-group">
+				<span class="input-group-addon">Name</span>
+				<input type="text" class="form-control" placeholder="Your Website - In Dev Lab" name="name" />
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">Server</span>
+				<input type="text" class="form-control" placeholder="yourwebsite.com" name="server" />
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">Port</span>
+				<input type="number" class="form-control" placeholder="22" name="port" />
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">Username</span>
+				<input type="text" class="form-control" placeholder="SSH Username" name="username" />
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">Password</span>
+				<input type="password" class="form-control" placeholder="SSH P455W0RD" name="password" />
+			</div>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Database Connection</h3>
+				</div>
+				<div class="panel-body">
+					<div class="select-group">
+						<span class="select-group-label">Database Type</span>
+						<select>
+							<option>Cassandra</option>
+							<option>CouchDB</option>
+							<option>MariaDB</option>
+							<option>Microsoft Access</option>
+							<option>Microsoft SQL Server</option>
+							<option>MongoDB</option>
+							<option selected="selected">MySQL</option>
+							<option>Oracle</option>
+							<option>PostgresSQL</option>
+							<option>Redis</option>
+							<option>SQLite</option>
+						</select>
+					</div>
+					<div class="input-group">
+						<span class="input-group-addon">Name</span>
+						<input type="text" class="form-control" placeholder="MySql on Your Website" name="db-connection-name" />
+					</div>
+					<div class="input-group">
+						<span class="input-group-addon">Host</span>
+						<input type="text" class="form-control" placeholder="localhost" name="db-connection-host" />
+					</div>
+					<div class="input-group">
+						<span class="input-group-addon">Database</span>
+						<input type="text" class="form-control" placeholder="your_db_name" name="db-connection-database" />
+					</div>
+					<div class="input-group">
+						<span class="input-group-addon">Username</span>
+						<input type="text" class="form-control" placeholder="your_db_username" name="db-connection-username" />
+					</div>
+					<div class="input-group">
+						<span class="input-group-addon">Password</span>
+						<input type="password" class="form-control" placeholder="P455W0RD" name="db-connection-password" />
+					</div>
+				</div>
+			</div>
+			<button type="button" class="btn btn-default pull-right add-new-server-button">Add Server</button>
 		</form>
 	</div>
 </div>
