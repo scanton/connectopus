@@ -299,6 +299,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		};
 		config.servers.push(newServer);
 		fs.writeJson(__dirname + '/working_files/config.json', config, () => {
+			$form.find("input").val("");
 			$form.find("input.is-valid").removeClass("is-valid");
 			$form.find("input.is-not-valid").removeClass("is-not-valid");
 			model.setConfig(config);
