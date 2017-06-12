@@ -51,6 +51,7 @@ module.exports = class ConnectopusController {
 			$dialog.find(".dialog-buttons").html($div);
 		}
 		$dialog.fadeIn("fast");
+		$dialog.find(".message input[type='text']").focus();
 	}
 
 	hideModal() {

@@ -34,6 +34,23 @@ module.exports = class ConnectopusModel {
 		}
 	}
 
+	updateServerData(args) {
+		if(args.id) {
+			let con = this.getConnection(args.id);
+			if(con && con.connections && con.connections.length) {
+				con.host = args["ssh-host"];
+				con.username = args["ssh-username"];
+				con.password = args["ssh-password"];
+				con.port = args["ssh-port"];
+				let db = con.connections[0];
+				db.database = args["mysql-database"];
+				db.host = args["mysql-host"];
+				db.username = args["mysql-username"];
+				db.password = args["mysql-password"];
+			}
+		}
+	}
+
 	setConfig(config = {}) {
 		this.config = config;
 		this._processConfig();
@@ -41,6 +58,16 @@ module.exports = class ConnectopusModel {
 
 	getConfig() {
 		return this.config;
+	}
+
+	setSettings(settings) {
+		if(settings) {
+			this.settings = settings;
+		}
+	}
+
+	getSettings() {
+		return this.settings;
 	}
 
 	getConnection(id) {

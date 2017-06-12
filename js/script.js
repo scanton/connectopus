@@ -15,12 +15,6 @@ const controller = new ConnectopusController(model, connections, html);
 const FileSystem = require('./custom_modules/FileSystem.js');
 const fs = new FileSystem();
 
-/*
-fs.writeJson(__dirname + '/working_files/test.json', {test: 'test', arr: [1, 2, 3]}, (o) => {
-	console.log(o);
-});
-*/
-
 window.onerror = function(errorMsg, url, lineNumber) {
 	console.log("Error occured: " + errorMsg);
 	
@@ -144,23 +138,38 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 }).on("click", ".database-tables li", function(evt) {
 	evt.preventDefault();
 	let $this = $(this);
-	let $parent = $this.closest('.database-tables');
-	$parent.find("li.selected").removeClass("selected");
-	$this.addClass("selected");
+	if($this.hasClass("blocked")) {
+		controller.showModal("Table Blocked", "Your custom settings prevents browsing to this table.", {
+			buttons: [
+				{
+					label: 'OK', 
+					class: "btn btn-success ok-button pull-right", 
+					callback: function(evt) {
+						evt.preventDefault();
+						controller.hideModal();
+					}
+				}
+			]
+		});
+	} else {
+		let $parent = $this.closest('.database-tables');
+		$parent.find("li.selected").removeClass("selected");
+		$this.addClass("selected");
 
-	$(".modal-overlay").fadeIn("fast");
-	let tableName = $this.text().trim();
-	$(".table-name-container").text(tableName);
-	connections.compareTables(tableName, function(tables) {
-		let diffResult = DataUtils.diff(tables);
-		$(".table-content-column .table-container").html(html.renderDiffs(diffResult, connections.getConnections()));
-		if(tables && tables[0] && tables[0].fields) {
-			highlightCollumnDifferences(tables[0].fields);
-			//hideUnaffectedColumns();
-			initialzeFilterDropDowns();
-		}
-		$(".modal-overlay").fadeOut("fast");
-	});
+		$(".modal-overlay").fadeIn("fast");
+		let tableName = $this.text().trim();
+		$(".table-name-container").text(tableName);
+		connections.compareTables(tableName, function(tables) {
+			let diffResult = DataUtils.diff(tables);
+			$(".table-content-column .table-container").html(html.renderDiffs(diffResult, connections.getConnections()));
+			if(tables && tables[0] && tables[0].fields) {
+				highlightCollumnDifferences(tables[0].fields);
+				//hideUnaffectedColumns();
+				initialzeFilterDropDowns();
+			}
+			$(".modal-overlay").fadeOut("fast");
+		});
+	}
 
 }).on("click", ".server-folder .name", function(evt) {
 	evt.preventDefault();
@@ -371,6 +380,50 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		]
 	});
 
+}).on("click", ".server-connection-detail .server-update-button", function(evt) {
+	evt.preventDefault();
+	let $this = $(this);
+	let id = $this.closest(".list-group-item").attr("data-id");
+	let data = $this.closest("form").serializeArray();
+	let o = {};
+	for(let i in data) {
+		o[data[i].name] = data[i].value;
+	}
+	if(id) {
+		model.updateServerData(o);
+		let config = model.getConfig();
+		fs.writeJson(__dirname + '/working_files/config.json', config, () => {
+			renderNewConfig(config);
+		});
+	}
+
+}).on("click", ".sftp-toolbar .sync-selected-files", function(evt) {
+	evt.preventDefault();
+	console.log("sync sftp files");
+
+}).on("change", ".sftp-tree-view .sftp-all-row-checkbox", function(evt) {
+	let $this = $(this);
+	let val = $this.is(":checked");
+	if(val) {
+		$(".sftp-tree-view .sftp-row-checkbox:hidden").prop("checked", false);
+		$(".sftp-tree-view .sftp-row-checkbox:visible").prop("checked", true);
+		$(".sftp-tree-view tr:hidden").removeClass("selected");
+		$(".sftp-tree-view tr:visible").addClass("selected");
+	} else {
+		$(".sftp-tree-view .sftp-row-checkbox").prop("checked", false);
+		$(".sftp-tree-view tr").removeClass("selected");
+	}
+
+}).on("change", ".sftp-tree-view .sftp-row-checkbox", function(evt) {
+	let $this = $(this);
+	let val = $this.is(":checked");
+	let $row = $this.closest("tr");
+	if(val) {
+		$row.addClass("selected");
+	} else {
+		$row.removeClass("selected");
+	}
+
 }).on("change", ".diffs .check-all-visible-rows-checkbox", function(evt) {
 	let $this = $(this);
 	let val = $this.is(":checked");
@@ -443,7 +496,16 @@ var renderNewConfig = (config) => {
 	$(".server-list-left .server-folder").droppable({
 		drop: dropServerOnFolderHandler,
 		hoverClass: "drop-target-active"
-	})
+	});
+}
+
+var renderNewSettings = (settings) => {
+	let $container = $(".setting-details-container");
+	$container.find("input[name='default_sftp_directory']").val(settings['default_sftp_directory']);
+	if(settings['block_tables']) {
+		let s = '<ul class="block-tables-list"><li>' + settings['block_tables'].join("</li><li>") + "</li></ul>";
+		$container.find(".block-tabels-list").html(s);
+	}
 }
 
 var dropServerOnFolderHandler = function(evt, ui) {
@@ -463,7 +525,7 @@ $(document).ready(function() {
 	connections.addListener("change", function(data) {
 		activeConnections.renderServerAvatars(data);
 		let tableName = connections.getLastResult().name;
-		$(".table-reference-column .table-list").html(html.renderTables(data, tableName));
+		$(".table-reference-column .table-list").html(html.renderTables(data, tableName, model.getSettings()['block_tables']));
 		let cons = connections.getConnections();
 		let l = cons.length;
 		for(let i = 0; i < l; i++) {
@@ -487,6 +549,23 @@ $(document).ready(function() {
  			console.log("Initializing new model {} (no config.json file found)");
  			let config = model.getConfig();
  			renderNewConfig(config);
+ 		}
+ 	});
+ 	
+ 	$.ajax({
+ 		url: './working_files/settings.json',
+ 		success: function(data) {
+	 		if(data) {
+	 			let settings = JSON.parse(data);
+	 			model.setSettings(settings);
+	 			renderNewSettings(settings);
+	 		}
+	 	},
+ 		error: function(err) {
+ 			console.log("No custom settings found");
+ 			let settings = { default_sftp_directory: "www" };
+ 			model.setSettings(settings);
+ 			renderNewSettings(settings);
  		}
  	});
 

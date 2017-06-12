@@ -101,7 +101,7 @@ module.exports = class HtmlRenderer {
 	 	var s = '';
 	 	if(data.servers) {
 	 		var servers = data.servers;
-	 		s += '<ul class="list-group server-list-group">';
+	 		s += '<form><ul class="list-group server-list-group">';
 	 		for(var i in servers) {
 	 			var server = servers[i];
 	 			if(server) {
@@ -113,7 +113,7 @@ module.exports = class HtmlRenderer {
 	 				s += '</div><button class="btn btn-default server-update-button pull-right" style="display: none;">Update Server Data</button><div class="clear-fix"></div></li>';
 	 			}
 	 		}
-	 		s += '</ul>';
+	 		s += '</ul></form>';
 	 	}
 	 	return s;
 	}
@@ -149,7 +149,7 @@ module.exports = class HtmlRenderer {
 		return s;
 	}
 
-	renderTables(data, selectedItem) {
+	renderTables(data, selectedItem, blockedTables = []) {
 		var a = [];
 		if(data && data.length) {
 			for(let i in data) {
@@ -165,13 +165,17 @@ module.exports = class HtmlRenderer {
 			}
 		}
 		a.sort();
-
 		let s = '<ul class="database-tables">';
 		for(let i in a) {
+			let classes = [];
 			let cssClass = '';
-			if(a[i] == selectedItem) {
-				cssClass = ' class="selected" ';
+			if(blockedTables.indexOf(a[i]) > -1) {
+				classes.push("blocked");
 			}
+			if(a[i] == selectedItem) {
+				classes.push("selected");
+			}
+			cssClass = ' class="' + classes.join(" ") + '" ';
 			s += '<li' + cssClass + '><span class="glyphicon glyphicon-list-alt"></span> ' + a[i] + '</li>';
 		}
 		return s + '</div>';

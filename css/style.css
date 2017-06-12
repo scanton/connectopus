@@ -147,6 +147,9 @@ table .cell-container.scrollable {
     border: 1px solid #777;
     border-radius: 10px;
 }
+.database-tables li.blocked {
+	color: #999;
+}
 .table-reference-column .database-name {
 	font-weight: bold;
 	margin-bottom: 5px;
@@ -304,7 +307,7 @@ table .cell-container.scrollable {
 .diffs .index-0 {
 	background-color: hsl(120, 100%, 95%);
 }
-.diffs tr.selected .index-0 {
+.diffs tr.selected .index-0, .sftp-tree-view tr.selected .index-0 {
 	background-color: hsl(120, 100%, 80%);
 }
 .diffs .index-0.is-different, .server-avatars .server-avatar-0, .all-sftp-directories .listing.index-0, .tabelized-files .index-0 {
@@ -316,7 +319,7 @@ table .cell-container.scrollable {
 .diffs .index-1 {
 	background-color: hsl(180, 100%, 95%);
 }
-.diffs tr.selected .index-1 {
+.diffs tr.selected .index-1, .sftp-tree-view tr.selected .index-1 {
 	background-color: hsl(180, 100%, 80%);
 }
 .diffs .index-1.is-different, .server-avatars .server-avatar-1, .all-sftp-directories .listing.index-1, .tabelized-files .index-1 {
@@ -328,7 +331,7 @@ table .cell-container.scrollable {
 .diffs .index-2 {
 	background-color: hsl(240, 100%, 95%);
 }
-.diffs tr.selected .index-2 {
+.diffs tr.selected .index-2, .sftp-tree-view tr.selected .index-2 {
 	background-color: hsl(240, 100%, 80%);
 }
 .diffs .index-2.is-different, .server-avatars .server-avatar-2, .all-sftp-directories .listing.index-2, .tabelized-files .index-2 {
@@ -340,7 +343,7 @@ table .cell-container.scrollable {
 .diffs .index-3 {
 	background-color: hsl(300, 100%, 95%);
 }
-.diffs tr.selected .index-3 {
+.diffs tr.selected .index-3, .sftp-tree-view tr.selected .index-3 {
 	background-color: hsl(300, 100%, 80%);
 }
 .diffs .index-3.is-different, .server-avatars .server-avatar-3, .all-sftp-directories .listing.index-3, .tabelized-files .index-3 {
@@ -352,7 +355,7 @@ table .cell-container.scrollable {
 .diffs .index-4 {
 	background-color: hsl(0, 100%, 95%);
 }
-.diffs tr.selected .index-4 {
+.diffs tr.selected .index-4, .sftp-tree-view tr.selected .index-4 {
 	background-color: hsl(0, 100%, 80%);
 }
 .diffs .index-4.is-different, .server-avatars .server-avatar-4, .all-sftp-directories .listing.index-4, .tabelized-files .index-4 {
@@ -364,7 +367,7 @@ table .cell-container.scrollable {
 .diffs .index-5 {
 	background-color: hsl(60, 100%, 95%);
 }
-.diffs tr.selected .index-5 {
+.diffs tr.selected .index-5, .sftp-tree-view tr.selected .index-5 {
 	background-color: hsl(60, 100%, 80%);
 }
 .diffs .index-5.is-different, .server-avatars .server-avatar-5, .all-sftp-directories .listing.index-5, .tabelized-files .index-5 {
@@ -376,7 +379,7 @@ table .cell-container.scrollable {
 .diffs .index-6 {
 	background-color: hsl(120, 100%, 90%);
 }
-.diffs tr.selected .index-6 {
+.diffs tr.selected .index-6, .sftp-tree-view tr.selected .index-6 {
 	background-color: hsl(120, 100%, 80%);
 }
 .diffs .index-6.is-different, .server-avatars .server-avatar-6, .all-sftp-directories .listing.index-6, .tabelized-files .index-6 {
@@ -407,6 +410,7 @@ table .cell-container.scrollable {
 	background: #ccc !important;
     padding: .25em .5em;
     color: #505050 !important;
+    border: 1px solid #ccc !important;
 }
 .tabelized-files td {
 	padding: .12em .75em;
@@ -565,4 +569,9 @@ form input.is-not-valid {
 }
 .modal-dialog {
 	z-index: 7;
+}
+
+.settings-list ul {
+	list-style: none;
+	padding: 0;
 }
