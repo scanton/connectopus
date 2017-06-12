@@ -31,58 +31,6 @@ module.exports = class HtmlRenderer {
 		}
 	}
 
-	_renderDirectory(dir, index, path) { 
-		let s = '<div class="directory connection-' + dir.id + '" data-connection="' + dir.id + '">';
-		let l = dir.directory.length;
-		for(let i = 0; i < l; i++) {
-			if(dir.directory[i].path == path) {
-				s += this._renderListings(dir.directory[i], index);
-			}
-		}
-		return s + '</div>';
-	}
-
-	_renderListings(list, index) {
-		let s = '<ul class="listing index-' + index + '">';
-		let fileList = '';
-		let l = list.listing.length;
-		for(let i = 0; i < l; i++) {
-			let item = list.listing[i];
-			let itemString = '';
-			itemString += '<li class="listing-item listing-type-' + item.type + '" data-accessTime="' + item.accessTime + '"';
-			itemString += ' data-group="' + item.group + '"';
-			itemString += ' data-modifyTime="' + item.modifyTime + '"';
-			itemString += ' data-name="' + item.name + '"';
-			itemString += ' data-owner="' + item.owner + '"';
-			itemString += ' data-rights-user="' + item.rights.user + '"';
-			itemString += ' data-rights-group="' + item.rights.group + '"'
-			itemString += ' data-rights-other="' + item.rights.other + '"';
-			itemString += ' data-size="' + item.size + '"';
-			itemString += ' data-type="' + item.type + '"';
-			itemString += ' data-path="' + list.path + '/' + item.name + '"';
-			itemString += ' >';
-			if(item.type == 'd') {
-				itemString += '<span class="glyphicon glyphicon-folder-close"></span> ';
-			} else if (item.type == '-') {
-				itemString += '<span class="glyphicon glyphicon-file"></span> ';
-			} else {
-				itemString += '<span class="glyphicon glyphicon-question-sign"></span> ';
-			}
-			itemString += item.name;
-			itemString += '</li>';
-			
-			if(item.type == 'd') {
-				s += itemString;
-			} else {
-				fileList += itemString;
-			}
-			
-			//s += itemString;
-		}
-		s += fileList;
-		return s + '</ul>';
-	}
-
 	renderDiffs(tables, cons) {
 		let s = '<div class="diffs"><table>';
 		let count = tables.tableCount;
@@ -243,7 +191,7 @@ module.exports = class HtmlRenderer {
 	renderServerFolder(name, data) {
 		var s = '';
 		if(name && data) {
-			s += '<ul class="server-folder"><span class="name"><span class="glyphicon glyphicon-folder-close"></span> ' + name + '</span>';
+			s += '<ul class="server-folder" data-name="' + name + '"><span class="name"><span class="glyphicon glyphicon-folder-close"></span> ' + name + '</span>';
 			s += this.renderServerLinks(data, 0);
 			s += '</ul>';
 		}
@@ -276,5 +224,57 @@ module.exports = class HtmlRenderer {
 
 	htmlDecode(str){
 		return $('<div/>').html(str).text();
+	}
+
+	_renderDirectory(dir, index, path) { 
+		let s = '<div class="directory connection-' + dir.id + '" data-connection="' + dir.id + '">';
+		let l = dir.directory.length;
+		for(let i = 0; i < l; i++) {
+			if(dir.directory[i].path == path) {
+				s += this._renderListings(dir.directory[i], index);
+			}
+		}
+		return s + '</div>';
+	}
+
+	_renderListings(list, index) {
+		let s = '<ul class="listing index-' + index + '">';
+		let fileList = '';
+		let l = list.listing.length;
+		for(let i = 0; i < l; i++) {
+			let item = list.listing[i];
+			let itemString = '';
+			itemString += '<li class="listing-item listing-type-' + item.type + '" data-accessTime="' + item.accessTime + '"';
+			itemString += ' data-group="' + item.group + '"';
+			itemString += ' data-modifyTime="' + item.modifyTime + '"';
+			itemString += ' data-name="' + item.name + '"';
+			itemString += ' data-owner="' + item.owner + '"';
+			itemString += ' data-rights-user="' + item.rights.user + '"';
+			itemString += ' data-rights-group="' + item.rights.group + '"'
+			itemString += ' data-rights-other="' + item.rights.other + '"';
+			itemString += ' data-size="' + item.size + '"';
+			itemString += ' data-type="' + item.type + '"';
+			itemString += ' data-path="' + list.path + '/' + item.name + '"';
+			itemString += ' >';
+			if(item.type == 'd') {
+				itemString += '<span class="glyphicon glyphicon-folder-close"></span> ';
+			} else if (item.type == '-') {
+				itemString += '<span class="glyphicon glyphicon-file"></span> ';
+			} else {
+				itemString += '<span class="glyphicon glyphicon-question-sign"></span> ';
+			}
+			itemString += item.name;
+			itemString += '</li>';
+			
+			if(item.type == 'd') {
+				s += itemString;
+			} else {
+				fileList += itemString;
+			}
+			
+			//s += itemString;
+		}
+		s += fileList;
+		return s + '</ul>';
 	}
 }

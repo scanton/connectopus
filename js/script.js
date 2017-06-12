@@ -303,8 +303,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 			$form.find("input.is-valid").removeClass("is-valid");
 			$form.find("input.is-not-valid").removeClass("is-not-valid");
 			model.setConfig(config);
- 			$(".server-list-left").html(html.renderServerReference(config));
- 			$(".server-list").html(html.renderServers(config));
+ 			renderNewConfig(config);
  			$(".server-list-left .server-link[data-id='" + newId + "']").click();
 		});
 	}
@@ -324,8 +323,8 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 						controller.hideModal();
 						let config = model.getConfig();
 						fs.writeJson(__dirname + '/working_files/config.json', config, () => {
-				 			$(".server-list-left").html(html.renderServerReference(config));
-				 			$(".server-list").html(html.renderServers(config));
+				 			renderNewConfig(config);
+				 			$(".server-reference-footer .add-server-button").click();
 						});
 					}
 				},
@@ -340,6 +339,37 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 			]
 		});	
 	}
+
+}).on("click", ".server-reference-footer .add-folder-button", function(evt) {
+	evt.preventDefault();
+	controller.showModal("Add Folder", "<div class='folder-name-div'>Folder Name: <input class='new-folder-name-input' type='text' name='folder-name' style='width: 446px; margin-bottom: 1em' /></div>", {
+		buttons: [
+			{
+				label: 'Add Folder', 
+				class: "btn btn-success ok-button pull-right", 
+				callback: function(evt) {
+					evt.preventDefault();
+					let val = $(".modal-dialog .new-folder-name-input").val();
+					let added = model.addFolder(val);
+					if(added) {
+						let config = model.getConfig();
+						fs.writeJson(__dirname + '/working_files/config.json', config, () => {
+				 			renderNewConfig(config);
+						});
+					}
+					controller.hideModal();
+				}
+			},
+			{
+				label: 'Cancel', 
+				class: "btn btn-default cancel-button pull-right", 
+				callback: function(evt) {
+					evt.preventDefault();
+					controller.hideModal();
+				}
+			}
+		]
+	});
 
 }).on("change", ".diffs .check-all-visible-rows-checkbox", function(evt) {
 	let $this = $(this);
@@ -401,6 +431,31 @@ $(window).resize(function() {
 	});
 });
 
+var renderNewConfig = (config) => {
+	$(".server-list-left").html(html.renderServerReference(config));
+	$(".server-list").html(html.renderServers(config));
+	$(".server-list-left .server-link").draggable({
+		containment: ".server-reference", 
+		cursor: 'move', 
+		snap: ".server-folder",
+		helper: 'clone'
+	});
+	$(".server-list-left .server-folder").droppable({
+		drop: dropServerOnFolderHandler,
+		hoverClass: "drop-target-active"
+	})
+}
+
+var dropServerOnFolderHandler = function(evt, ui) {
+	let id = ui.draggable.attr("data-id");
+	let name = $(this).attr("data-name");
+	model.addServerToFolder(id, name);
+	let config = model.getConfig();
+	fs.writeJson(__dirname + '/working_files/config.json', config, () => {
+		renderNewConfig(config);
+	});
+}
+
 $(document).ready(function() {
 
 	const activeConnections = new ActiveConnectionViewController(".server-avatars .text-center");
@@ -425,15 +480,13 @@ $(document).ready(function() {
 	 		if(data) {
 	 			let config = JSON.parse(data);
 	 			model.setConfig(config);
-	 			$(".server-list-left").html(html.renderServerReference(config));
-	 			$(".server-list").html(html.renderServers(config));
+	 			renderNewConfig(config);
 	 		}
 	 	},
  		error: function(err) {
  			console.log("Initializing new model {} (no config.json file found)");
  			let config = model.getConfig();
- 			$(".server-list-left").html(html.renderServerReference(config));
- 			$(".server-list").html(html.renderServers(config));
+ 			renderNewConfig(config);
  		}
  	});
 
@@ -479,8 +532,10 @@ $(document).ready(function() {
  	});
 
  	$(".include-partial").each(function() {
- 		let $this = $(this);
+ 		var $this = $(this);
  		let uri = $this.attr("data-target");
- 		$this.load(uri);
+ 		$this.load(uri, function() {
+ 			$this.find("select").selectmenu();
+ 		});
  	});
 });

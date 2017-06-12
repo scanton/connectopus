@@ -152,6 +152,16 @@ table .cell-container.scrollable {
 	margin-bottom: 5px;
 }
 
+.server-folder {
+	border-radius: 10px;
+	transition: all 0.1s ease;
+}
+.server-folder.drop-target-active {
+	background-color: #eee;
+    border: 1px solid #777;
+    padding: 3px 7px;
+}
+
 .server-link {
 	position: relative;
 }
@@ -549,4 +559,10 @@ form input.is-valid {
 }
 form input.is-not-valid {
 	background-color: #FCC;
+}
+.modal-overlay {
+	z-index: 5;
+}
+.modal-dialog {
+	z-index: 7;
 }

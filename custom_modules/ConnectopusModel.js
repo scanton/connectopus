@@ -6,6 +6,34 @@ module.exports = class ConnectopusModel {
 		this._processConfig();
 	}
 
+	addFolder(name) {
+		if(name) {
+			let f = this.getFolder(name);
+			if(!f) {
+				if(!this.config.folders) {
+					this.config.folders = [];
+				}
+				return this.config.folders.push({name: name, servers: []});
+			} else {
+				console.warn("folder already exists", name);
+			}
+		} else {
+			console.warn("invalid folder name", name);
+		}
+	}
+
+	addServerToFolder(id, name) {
+		if(this.config.folders && this.config.folders.length) {
+			let l = this.config.folders.length;
+			for(let i = 0; i < l; i++) {
+				let f = this.config.folders[i];
+				if(f && f.name == name) {
+					this.config.folders[i].servers.push(this.removeServerFromConfig(id)[0]);
+				}
+			}
+		}
+	}
+
 	setConfig(config = {}) {
 		this.config = config;
 		this._processConfig();
@@ -38,8 +66,20 @@ module.exports = class ConnectopusModel {
 		}
 	}
 
+	getFolder(name) {
+		let folders = this.config.folders;
+		if(folders) {
+			let l = folders.length;
+			for(let i = 0; i < l; i++) {
+				let f = folders[i];
+				if(f.name == name) {
+					return f;
+				}
+			}
+		}
+	}
+
 	removeServerFromConfig(id) {
-		let serverFound = false;
 		if(id) {
 			if(this.config.servers && this.config.servers.length) {
 				
@@ -47,25 +87,20 @@ module.exports = class ConnectopusModel {
 				for(let i = 0; i < sl; i++) {
 					let svr = this.config.servers[i];
 					if(svr && svr.id == id) {
-						this.config.servers.splice(i, 1);
-						serverFound = true;
-						break;
+						return this.config.servers.splice(i, 1);
 					}
 				}
-				if(!serverFound) {
-					if(this.config.folders && this.config.folders.length) {
-						let fl = this.config.folders.length;
-						for(let i = 0; i < fl; i++) {
-							let fldr = this.config.folders[i];
-							if(fldr && fldr.servers && fldr.servers.length) {
-								let fsl = fldr.servers.length;
-								for(let j = 0; j < fsl; j++) {
-									let svr = fldr.servers[j];
-									if(svr && svr.id == id) {
-										this.config.folders[i].servers.splice(j, 1);
-										serverFound == true;
-										break;
-									}
+				
+				if(this.config.folders && this.config.folders.length) {
+					let fl = this.config.folders.length;
+					for(let i = 0; i < fl; i++) {
+						let fldr = this.config.folders[i];
+						if(fldr && fldr.servers && fldr.servers.length) {
+							let fsl = fldr.servers.length;
+							for(let j = 0; j < fsl; j++) {
+								let svr = fldr.servers[j];
+								if(svr && svr.id == id) {
+									return this.config.folders[i].servers.splice(j, 1);
 								}
 							}
 						}
@@ -73,7 +108,6 @@ module.exports = class ConnectopusModel {
 				}
 			}
 		}
-		return serverFound;
 	}
 
 	_processConfig() {

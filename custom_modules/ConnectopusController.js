@@ -38,6 +38,7 @@ module.exports = class ConnectopusController {
 		
 		$dialog.find(".title").text(title);
 		$dialog.find(".message").html(message);
+
 		if(options && options.buttons && options.buttons.length) {
 			let $div = $("<div class='dynamic-button-container'></div>");
 			let obl = options.buttons.length;
