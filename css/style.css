@@ -505,6 +505,8 @@ table .cell-container.scrollable {
 	bottom: 0;
 	right: 0;
 	width: 300px;
+	z-index: 2;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 5px rgba(0, 0, 0, .075);
 }
 ul.sftp-filtered-directories {
 	list-style: none;
