@@ -1,6 +1,7 @@
-module.exports = class ActiveConnectionViewController {
+module.exports = class ActiveConnectionViewController extends EventEmitter {
 	
 	constructor(viewContainer) {
+		super();
 		this.$container = $(viewContainer);
 	}
 

@@ -528,13 +528,17 @@ table .cell-container.scrollable {
 	padding-left: .5em;
 }
 .settings-panel .add-blocked-table-button {
-	padding: 3px 6px;
+	padding: 0 5px;
 	margin: 0 6px;
 }
 .settings-panel li .remove-blocked-table-button {
-	padding: 3px 6px;
+	padding: 0 5px;
 	visibility: hidden;
 	margin-right: 5px;
+}
+.settings-panel li:hover {
+	background: #ffecd1;
+	border-radius: 5px;
 }
 .settings-panel li:hover .remove-blocked-table-button {
 	visibility:	visible;

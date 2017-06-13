@@ -1,6 +1,7 @@
-module.exports = class FileSystem {
+module.exports = class FileSystem extends EventEmitter {
 
 	constructor() {
+		super();
 		this.fs = require('fs-extra');
 	}
 

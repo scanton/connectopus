@@ -1,6 +1,7 @@
-module.exports = class ConnectopusController {
+module.exports = class ConnectopusController extends EventEmitter {
 
 	constructor(model, connectionManager, htmlRenderer) {
+		super();
 		this.model = model;
 		this.connections = connectionManager;
 		this.html = htmlRenderer;

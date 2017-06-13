@@ -1,6 +1,7 @@
-module.exports = class ConnectopusModel {
+module.exports = class ConnectopusModel extends EventEmitter {
 
 	constructor(config = {}) {
+		super();
 		this.md5 = require('md5');
 		this.config = config;
 		this._processConfig();
@@ -135,6 +136,39 @@ module.exports = class ConnectopusModel {
 							}
 						}
 					}
+				}
+			}
+		}
+	}
+
+	updateSetting(key, value) {
+		if(!this.settings) {
+			this.settings = {};
+		}
+		this.settings[key] = value;
+		this.dispatchEvent("settings-changed", this.getSettings());
+	}
+
+	pushSettingArrayItem(arrayName, value) {
+		if(!this.settings) {
+			this.settings = {};
+		}
+		if(!this.settings[arrayName]) {
+			this.settings[arrayName] = [];
+		}
+		this.settings[arrayName].push(value);
+		this.dispatchEvent("settings-changed", this.getSettings());
+	}
+
+	removeSettingArrayItem(arrayName, value) {
+		if(this.settings && this.settings[arrayName]) {
+			let a = this.settings[arrayName];
+			let l = a.length;
+			for(let i = 0; i < l; i++) {
+				if(a[i] == value) {
+					let result = a.splice(i, 1);
+					this.dispatchEvent("settings-changed", this.getSettings());
+					return result;
 				}
 			}
 		}

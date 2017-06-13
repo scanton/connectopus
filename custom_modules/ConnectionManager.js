@@ -1,8 +1,9 @@
-module.exports = class ConnectionManager {
+module.exports = class ConnectionManager extends EventEmitter {
 	
 	constructor() {
+		super();
 		this.connections = [];
-		this.listeners = {};
+		//this.listeners = {};
 		this.tunnel = require('tunnel-ssh');
 		this.mysql = require('mysql');
 		this.Ssh2SftpClient = require('ssh2-sftp-client');
@@ -36,7 +37,6 @@ module.exports = class ConnectionManager {
 	}
 
 	addConnection(data, callback, defaultDirectory = 'www') {
-		console.log(defaultDirectory);
 		var hasConnection = false;
 		if(data) {
 			for(let i in this.connections) {
@@ -245,7 +245,7 @@ module.exports = class ConnectionManager {
 	getConnectionCount() {
 		return this.connections.length;
 	}
-
+	/*
 	addListener(eventName, handler) {
 		if(eventName && handler) {
 			if(!this.listeners[eventName]) {
@@ -262,7 +262,7 @@ module.exports = class ConnectionManager {
 			}
 		}
 	}
-
+	*/
 	parseTables(data) {
 		let a = [];
 		for(let i in data) {

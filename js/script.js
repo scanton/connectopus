@@ -1,18 +1,20 @@
 const remote = require('electron').remote;
 
-const ConnectionManager = require('./custom_modules/ConnectionManager.js');
+const EventEmitter = require(__dirname + '/custom_modules/EventEmitter.js');
+
+const ConnectionManager = require(__dirname + '/custom_modules/ConnectionManager.js');
 const connections = new ConnectionManager();
 
-const ConnectopusModel = require('./custom_modules/ConnectopusModel.js');
+const ConnectopusModel = require(__dirname + '/custom_modules/ConnectopusModel.js');
 const model = new ConnectopusModel();
 
-const HtmlRenderer = require('./custom_modules/HtmlRenderer.js');
+const HtmlRenderer = require(__dirname + '/custom_modules/HtmlRenderer.js');
 var html = new HtmlRenderer();
 
-const ConnectopusController = require('./custom_modules/ConnectopusController.js');
+const ConnectopusController = require(__dirname + '/custom_modules/ConnectopusController.js');
 const controller = new ConnectopusController(model, connections, html);
 
-const FileSystem = require('./custom_modules/FileSystem.js');
+const FileSystem = require(__dirname + '/custom_modules/FileSystem.js');
 const fs = new FileSystem();
 
 window.onerror = function(errorMsg, url, lineNumber) {
@@ -24,9 +26,9 @@ window.onerror = function(errorMsg, url, lineNumber) {
 	return false;
 }
 
-const DataUtils = require('./custom_modules/DataUtils.js');
+const DataUtils = require(__dirname + '/custom_modules/DataUtils.js');
 
-const ActiveConnectionViewController = require('./custom_modules/ActiveConnectionsViewController.js');
+const ActiveConnectionViewController = require(__dirname + '/custom_modules/ActiveConnectionsViewController.js');
 
 require('./custom_modules/enableContextMenu.js')();
 
@@ -268,21 +270,29 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 
 }).on("click", ".settings-link", function(evt) {
 	evt.preventDefault();
-	$(".settings-panel").toggle("slide", {direction: "right"});
+	$(".settings-panel").toggle("slide", {direction: "right", easing: "easeOutCubic"});
 
 }).on("change", ".setting-details-container .hide-dangerous-buttons-checkbox", function(evt) {
-	console.log("hide dangerous buttons", $(this).is(":checked"));
+	model.updateSetting("hide_dangerous_buttons", $(this).is(":checked"));
 
 }).on("click", ".setting-details-container .add-blocked-table-button", function(evt) {
 	evt.preventDefault();
-	console.log("add blocked table");
+	let val = $(this).closest("td").find("input[type='text']").val();
+	if(val) {
+		model.pushSettingArrayItem("block_tables", val);
+	}
 
 }).on("click", ".setting-details-container .remove-blocked-table-button", function(evt) {
 	evt.preventDefault();
-	console.log("remove blocked table");
+	model.removeSettingArrayItem("block_tables", $(this).closest("li").text());
 
 }).on("change", ".setting-details-container input[name='default_sftp_directory']", function(evt) {
-	console.log("update root sftp directory", $(this).val());
+	let val = $(this).val();
+	if(val && val.length) {
+		model.updateSetting("default_sftp_directory", val);
+	} else {
+		console.warn("invalid default sftp directory - no action taken");
+	}
 
 }).on("click", ".add-new-server-button", function(evt) {
 	evt.preventDefault();
@@ -562,7 +572,7 @@ var renderNewSettings = (settings) => {
 	let $container = $(".setting-details-container");
 	$container.find("input[name='default_sftp_directory']").val(settings['default_sftp_directory']);
 	if(settings['block_tables'] && settings['block_tables'].length) {
-		let s = '<ul class="block-tables-list"><li><button class="btn btn-default remove-blocked-table-button" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>' + settings['block_tables'].join('</li><li><button class="btn btn-default remove-blocked-table-button" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>') + "</li></ul>";
+		let s = '<ul class="block-tables-list"><li><button class="btn btn-warning remove-blocked-table-button" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>' + settings['block_tables'].join('</li><li><button class="btn btn-warning remove-blocked-table-button" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>') + "</li></ul>";
 		$container.find(".block-tabels-list").html(s);
 	}
 	$container.find(".hide-dangerous-buttons-checkbox").prop("checked", settings.hide_dangerous_buttons);
@@ -577,6 +587,12 @@ var dropServerOnFolderHandler = function(evt, ui) {
 		renderNewConfig(config);
 	});
 }
+
+model.addListener("settings-changed", (settings) => {
+	fs.writeJson(__dirname + '/working_files/settings.json', settings, () => {
+		renderNewSettings(settings);
+	});
+});
 
 $(document).ready(function() {
 
@@ -678,7 +694,6 @@ $(document).ready(function() {
 						class: "btn btn-danger ok-button pull-right", 
 						callback: function(evt) {
 							evt.preventDefault();
-							console.log("syncronize selected rows (currently not implemented)");
 							controller.syncRows(rowIds);
 							controller.hideModal();
 						}
