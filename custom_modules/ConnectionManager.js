@@ -35,7 +35,8 @@ module.exports = class ConnectionManager {
 		this.dispatchEvent("active-path-change", path);
 	}
 
-	addConnection(data, callback) {
+	addConnection(data, callback, defaultDirectory = 'www') {
+		console.log(defaultDirectory);
 		var hasConnection = false;
 		if(data) {
 			for(let i in this.connections) {
@@ -68,7 +69,7 @@ module.exports = class ConnectionManager {
 				}
 				callback(results);
 			});
-			this.sftpRequestDirectory(data.id, 'www', function(list) {
+			this.sftpRequestDirectory(data.id, defaultDirectory, function(list) {
 				//console.log(list, 'list');
 				/**
 				 * This event is handled in ConnectopusController "add-directory" handler

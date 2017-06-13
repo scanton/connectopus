@@ -62,7 +62,9 @@ let highlightCollumnDifferences = function(fields) {
 				}
 			}
 		}
-		
+		if(!$row.find(".field-id-0-0").text().length) {
+			$row.find("input[type='checkbox']").remove();
+		}
 	});
 }
 
@@ -120,7 +122,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		$(".modal-overlay").fadeIn("fast");
 		connections.addConnection(model.getConnection(id), function(data) {
 			$(".modal-overlay").fadeOut("fast");
-		});
+		}, model.getSettings()['default_sftp_directory']);
 	}
 
 }).on("click", ".server-list-group .server-name", function (evt) {
@@ -203,14 +205,18 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 
 }).on("click", ".server-avatar .close-icon", function(evt) {
 	evt.preventDefault();
+	console.log("connection removal temporarily disabled (click 'Refresh' to re-initialize)");
+	/*
 	let id = $(this).closest(".server-avatar").attr("data-id");
 	connections.removeConnection(id);
-
+	*/
 }).on("click", ".server-avatar .make-king-icon", function(evt) {
 	evt.preventDefault();
+	console.log("re-ordering connections temporarily disabled (click 'Refresh' to re-initialize)");
+	/*
 	let id = $(this).closest(".server-avatar").attr("data-id");
 	connections.makeMaster(id);
-
+	*/
 }).on("click", "table .cell-container", function(evt) {
 	evt.preventDefault();
 	let $this = $(this);
@@ -227,7 +233,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		$(".modal-overlay").fadeIn("fast");
 		connections.addConnection(model.getConnection(id), function(data) {
 			$(".modal-overlay").fadeOut("fast");
-		});
+		}, model.getSettings()['default_sftp_directory']);
 	}
 
 }).on("click", ".diffs .sort-down", function(evt) {
@@ -262,7 +268,21 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 
 }).on("click", ".settings-link", function(evt) {
 	evt.preventDefault();
-	$(".settings-panel").slideToggle("fast");
+	$(".settings-panel").toggle("slide", {direction: "right"});
+
+}).on("change", ".setting-details-container .hide-dangerous-buttons-checkbox", function(evt) {
+	console.log("hide dangerous buttons", $(this).is(":checked"));
+
+}).on("click", ".setting-details-container .add-blocked-table-button", function(evt) {
+	evt.preventDefault();
+	console.log("add blocked table");
+
+}).on("click", ".setting-details-container .remove-blocked-table-button", function(evt) {
+	evt.preventDefault();
+	console.log("remove blocked table");
+
+}).on("change", ".setting-details-container input[name='default_sftp_directory']", function(evt) {
+	console.log("update root sftp directory", $(this).val());
 
 }).on("click", ".add-new-server-button", function(evt) {
 	evt.preventDefault();
@@ -351,7 +371,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 
 }).on("click", ".server-reference-footer .add-folder-button", function(evt) {
 	evt.preventDefault();
-	controller.showModal("Add Folder", "<div class='folder-name-div'>Folder Name: <input class='new-folder-name-input' type='text' name='folder-name' style='width: 446px; margin-bottom: 1em' /></div>", {
+	controller.showModal("Add Folder", "<div class='folder-name-div'>Folder Name: <input class='new-folder-name-input' type='text' name='folder-name' style='width: 446px;' /></div>", {
 		buttons: [
 			{
 				label: 'Add Folder', 
@@ -399,16 +419,50 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 
 }).on("click", ".sftp-toolbar .sync-selected-files", function(evt) {
 	evt.preventDefault();
-	console.log("sync sftp files");
+	if($(".sftp-tree-view .sftp-row-checkbox:checked").length) {
+		controller.showModal("Syncronize Selected Files", "Would you like to copy the selected files from the left-most server to all other servers?", {
+			buttons: [
+				{
+					label: 'Syncronize', 
+					class: "btn btn-danger ok-button pull-right", 
+					callback: function(evt) {
+						evt.preventDefault();
+						console.log("syncronize selected files (currently not implemented)");
+						controller.hideModal();
+					}
+				},
+				{
+					label: 'Cancel', 
+					class: "btn btn-default cancel-button pull-right", 
+					callback: function(evt) {
+						evt.preventDefault();
+						controller.hideModal();
+					}
+				}
+			]
+		});
+	} else {
+		controller.showModal("No Files Selected", "Please click the check-boxes next to the items you would like to syncronize.", {
+			buttons: [
+				{
+					label: 'Ok', 
+					class: "btn btn-success ok-button pull-right", 
+					callback: function(evt) {
+						evt.preventDefault();
+						controller.hideModal();
+					}
+				}
+			]
+		});
+	}
 
 }).on("change", ".sftp-tree-view .sftp-all-row-checkbox", function(evt) {
 	let $this = $(this);
 	let val = $this.is(":checked");
 	if(val) {
 		$(".sftp-tree-view .sftp-row-checkbox:hidden").prop("checked", false);
-		$(".sftp-tree-view .sftp-row-checkbox:visible").prop("checked", true);
+		$(".sftp-tree-view .sftp-row-checkbox:visible").prop("checked", true).closest("tr").addClass("selected");
 		$(".sftp-tree-view tr:hidden").removeClass("selected");
-		$(".sftp-tree-view tr:visible").addClass("selected");
 	} else {
 		$(".sftp-tree-view .sftp-row-checkbox").prop("checked", false);
 		$(".sftp-tree-view tr").removeClass("selected");
@@ -431,7 +485,12 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		$(".diffs .row-checkbox:hidden").prop("checked", false);
 		$(".diffs .row-checkbox:visible").prop("checked", true);
 		$(".diffs tr:hidden").removeClass("selected");
-		$(".diffs tr:visible").addClass("selected");
+		$(".diffs tr:visible").each(function() {
+			let $row = $(this);
+			if($row.find("input[type='checkbox']").length) {
+				$row.addClass("selected")
+			}
+		});
 	} else {
 		$(".diffs .row-checkbox").prop("checked", false);
 		$(".diffs tr").removeClass("selected");
@@ -502,8 +561,8 @@ var renderNewConfig = (config) => {
 var renderNewSettings = (settings) => {
 	let $container = $(".setting-details-container");
 	$container.find("input[name='default_sftp_directory']").val(settings['default_sftp_directory']);
-	if(settings['block_tables']) {
-		let s = '<ul class="block-tables-list"><li>' + settings['block_tables'].join("</li><li>") + "</li></ul>";
+	if(settings['block_tables'] && settings['block_tables'].length) {
+		let s = '<ul class="block-tables-list"><li><button class="btn btn-default remove-blocked-table-button" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>' + settings['block_tables'].join('</li><li><button class="btn btn-default remove-blocked-table-button" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>') + "</li></ul>";
 		$container.find(".block-tabels-list").html(s);
 	}
 	$container.find(".hide-dangerous-buttons-checkbox").prop("checked", settings.hide_dangerous_buttons);
@@ -611,7 +670,43 @@ $(document).ready(function() {
  			let $row = $(this).closest("tr");
  			rowIds.push($row.find(".field-id-0-0").text());
  		});
- 		controller.syncRows(rowIds);
+ 		if(rowIds.length) {
+ 			controller.showModal("Syncronize Selected Files", "Would you like to copy the selected files from the left-most server to all other servers?", {
+				buttons: [
+					{
+						label: 'Syncronize', 
+						class: "btn btn-danger ok-button pull-right", 
+						callback: function(evt) {
+							evt.preventDefault();
+							console.log("syncronize selected rows (currently not implemented)");
+							controller.syncRows(rowIds);
+							controller.hideModal();
+						}
+					},
+					{
+						label: 'Cancel', 
+						class: "btn btn-default cancel-button pull-right", 
+						callback: function(evt) {
+							evt.preventDefault();
+							controller.hideModal();
+						}
+					}
+				]
+			});
+ 		} else {
+ 			controller.showModal("No Rows Selected", "Please select the rows you would like to syncronize with the other servers.", {
+				buttons: [
+					{
+						label: 'OK', 
+						class: "btn btn-success ok-button pull-right", 
+						callback: function(evt) {
+							evt.preventDefault();
+							controller.hideModal();
+						}
+					}
+				]
+			});
+ 		}
  	});
 
  	$(".include-partial").each(function() {

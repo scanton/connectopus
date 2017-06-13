@@ -27,9 +27,9 @@
 						<li class="active media-option-link option-link" data-target="connections-container"><a href="#"><span class="glyphicon glyphicon glyphicon-resize-small"></span> Connections</a></li>
 						<li class="mysql-option-link option-link" data-target="mysql-container"><a href="#"><span class="glyphicon glyphicon-hdd"></span> Content</a></li>
 						<li class="sftp-option-link option-link" data-target="sftp-container"><a href="#"><span class="glyphicon glyphicon-duplicate"></span> Code</a></li>
+						<!--
 						<li class="services-option-link option-link" data-target="services-container"><a href="#"><span class="glyphicon glyphicon-cloud-download"></span> Rest</a></li>
 						<li class="media-option-link option-link" data-target="preview-container"><a href="#"><span class="glyphicon glyphicon-eye-open"></span> Preview</a></li>
-						<!--
 						<li class="media-option-link option-link" data-target="media-container"><a href="#"><span class="glyphicon glyphicon-film"></span> Media</a></li>
 						-->
 					</ul>
@@ -166,24 +166,30 @@
 		<div class="container-fluid settings-panel" style="display: none;">
 			<h4>Settings</h4>
 			<div class="setting-details-container">
-				<div class="panel">
-					<div class="panel-body">
-						<table class="settings-list">
-							<tr>
-								<td>Root SFTP Directory</td>
-								<td><input type="text" value="" name="default_sftp_directory" /></td>
-							</tr>
-							<tr>
-								<td>Block Tables</td>
-								<td class="block-tabels-list"><textarea name="block_tables"></textarea></td>
-							</tr>
-							<tr>
-								<td>Hide Dangerous Buttons</td>
-								<td><input type="checkbox" class="hide-dangerous-buttons-checkbox" /></td>
-							</tr>
-						</table>
+				<form>
+					<div class="panel">
+						<div class="panel-body">
+							<table class="settings-list">
+								<tr>
+									<td class="column-0">Hide Dangerous Buttons </td>
+									<td class="column-1"> <input type="checkbox" class="hide-dangerous-buttons-checkbox" /></td>
+								</tr>
+								<tr>
+									<td class="column-0">Root SFTP Directory</td>
+									<td class="column-1"><input type="text" value="" name="default_sftp_directory" /></td>
+								</tr>
+								<tr>
+									<td class="column-0">Add Table To Block</td>
+									<td class="column-1"><input type="text" name="block_table_name" /><button class="btn btn-default add-blocked-table-button" title="Add Table to Blocked List"><span class="glyphicon glyphicon-plus"></span></button></td>
+								</tr>
+								<tr>
+									<td class="column-0">Blocked Tables</td>
+									<td class="column-1 block-tabels-list"></td>
+								</tr>
+							</table>
+						</div>
 					</div>
-				</div>
+				</form>
 			</div>
 		</div>
 

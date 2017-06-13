@@ -520,10 +520,26 @@ table .cell-container.scrollable {
 	top: 35px;
 	bottom: 0;
 	right: 0;
-	width: 300px;
+	width: 420px;
 	z-index: 2;
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 5px rgba(0, 0, 0, .075);
 }
+.settings-panel .column-1 {
+	padding-left: .5em;
+}
+.settings-panel .add-blocked-table-button {
+	padding: 3px 6px;
+	margin: 0 6px;
+}
+.settings-panel li .remove-blocked-table-button {
+	padding: 3px 6px;
+	visibility: hidden;
+	margin-right: 5px;
+}
+.settings-panel li:hover .remove-blocked-table-button {
+	visibility:	visible;
+}
+
 ul.sftp-filtered-directories {
 	list-style: none;
 	color: #5e5e5e;
@@ -572,8 +588,14 @@ form input.is-not-valid {
 .modal-dialog {
 	z-index: 7;
 }
+.modal-dialog .dynamic-button-container {
+	margin-top: 1em;
+}
 
 .settings-list ul {
 	list-style: none;
 	padding: 0;
+}
+.setting-details-container input[type='text'] {
+	margin: .25em 0;
 }
