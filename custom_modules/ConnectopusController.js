@@ -44,7 +44,8 @@ module.exports = class ConnectopusController extends EventEmitter {
 		if(rowIds.length != rowData.length) {
 			console.error("Missing row data in last results", rowIds, rowData);
 		} else {
-			console.log("connections.updataData(rowIds, rowData)", rowIds, rowData);
+			let sql = _constructSqlInserts(results.data[0].fields, rowIds, rowData);
+			console.log(sql);
 		}
 	}
 	syncFiles(paths) {
@@ -76,6 +77,10 @@ module.exports = class ConnectopusController extends EventEmitter {
 	hideModal() {
 		$(".modal-overlay").fadeOut("fast");
 		$(".modal-dialog").fadeOut("fast");
+	}
+
+	_constructSqlInserts(fields, rowIds, rowData) {
+		console.log('_constructSqlInserts', fields, rownIds, rowData);
 	}
 
 	_moveDirectoryListToSideBar(domQuery) {
