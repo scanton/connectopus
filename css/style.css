@@ -435,7 +435,9 @@ table .cell-container.scrollable {
 	display: none;
 }
 .diffs .diff-header:hover .sort-controls {
+	/*
 	display: inline-block;
+	*/
 }
 .diffs .diff-header .sort-controls button {
 	padding: 3px 6px 0;

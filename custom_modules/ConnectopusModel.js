@@ -63,6 +63,9 @@ module.exports = class ConnectopusModel {
 	setSettings(settings) {
 		if(settings) {
 			this.settings = settings;
+			if(settings.hide_dangerous_buttons) {
+				$(".btn-danger").hide();
+			}
 		}
 	}
 

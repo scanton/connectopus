@@ -506,6 +506,7 @@ var renderNewSettings = (settings) => {
 		let s = '<ul class="block-tables-list"><li>' + settings['block_tables'].join("</li><li>") + "</li></ul>";
 		$container.find(".block-tabels-list").html(s);
 	}
+	$container.find(".hide-dangerous-buttons-checkbox").prop("checked", settings.hide_dangerous_buttons);
 }
 
 var dropServerOnFolderHandler = function(evt, ui) {
@@ -563,9 +564,12 @@ $(document).ready(function() {
 	 	},
  		error: function(err) {
  			console.log("No custom settings found");
- 			let settings = { default_sftp_directory: "www" };
+ 			var settings = { default_sftp_directory: "www", hide_dangerous_buttons: true };
  			model.setSettings(settings);
- 			renderNewSettings(settings);
+ 			$(".btn-danger").hide();
+ 			fs.writeJson(__dirname + '/working_files/settings.json', settings, () => {
+				renderNewSettings(settings);
+			});
  		}
  	});
 

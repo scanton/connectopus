@@ -148,7 +148,10 @@ module.exports = class ConnectopusController {
 
 		s += '</table>';
 
-		$(".sftp-tree-view").html(s);
+		let $sftpView = $(".sftp-tree-view");
+		$sftpView.html(s);
+
+		$sftpView.find(".does-not-exist-in-main-data-set").closest("tr").find(".sftp-row-checkbox").remove();
 	}
 
 	_renderDirectories(connects, path, domQuery = ".directory-list") {
