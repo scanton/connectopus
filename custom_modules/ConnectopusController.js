@@ -29,8 +29,26 @@ module.exports = class ConnectopusController extends EventEmitter {
 	}
 
 	syncRows(rowIds) {
-		console.log('Sync rows', rowIds);
-		console.log(this.connections.getLastResult());
+		let rowData = [];
+		let results = this.connections.getLastResult();
+		if(results && results.data && results.data[0] && results.data[0].results && results.data[0].results.length) {
+			let idFieldName = results.data[0].fields[0].name;
+			let r = results.data[0].results;
+			let l = r.length;
+			for(let i = 0; i < l; i++) {
+				if(rowIds.indexOf(r[i][idFieldName]) > -1) {
+					rowData.push(r[i])
+				}
+			}
+		}
+		if(rowIds.length != rowData.length) {
+			console.error("Missing row data in last results", rowIds, rowData);
+		} else {
+			console.log("connections.updataData(rowIds, rowData)", rowIds, rowData);
+		}
+	}
+	syncFiles(paths) {
+		console.log('sync files', paths);
 	}
 
 	showModal(title, message, options) {

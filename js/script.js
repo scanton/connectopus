@@ -429,7 +429,13 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 
 }).on("click", ".sftp-toolbar .sync-selected-files", function(evt) {
 	evt.preventDefault();
-	if($(".sftp-tree-view .sftp-row-checkbox:checked").length) {
+	let $checks = $(".sftp-tree-view .sftp-row-checkbox:checked");
+	let paths = [];
+	$checks.each(function() {
+		let $row = $(this).closest("tr");
+		paths.push($row.find("td.index-0").attr("data-path"));
+	});
+	if($checks.length) {
 		controller.showModal("Syncronize Selected Files", "Would you like to copy the selected files from the left-most server to all other servers?", {
 			buttons: [
 				{
@@ -437,7 +443,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 					class: "btn btn-danger ok-button pull-right", 
 					callback: function(evt) {
 						evt.preventDefault();
-						console.log("syncronize selected files (currently not implemented)");
+						controller.syncFiles(paths);
 						controller.hideModal();
 					}
 				},
