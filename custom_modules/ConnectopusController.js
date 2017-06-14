@@ -2,6 +2,7 @@ module.exports = class ConnectopusController extends EventEmitter {
 
 	constructor(model, connectionManager, htmlRenderer) {
 		super();
+		this.escape = require('jsesc');
 		this.model = model;
 		this.connections = connectionManager;
 		this.html = htmlRenderer;
@@ -31,8 +32,10 @@ module.exports = class ConnectopusController extends EventEmitter {
 	syncRows(rowIds) {
 		let rowData = [];
 		let results = this.connections.getLastResult();
+		console.log(results);
 		if(results && results.data && results.data[0] && results.data[0].results && results.data[0].results.length) {
 			let idFieldName = results.data[0].fields[0].name;
+			var table = results.data[0].fields[0].table;
 			let r = results.data[0].results;
 			let l = r.length;
 			for(let i = 0; i < l; i++) {
@@ -44,7 +47,7 @@ module.exports = class ConnectopusController extends EventEmitter {
 		if(rowIds.length != rowData.length) {
 			console.error("Missing row data in last results", rowIds, rowData);
 		} else {
-			let sql = _constructSqlInserts(results.data[0].fields, rowIds, rowData);
+			let sql = this._constructSqlInserts(table, results.data[0].fields, rowIds, rowData);
 			console.log(sql);
 		}
 	}
@@ -79,8 +82,57 @@ module.exports = class ConnectopusController extends EventEmitter {
 		$(".modal-dialog").fadeOut("fast");
 	}
 
-	_constructSqlInserts(fields, rowIds, rowData) {
-		console.log('_constructSqlInserts', fields, rownIds, rowData);
+	_constructSqlInserts(tableName, fields, rowIds, rowData) {
+		//console.log('_constructSqlInserts', tableName, fields, rowIds, rowData);
+
+		let fieldArray = [];
+		let l = fields.length;
+		for(let i = 0; i < l; i++) {
+			fieldArray.push(fields[i].name);
+		}
+		let valuesArray = [];
+		l = rowData.length;
+		for(let i = 0; i < l; i++) {
+			let element = '(';
+			let a = [];
+			let r = rowData[i];
+			let l2 = fieldArray.length;
+			for(let j = 0; j < l2; j++) {
+				let val = r[fieldArray[j]];
+				let type = typeof(val);
+				if(type == "string") {
+					val = '"' + this.escape(val) + '"';
+				} else if(type == "object"){
+					val = '"' + this.escape(val.toString()) + '"';
+				}
+				a.push(val);
+			}
+			element += a.join(",");
+			element += ')';
+			valuesArray.push(element);
+		}
+
+		let s = '';
+		//s += ' SET @PREVIOUS_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS; \n\r ';
+		//s += ' SET FOREIGN_KEY_CHECKS = 0; \n\r '
+		//s += ' SET FOREIGN_KEY_CHECKS = @PREVIOUS_FOREIGN_KEY_CHECKS; \n\r ';
+		//s += ' SET @PREVIOUS_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS; \n\r ';
+		//s += ' SET FOREIGN_KEY_CHECKS = 0; \n\r\n\r ' ;
+
+		s += ' DELETE FROM `' + tableName + '` WHERE `' + fieldArray[0] + '` IN ("' + rowIds.join('", "') + '"); \n\r\n\r ';
+
+		s += ' LOCK TABLES `' + tableName + '` WRITE; \n\r ';
+		s += ' ALTER TABLE `' + tableName + '` DISABLE KEYS; \n\r\n\r ';
+
+		s += ' INSERT INTO `' + tableName + '` (`' + fieldArray.join("`, `") + '`) VALUES \n\r ';
+
+		s += valuesArray.join(",\n\r") + '; \n\r\n\r ';
+
+		s += ' ALTER TABLE `' + tableName + '` ENABLE KEYS; \n\r ';
+		s += ' UNLOCK TABLES; \n\r ';
+		//s += ' SET FOREIGN_KEY_CHECKS = @PREVIOUS_FOREIGN_KEY_CHECKS; ';
+
+		return s;
 	}
 
 	_moveDirectoryListToSideBar(domQuery) {
