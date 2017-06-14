@@ -32,15 +32,15 @@ module.exports = class ConnectopusController extends EventEmitter {
 	syncRows(rowIds) {
 		let rowData = [];
 		let results = this.connections.getLastResult();
-		console.log(results);
+		
 		if(results && results.data && results.data[0] && results.data[0].results && results.data[0].results.length) {
 			let idFieldName = results.data[0].fields[0].name;
 			var table = results.data[0].fields[0].table;
 			let r = results.data[0].results;
 			let l = r.length;
 			for(let i = 0; i < l; i++) {
-				if(rowIds.indexOf(r[i][idFieldName]) > -1) {
-					rowData.push(r[i])
+				if(rowIds.indexOf(String(r[i][idFieldName])) > -1) {
+					rowData.push(r[i]);
 				}
 			}
 		}
