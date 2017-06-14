@@ -208,6 +208,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 }).on("click", ".server-avatar .close-icon", function(evt) {
 	evt.preventDefault();
 	console.log("connection removal temporarily disabled (click 'Refresh' to re-initialize)");
+
 	/*
 	let id = $(this).closest(".server-avatar").attr("data-id");
 	connections.removeConnection(id);
@@ -215,6 +216,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 }).on("click", ".server-avatar .make-king-icon", function(evt) {
 	evt.preventDefault();
 	console.log("re-ordering connections temporarily disabled (click 'Refresh' to re-initialize)");
+
 	/*
 	let id = $(this).closest(".server-avatar").attr("data-id");
 	connections.makeMaster(id);
