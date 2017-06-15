@@ -251,7 +251,11 @@ module.exports = class ConnectopusController extends EventEmitter {
 				for(let i = 0; i < l; i++) {
 					let $list = $($listings[i]);
 					let $item = $list.find(".listing-item[data-path='" + path + "']");
-					if(Number($item.attr("data-modifytime")) < Number($this.attr("data-modifytime")) || $item.attr("data-size") != $this.attr("data-size")) {
+					/**
+					 * only leaving items that match in size.  We're disregarding the file create date.
+					 **/
+					//if(Number($item.attr("data-modifytime")) < Number($this.attr("data-modifytime")) || $item.attr("data-size") != $this.attr("data-size")) {
+					if($item.attr("data-size") != $this.attr("data-size")) {
 						allMatch = false;
 						break;
 					}
