@@ -150,6 +150,40 @@ module.exports = class ConnectionManager extends EventEmitter {
 		this._processSftpQueue(queue, callback);
 	}
 
+	syncFiles(fileList, completeCallback = null, progressCallback = null, errorHandler = null) {
+		
+		console.log("sync files", fileList);
+
+		var setConnectionStatus = this.setConnectionStatus.bind(this);
+		if(fileList && fileList.length) {
+			this.sftp = new this.Ssh2SftpClient();
+			let cons = this.getConnections();
+			if(cons && cons[0]) {
+				let conn = cons[0];
+				let sshData = {
+					host: conn.host,
+					port: conn.port,
+					username: conn.username,
+					password: conn.password
+				}
+				setConnectionStatus(conn.id, 'pending');
+				this.sftp.connect(sshData).then(() => {
+					this.sftp.get(fileList[0]).then((data) => {
+						setConnectionStatus(conn.id, 'active');
+						
+						completeCallback(data);
+					});
+				}).catch((err) => {
+					setConnectionStatus(id, "error");
+					if(errorHandler) {
+						errorHandler(err);
+					}
+				});
+			}
+		}
+
+	}
+
 	sftpRequestDirectory(id, directory = 'www', callback = null, errorHandler = null) {
 		var setConnectionStatus = this.setConnectionStatus.bind(this);
 		this.sftp = new this.Ssh2SftpClient();

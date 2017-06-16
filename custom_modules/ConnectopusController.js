@@ -51,8 +51,15 @@ module.exports = class ConnectopusController extends EventEmitter {
 			console.log(sql);
 		}
 	}
+
 	syncFiles(paths) {
-		console.log('sync files', paths);
+		this.connections.syncFiles(paths, function(data) {
+			console.log("on-file-sync-complete", data);
+		}, function(data) {
+			console.log("on-file-sync-progress", data);
+		}, function(err) {
+			console.warn("on-file-sync-error", err);
+		});
 	}
 
 	showModal(title, message, options) {
