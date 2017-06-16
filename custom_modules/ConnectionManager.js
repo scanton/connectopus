@@ -168,10 +168,10 @@ module.exports = class ConnectionManager extends EventEmitter {
 				}
 				setConnectionStatus(conn.id, 'pending');
 				this.sftp.connect(sshData).then(() => {
-					this.sftp.get(fileList[0]).then((data) => {
+					this.sftp.get(fileList[0]).then((stream) => {
 						setConnectionStatus(conn.id, 'active');
 						
-						completeCallback(data);
+						completeCallback(stream, fileList[0]);
 					});
 				}).catch((err) => {
 					setConnectionStatus(id, "error");

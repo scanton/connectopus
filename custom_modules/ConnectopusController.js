@@ -3,6 +3,7 @@ module.exports = class ConnectopusController extends EventEmitter {
 	constructor(model, connectionManager, htmlRenderer) {
 		super();
 		this.escape = require('jsesc');
+		this.fs = require('fs-extra');
 		this.model = model;
 		this.connections = connectionManager;
 		this.html = htmlRenderer;
@@ -53,8 +54,21 @@ module.exports = class ConnectopusController extends EventEmitter {
 	}
 
 	syncFiles(paths) {
-		this.connections.syncFiles(paths, function(data) {
-			console.log("on-file-sync-complete", data);
+		var fs = this.fs;
+		this.connections.syncFiles(paths, function(stream, path) {
+			console.log("on-file-sync-complete", stream, path);
+
+			let a = path.split("/");
+			a.pop();
+			let dir = a.join("/");
+
+			let localPath = __dirname + '/working_files/temp/' + path;
+			let localDir = __dirname + '/working_files/temp/' + dir;
+			
+			console.warn("ensure", localDir);
+
+			fs.ensureDirSync(localDir);
+			stream.pipe(fs.createWriteStream(localPath));
 		}, function(data) {
 			console.log("on-file-sync-progress", data);
 		}, function(err) {
