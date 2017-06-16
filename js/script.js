@@ -163,6 +163,11 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		$(".modal-overlay").fadeIn("fast");
 		let tableName = $this.text().trim();
 		$(".table-name-container").text(tableName);
+		let tableLimit = model.getSetting("max_rows_requested");
+		if(!tableLimit) {
+			console.warn("max_rows_requested (table limit) not found in custom settings.  Using 100000");
+			tableLimit = 100000;
+		}
 		connections.compareTables(tableName, function(tables) {
 			let diffResult = DataUtils.diff(tables);
 			$(".table-content-column .table-container").html(html.renderDiffs(diffResult, connections.getConnections()));
@@ -172,7 +177,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 				initialzeFilterDropDowns();
 			}
 			$(".modal-overlay").fadeOut("fast");
-		});
+		}, tableLimit);
 	}
 
 }).on("click", ".server-folder .name", function(evt) {
@@ -294,6 +299,14 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		model.updateSetting("default_sftp_directory", val);
 	} else {
 		console.warn("invalid default sftp directory - no action taken");
+	}
+
+}).on("change", ".setting-details-container input[name='max_rows_requested']", function(evt) {
+	let val = $(this).val();
+	if(val && val.length) {
+		model.updateSetting("max_rows_requested", val);
+	} else {
+		console.warn("invalid max_rows_requested - no action taken");
 	}
 
 }).on("click", ".add-new-server-button", function(evt) {
@@ -579,6 +592,7 @@ var renderNewConfig = (config) => {
 var renderNewSettings = (settings) => {
 	let $container = $(".setting-details-container");
 	$container.find("input[name='default_sftp_directory']").val(settings['default_sftp_directory']);
+	$container.find("input[name='max_rows_requested']").val(settings['max_rows_requested']);
 	if(settings['block_tables'] && settings['block_tables'].length) {
 		let s = '<ul class="block-tables-list"><li><button class="btn btn-warning remove-blocked-table-button" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>' + settings['block_tables'].join('</li><li><button class="btn btn-warning remove-blocked-table-button" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>') + "</li></ul>";
 		$container.find(".block-tabels-list").html(s);

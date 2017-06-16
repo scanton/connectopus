@@ -122,11 +122,14 @@ module.exports = class ConnectionManager extends EventEmitter {
 		}
 	}
 
-	compareTables(tableName, callback) {
+	compareTables(tableName, callback, tableLimit) {
+		if(!Number.isInteger(Number(tableLimit))) {
+			tableLimit = 100000;
+		}
 		this.activeTableName = tableName;
 		let queue = [];
 		let cons = this.getConnections();
-		let query = ' SELECT * FROM ' + tableName + ' LIMIT 100000 '; 
+		let query = ' SELECT * FROM ' + tableName + ' LIMIT ' + tableLimit; 
 		let nextQueue = this._nextQueue.bind(this);
 		for(let i in cons) {
 			let c = cons[i];

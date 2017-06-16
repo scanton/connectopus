@@ -141,6 +141,12 @@ module.exports = class ConnectopusModel extends EventEmitter {
 		}
 	}
 
+	getSetting(key) {
+		if(this.settings && this.settings[key]) {
+			return this.settings[key];
+		}
+	}
+
 	updateSetting(key, value) {
 		if(!this.settings) {
 			this.settings = {};
