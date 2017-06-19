@@ -55,24 +55,23 @@ module.exports = class ConnectopusController extends EventEmitter {
 
 	syncFiles(paths) {
 		var fs = this.fs;
-		this.connections.syncFiles(paths, function(stream, path) {
-			console.log("on-file-sync-complete", stream, path);
-
+		var dirName = __dirname.split("/custom_modules")[0];
+		var workingPath = dirName + '/working_files/temp/';
+		fs.removeSync(dirName + '/working_files/temp/');
+		$(".modal-overlay").fadeIn("fast");
+		this.connections.cacheFiles(paths, (data) => {
+			this.connections.putRemoteFilesFromCache(workingPath, data);
+			$(".modal-overlay").fadeOut("fast");
+		}, function(stream, path) {
 			let a = path.split("/");
 			a.pop();
 			let dir = a.join("/");
-
-			let localPath = __dirname + '/working_files/temp/' + path;
-			let localDir = __dirname + '/working_files/temp/' + dir;
-			
-			console.warn("ensure", localDir);
-
+			let localPath = workingPath + path;
+			let localDir = workingPath + dir;
 			fs.ensureDirSync(localDir);
 			stream.pipe(fs.createWriteStream(localPath));
-		}, function(data) {
-			console.log("on-file-sync-progress", data);
 		}, function(err) {
-			console.warn("on-file-sync-error", err);
+			console.error("on-file-sync-error", err);
 		});
 	}
 
@@ -249,6 +248,21 @@ module.exports = class ConnectopusController extends EventEmitter {
 		$sftpView.html(s);
 
 		$sftpView.find(".does-not-exist-in-main-data-set").closest("tr").find(".sftp-row-checkbox").remove();
+		$sftpView.find(".listing-item.index-0").each(function() {
+			let fileName = $(this).text();
+			let supportedFileTypes = ['.php', '.js', '.css', '.htm', '.html', '.txt', '.xml', '.json'];
+			let isSupported = false;
+			for(let i in supportedFileTypes) {
+				let type = supportedFileTypes[i];
+				if(fileName.slice(-type.length) == type) {
+					isSupported = true;
+					break;
+				}
+			}
+			if(!isSupported) {
+				$(this).closest("tr").find(".sftp-row-checkbox").remove();
+			}
+		});
 	}
 
 	_renderDirectories(connects, path, domQuery = ".directory-list") {

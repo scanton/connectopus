@@ -36,6 +36,10 @@ module.exports = class ConnectionManager extends EventEmitter {
 		this.dispatchEvent("active-path-change", path);
 	}
 
+	getActivePath() {
+		return this.activePath;
+	}
+
 	addConnection(data, callback, defaultDirectory = 'www') {
 		var hasConnection = false;
 		if(data) {
@@ -150,29 +154,31 @@ module.exports = class ConnectionManager extends EventEmitter {
 		this._processSftpQueue(queue, callback);
 	}
 
-	syncFiles(fileList, completeCallback = null, progressCallback = null, errorHandler = null) {
-		
-		console.log("sync files", fileList);
-
+	cacheFiles(fileList, completeCallback = null, progressCallback = null, errorHandler = null) {
 		var setConnectionStatus = this.setConnectionStatus.bind(this);
 		if(fileList && fileList.length) {
 			this.sftp = new this.Ssh2SftpClient();
+			var fileListLength = fileList.length;
+			var filesLoaded = 0;
+			var filesUploaded = 0;
+			var currentConnection = 0;
 			let cons = this.getConnections();
-			if(cons && cons[0]) {
-				let conn = cons[0];
-				let sshData = {
-					host: conn.host,
-					port: conn.port,
-					username: conn.username,
-					password: conn.password
-				}
+			if(cons && cons[currentConnection]) {
+				var consLength = cons.length;
+				let conn = cons[currentConnection];
+				let sshData = this._getSshData(conn);
 				setConnectionStatus(conn.id, 'pending');
 				this.sftp.connect(sshData).then(() => {
-					this.sftp.get(fileList[0]).then((stream) => {
-						setConnectionStatus(conn.id, 'active');
-						
-						completeCallback(stream, fileList[0]);
-					});
+					for(let i = 0; i < fileListLength; i++) {
+						this.sftp.get(fileList[i]).then((stream) => {
+							filesLoaded++;
+							progressCallback(stream, fileList[i]);
+							if(filesLoaded == fileListLength) {
+								setConnectionStatus(conn.id, 'active');
+								completeCallback(fileList);
+							}
+						});
+					}
 				}).catch((err) => {
 					setConnectionStatus(id, "error");
 					if(errorHandler) {
@@ -181,7 +187,50 @@ module.exports = class ConnectionManager extends EventEmitter {
 				});
 			}
 		}
+	}
 
+	putRemoteFilesFromCache(workingPath, fileList, callback = null, errorHandler = null) {
+		var compareDirectory = this.compareDirectory.bind(this);
+		var getActivePath = this.getActivePath.bind(this);
+		let connections = this.getConnections();
+		let fileListLength = fileList.length;
+		if(connections.length > 1) {
+			let connectionIndex = 1;
+			this._putFilesToConnection(connections[connectionIndex], workingPath, fileList, function(data) {
+				console.log("on-file-put-complete", data);
+				compareDirectory(getActivePath(), function(data) {
+					$(".modal-overlay").fadeOut("fast");
+				});
+			}, function(progress) {
+				console.log("file-progress", progress);
+			}, errorHandler);
+		} else {
+			if(callback) {
+				callback("0 updates");
+			}
+		}
+	}
+
+	_putFilesToConnection(currentConnection, workingPath, fileList, callback, progressCallback, errorHandler = null) {
+		var setConnectionStatus = this.setConnectionStatus.bind(this);
+		var filesUploaded = 0;
+		let sshData = this._getSshData(currentConnection);
+		let fileListLength = fileList.length;
+		setConnectionStatus(currentConnection.id, 'pending');
+		this.sftp = new this.Ssh2SftpClient();
+		this.sftp.connect(sshData).then(() => {
+			for(let i = 0; i < fileListLength; i++) {
+				this.sftp.put(workingPath + fileList[i], fileList[i]).then((stream) => {
+					filesUploaded++;
+					progressCallback(stream, fileList[i]);
+					if(filesUploaded == fileListLength) {
+						setConnectionStatus(currentConnection.id, 'active');
+						callback(currentConnection.id);
+					}
+				});
+				
+			}
+		});
 	}
 
 	sftpRequestDirectory(id, directory = 'www', callback = null, errorHandler = null) {
@@ -190,12 +239,7 @@ module.exports = class ConnectionManager extends EventEmitter {
 		this.setActivePath(directory);
 		setConnectionStatus(id, 'pending');
 		let conn = this.getConnection(id);
-		let sshData = {
-			host: conn.host,
-			port: conn.port,
-			username: conn.username,
-			password: conn.password
-		}
+		let sshData = this._getSshData(conn);
 		this.sftp.connect(sshData).then(() => {
 			this.sftp.list(directory).then((data) => {
 				setConnectionStatus(id, 'active');
@@ -414,6 +458,15 @@ module.exports = class ConnectionManager extends EventEmitter {
 
 	_createQueueItem(id, query, callback, dbConnection = 0) {
 		return { id: id, query: query, callback: callback, dbConnection: dbConnection };
+	}
+
+	_getSshData(conn) {
+		return {
+			host: conn.host,
+			port: conn.port,
+			username: conn.username,
+			password: conn.password
+		};
 	}
 
 	_processQueue(queue, callback) {
