@@ -13,7 +13,7 @@ You can connect to an unlimited number of servers in one session (limited only o
 
 ## Project Status
 
-This project is in active development.  While there is some utility in this tool at the moment, it is still very pre-alpha.
+This project is in active development.  Core features are still being implemented.  Code management via SFTP now works.  SQL specific data sync is not fully implemented.
 
 ## Installation Instructions
 
