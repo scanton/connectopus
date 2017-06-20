@@ -17,6 +17,8 @@ const controller = new ConnectopusController(model, connections, html);
 const FileSystem = require(__dirname + '/custom_modules/FileSystem.js');
 const fs = new FileSystem();
 
+const diff = require('diff');
+
 window.onerror = function(errorMsg, url, lineNumber) {
 	console.log("Error occured: " + errorMsg);
 	
@@ -124,6 +126,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		$(".modal-overlay").fadeIn("fast");
 		connections.addConnection(model.getConnection(id), function(data) {
 			$(".modal-overlay").fadeOut("fast");
+			$(".link-requires-active-connections").show('slide', {direction: 'left'}, 500);
 		}, model.getSettings()['default_sftp_directory']);
 	}
 
@@ -139,11 +142,16 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 	let $this = $(this);
 	let $li = $this.closest(".list-group-item");
 
+}).on("click", ".listing-item.different-size", function(evt) {
+	evt.preventDefault();
+	let $this = $(this);
+	console.log("diff", $this.attr("data-path"));
+
 }).on("click", ".database-tables li", function(evt) {
 	evt.preventDefault();
 	let $this = $(this);
 	if($this.hasClass("blocked")) {
-		controller.showModal("Table Blocked", "Your custom settings prevents browsing to this table.", {
+		controller.showModal("Table Blocked", "<p>Your custom Settings prevents browsing to this table.</p><p>By limiting access to tables, you are able to prevent accidently selecting tables that are too large for comparison, or tables that are populated by web services; making them inappropriate for direct row by row comparison.</p><p>You can edit the Blocked Tables list by clicking the '<span class=\"glyphicon glyphicon-cog\"></span> Settings' tab at the top/right of the application.</p>", {
 			buttons: [
 				{
 					label: 'OK', 
@@ -242,6 +250,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		$(".modal-overlay").fadeIn("fast");
 		connections.addConnection(model.getConnection(id), function(data) {
 			$(".modal-overlay").fadeOut("fast");
+			$(".link-requires-active-connections").show('slide', {direction: 'left'}, 500);
 		}, model.getSettings()['default_sftp_directory']);
 	}
 
@@ -459,7 +468,8 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 					callback: function(evt) {
 						evt.preventDefault();
 						controller.syncFiles(paths);
-						controller.hideModal();
+						//controller.hideModal();
+						$(".modal-dialog").fadeOut("fast");
 					}
 				},
 				{
@@ -498,6 +508,11 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		$(".sftp-tree-view .sftp-row-checkbox").prop("checked", false);
 		$(".sftp-tree-view tr").removeClass("selected");
 	}
+	if($(".sftp-row-checkbox:checked").length) {
+		$(".sync-selected-files").slideDown("fast");
+	} else {
+		$(".sync-selected-files").slideUp("fast");
+	}
 
 }).on("change", ".sftp-tree-view .sftp-row-checkbox", function(evt) {
 	let $this = $(this);
@@ -507,6 +522,11 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		$row.addClass("selected");
 	} else {
 		$row.removeClass("selected");
+	}
+	if($(".sftp-row-checkbox:checked").length) {
+		$(".sync-selected-files").slideDown("fast");
+	} else {
+		$(".sync-selected-files").slideUp("fast");
 	}
 
 }).on("change", ".diffs .check-all-visible-rows-checkbox", function(evt) {
@@ -526,6 +546,11 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 		$(".diffs .row-checkbox").prop("checked", false);
 		$(".diffs tr").removeClass("selected");
 	}
+	if($(".row-checkbox-0:checked").length) {
+		$(".sync-rows-button").slideDown("fast");
+	} else {
+		$(".sync-rows-button").slideUp("fast");
+	}
 
 }).on("change", ".diffs .row-checkbox-0", function(evt) {
 	let $this = $(this);
@@ -537,6 +562,11 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 	} else {
 		$row.removeClass("selected");
 		$row.find(".row-checkbox").prop("checked", false);
+	}
+	if($(".row-checkbox-0:checked").length) {
+		$(".sync-rows-button").slideDown("fast");
+	} else {
+		$(".sync-rows-button").slideUp("fast");
 	}
 	
 }).on("change", ".diffs .filter-select", function(evt) {

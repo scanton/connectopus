@@ -403,6 +403,7 @@ table .cell-container.scrollable {
 .table-content-column .table-toolbar, .sftp-files-column .sftp-toolbar {
 	background-color: #D6D6D6;
     padding: 2px 1em;
+    min-height: 38px;
 }
 
 .tabelized-files th {
@@ -602,4 +603,16 @@ form input.is-not-valid {
 }
 .setting-details-container input[type='text'] {
 	margin: .25em 0;
+}
+.block-tabels-list.well {
+	padding: .25em 0;
+}
+.listing-item.different-size {
+	cursor: pointer;
+	transition: all 0.1s ease;
+}
+.listing-item.different-size:hover {
+	border: 1px solid black;
+	padding: .25em .5em;
+	background: #FF9;
 }

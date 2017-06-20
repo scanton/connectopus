@@ -216,7 +216,10 @@ module.exports = class ConnectionManager extends EventEmitter {
 		if(connections.length > this.connectionIndex) {
 			this._putFilesToConnection(connections[this.connectionIndex], this.remoteTransferDetails.workingPath, this.remoteTransferDetails.fileList, handleFilePutComplete, handleFilePutProgress, this.remoteTransferDetails.errorHandler);
 		} else {
+			//$(".modal-overlay").fadeIn("fast");
 			this.compareDirectory(this.getActivePath(), function(data) {
+				//$(".modal-overlay").fadeOut("fast");
+				//dispatch complete event?
 				$(".modal-overlay").fadeOut("fast");
 			});
 		}

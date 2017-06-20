@@ -61,7 +61,7 @@ module.exports = class ConnectopusController extends EventEmitter {
 		$(".modal-overlay").fadeIn("fast");
 		this.connections.cacheFiles(paths, (data) => {
 			this.connections.putRemoteFilesFromCache(workingPath, data);
-			$(".modal-overlay").fadeOut("fast");
+			//$(".modal-overlay").fadeOut("fast");
 		}, function(stream, path) {
 			let a = path.split("/");
 			a.pop();
@@ -263,6 +263,7 @@ module.exports = class ConnectopusController extends EventEmitter {
 				$(this).closest("tr").find(".sftp-row-checkbox").remove();
 			}
 		});
+		$sftpView.find(".listing-item.different-size").attr("title", "Click to see file diff");
 	}
 
 	_renderDirectories(connects, path, domQuery = ".directory-list") {

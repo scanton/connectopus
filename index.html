@@ -25,14 +25,14 @@
 					<!--<a class="navbar-brand" href="#">Connectopus</a>-->
 					<ul class="nav navbar-nav">
 						<li class="active media-option-link option-link" data-target="connections-container"><a href="#"><span class="glyphicon glyphicon glyphicon-resize-small"></span> Connections</a></li>
-						<li class="mysql-option-link option-link" data-target="mysql-container"><a href="#"><span class="glyphicon glyphicon-hdd"></span> Content</a></li>
-						<li class="sftp-option-link option-link" data-target="sftp-container"><a href="#"><span class="glyphicon glyphicon-duplicate"></span> Code</a></li>
+						<li class="mysql-option-link option-link link-requires-active-connections" data-target="mysql-container" style="display: none;"><a href="#"><span class="glyphicon glyphicon-hdd"></span> Content</a></li>
+						<li class="sftp-option-link option-link link-requires-active-connections" data-target="sftp-container" style="display: none;"><a href="#"><span class="glyphicon glyphicon-duplicate"></span> Code</a></li>
 						<!--
 						<li class="services-option-link option-link" data-target="services-container"><a href="#"><span class="glyphicon glyphicon-cloud-download"></span> Rest</a></li>
 						<li class="media-option-link option-link" data-target="preview-container"><a href="#"><span class="glyphicon glyphicon-eye-open"></span> Preview</a></li>
-						-->
-						<li class="media-option-link option-link" data-target="media-container"><a href="#"><span class="glyphicon glyphicon-film"></span> Media</a></li>
 						
+						<li class="media-option-link option-link" data-target="media-container"><a href="#"><span class="glyphicon glyphicon-film"></span> Media</a></li>
+						-->
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right">
@@ -91,8 +91,8 @@
 				</div>
 				<div class="col-xs-8 col-sm-9 col-lg-10 sftp-files-column">
 					<div class="sftp-toolbar">
-						<button class="btn btn-warning sync-selected-files pull-right"><span class="glyphicon glyphicon-transfer"></span> Sync Selected Files</button>
-						<div class="active-sftp-path">Code (SFTP)</div>
+						<button class="btn btn-warning sync-selected-files pull-right" style="display: none;"><span class="glyphicon glyphicon-transfer"></span> Sync Selected Files</button>
+						<div class="active-sftp-path"></div>
 						<div class="clear-fix"></div>
 					</div>
 					<div class="sftp-tree-view table-container"></div>
@@ -111,13 +111,13 @@
 				</div>
 				<div class="col-xs-8 col-sm-9 col-lg-10 table-content-column">
 					<div class="table-toolbar">
-						<button class="btn btn-warning sync-rows-button pull-right"><span class="glyphicon glyphicon-transfer"></span> Sync Selected Rows</button>
+						<button class="btn btn-warning sync-rows-button pull-right" style="display: none;"><span class="glyphicon glyphicon-transfer"></span> Sync Selected Rows</button>
 
 						<div class="table-name-container"></div>
 
 						<button class="btn btn-default show-matching-columns-button" style="display: none;"><span class="glyphicon glyphicon-list"></span> Show Matching Columns</button>
-						<button class="btn btn-default hide-matching-columns-button"><span class="glyphicon glyphicon-list"></span> Hide Matching Columns</button>
-						
+						<button class="btn btn-default hide-matching-columns-button" style="display: none;"><span class="glyphicon glyphicon-list"></span> Hide Matching Columns</button>
+						<div class="clear-fix"></div>
 						<!--
 						<button class="btn btn-default show-inserts-button pull-right" style="display: none;"><span class="glyphicon glyphicon-indent-left"></span> Show Inserts</button>
 						<button class="btn btn-default hide-inserts-button pull-right"><span class="glyphicon glyphicon-indent-left"></span> Hide Inserts</button>
@@ -185,7 +185,7 @@
 								</tr>
 								<tr>
 									<td class="column-0">Blocked Tables</td>
-									<td class="column-1 block-tabels-list"></td>
+									<td class="column-1 block-tabels-list well"></td>
 								</tr>
 								<tr>
 									<td class="column-0">Max Rows Requested</td>
