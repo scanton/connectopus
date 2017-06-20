@@ -2,8 +2,9 @@ module.exports = class ConnectionManager extends EventEmitter {
 	
 	constructor() {
 		super();
+		this.connectionIndex = 1;
+		this.remoteTransferDetails = {};
 		this.connections = [];
-		//this.listeners = {};
 		this.tunnel = require('tunnel-ssh');
 		this.mysql = require('mysql');
 		this.Ssh2SftpClient = require('ssh2-sftp-client');
@@ -15,7 +16,6 @@ module.exports = class ConnectionManager extends EventEmitter {
 		this.server = null;
 		this.activeTableName = '';
 		this.directories = [];
-
 		this.paths = [];
 		this.activePath = '';
 		this.hasPendingSftpQueue = false;
@@ -190,25 +190,40 @@ module.exports = class ConnectionManager extends EventEmitter {
 	}
 
 	putRemoteFilesFromCache(workingPath, fileList, callback = null, errorHandler = null) {
-		var compareDirectory = this.compareDirectory.bind(this);
-		var getActivePath = this.getActivePath.bind(this);
+		var handleFilePutComplete = this._handleFilePutComplete.bind(this);
+		var handleFilePutProgress = this._handleFilePutProgress.bind(this);
 		let connections = this.getConnections();
 		let fileListLength = fileList.length;
+		this.remoteTransferDetails = { workingPath: workingPath, fileList: fileList, callback: callback, errorHandler: errorHandler };
 		if(connections.length > 1) {
-			let connectionIndex = 1;
-			this._putFilesToConnection(connections[connectionIndex], workingPath, fileList, function(data) {
-				console.log("on-file-put-complete", data);
-				compareDirectory(getActivePath(), function(data) {
-					$(".modal-overlay").fadeOut("fast");
-				});
-			}, function(progress) {
-				console.log("file-progress", progress);
-			}, errorHandler);
+			this.connectionIndex = 1;
+			this._putFilesToConnection(connections[this.connectionIndex], workingPath, fileList, handleFilePutComplete, handleFilePutProgress, errorHandler);
 		} else {
 			if(callback) {
 				callback("0 updates");
 			}
 		}
+	}
+
+	_handleFilePutComplete(data) {
+		var handleFilePutComplete = this._handleFilePutComplete.bind(this);
+		var handleFilePutProgress = this._handleFilePutProgress.bind(this);
+
+		//console.log("on-file-put-complete", data);
+
+		let connections = this.getConnections();
+		++this.connectionIndex;
+		if(connections.length > this.connectionIndex) {
+			this._putFilesToConnection(connections[this.connectionIndex], this.remoteTransferDetails.workingPath, this.remoteTransferDetails.fileList, handleFilePutComplete, handleFilePutProgress, this.remoteTransferDetails.errorHandler);
+		} else {
+			this.compareDirectory(this.getActivePath(), function(data) {
+				$(".modal-overlay").fadeOut("fast");
+			});
+		}
+	}
+
+	_handleFilePutProgress() {
+		console.log("file-progress");
 	}
 
 	_putFilesToConnection(currentConnection, workingPath, fileList, callback, progressCallback, errorHandler = null) {
