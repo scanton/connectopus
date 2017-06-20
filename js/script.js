@@ -644,7 +644,9 @@ $(document).ready(function() {
 	 		}
 	 	},
  		error: function(err) {
- 			console.log("Initializing new model {} (no config.json file found)");
+ 			console.warn("Handling Error: -- (no config.json file found). Welcoming new user with introduction help screen.");
+ 			console.log("Welcome new user :)");
+ 			$(".add-new-server-container").tut("Welcome to Connectopus!", "It appears this is your first time using Connectopus.  To get started, you'll want to add some connections.  These are the SSH connections to your web server(s) and the MySQL database connection used once the SSH connection is established.");
  			let config = model.getConfig();
  			renderNewConfig(config);
  		}
