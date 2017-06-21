@@ -24,6 +24,40 @@ module.exports = class ConnectionManager extends EventEmitter {
 		this.sftpQueueResults = [];
 	}
 
+	cacheCompare(connectionIndex, path, workingPath, callback, errorHandler) {
+		var setConnectionStatus = this.setConnectionStatus.bind(this);
+		if(connectionIndex && path) {
+			this.sftp = new this.Ssh2SftpClient();
+			var cons = this.getConnections();
+			if(cons && cons[connectionIndex]) {
+				var conn = cons[connectionIndex];
+				var sshData = this._getSshData(conn);
+				setConnectionStatus(conn.id, 'pending');
+				this.sftp.connect(sshData).then(() => {
+					this.sftp.get(path).then((stream) => {
+						setConnectionStatus(this.getConnections()[connectionIndex].id, 'active');
+						callback(stream, connectionIndex);
+						var conn = this.getConnections()[0];
+						var sshData = this._getSshData(conn);
+						setConnectionStatus(conn.id, 'pending');
+						this.sftp = new this.Ssh2SftpClient();
+						this.sftp.connect(sshData).then(() => {
+							this.sftp.get(path).then((stream) => {
+								setConnectionStatus(conn.id, 'active');
+								callback(stream, 0);
+							});
+						});
+					});
+				}).catch((err) => {
+					setConnectionStatus(this.getConnections()[connectionIndex].id, "error");
+					if(errorHandler) {
+						errorHandler(err);
+					}
+				});
+			}
+		}
+	}
+
 	hasPath(path) {
 		return this.paths.indexOf(path) > -1;
 	}

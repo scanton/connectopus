@@ -17,8 +17,6 @@ const controller = new ConnectopusController(model, connections, html);
 const FileSystem = require(__dirname + '/custom_modules/FileSystem.js');
 const fs = new FileSystem();
 
-const diff = require('diff');
-
 window.onerror = function(errorMsg, url, lineNumber) {
 	console.log("Error occured: " + errorMsg);
 	
@@ -145,7 +143,15 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 }).on("click", ".listing-item.different-size", function(evt) {
 	evt.preventDefault();
 	let $this = $(this);
-	console.log("diff", $this.attr("data-path"));
+	let path = $this.attr("data-path");
+	let columnIndex = $this.attr("class").split("index-")[1].split(" ")[0];
+	controller.compareFiles(columnIndex, path, function(data) {
+		let $diffView = $(".code-diff-view");
+		$diffView.html(html.renderTextDiff(data));
+		$(".code-diff-container").slideDown("fast");
+		$(".code-diff-container .title").text(path);
+		$(".modal-overlay").fadeOut("fast");
+	});
 
 }).on("click", ".database-tables li", function(evt) {
 	evt.preventDefault();

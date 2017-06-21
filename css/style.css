@@ -616,3 +616,35 @@ form input.is-not-valid {
 	padding: .25em .5em;
 	background: #FF9;
 }
+table.text-diffs td {
+	width: 50%;
+	overflow: scroll;
+}
+table.text-diffs .added {
+	background: #CFC;
+	color: #090;
+}
+table.text-diffs .removed {
+	background: #FCC;
+	color: #C00;
+}
+table.text-diffs pre {
+	width: auto;
+    display: block;
+    padding: inherit;
+    margin: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+    word-break: break-all;
+    word-wrap: break-word;
+    background-color: inherit;
+    border: inherit;
+    border-radius: 0;
+
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}

@@ -181,6 +181,34 @@ module.exports = class HtmlRenderer {
 		return s + '</div>';
 	}
 
+	renderTextDiff(data) {
+		let escape = require('escape-html');
+		let s = '<table class="text-diffs">';
+		let skip = -1;
+		for(let i in data) {
+			let d = data[i];
+			if(d && i != skip) {
+				let added = Boolean(d.added);
+				let removed = Boolean(d.removed);
+				let value = escape(d.value);
+				if(!added && !removed) {
+					s += '<tr><td class="unchanged"><pre>' + value + '</pre></td><td class="unchanged"><pre>' + value + '</pre></td></tr>';
+				} else if(added) {
+					s += '<tr><td></td><td class="removed"><pre>' + value + '</pre></td></tr>';
+				} else if(removed) {
+					let nextD = data[i + 1];
+					if(nextD && nextD.added) {
+						s += '<tr><td class="added"><pre>' + value + '</pre></td><td class="removed"><pre>' + escape(nextD.value) + '</pre></td></tr>';
+						skip = i + 1;
+					} else {
+						s += '<tr><td class="added"><pre>' + value + '</pre></td><td></td></tr>';
+					}
+				}
+			}
+		}
+		return s + '</table>';
+	}
+
 	renderServerLinks(data, isVisible = 1) {
 		var s = '';
 		if(data) {

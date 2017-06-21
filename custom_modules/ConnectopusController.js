@@ -2,6 +2,7 @@ module.exports = class ConnectopusController extends EventEmitter {
 
 	constructor(model, connectionManager, htmlRenderer) {
 		super();
+		this.diff = require('diff');
 		this.escape = require('jsesc');
 		this.fs = require('fs-extra');
 		this.model = model;
@@ -28,6 +29,29 @@ module.exports = class ConnectopusController extends EventEmitter {
 				$(".modal-overlay").fadeOut("fast");
 			});
 		}
+	}
+
+	compareFiles(connectionIndex, path, callback) {
+		var fs = this.fs;
+		var diff = this.diff;
+		var dirName = __dirname.split("/custom_modules")[0];
+		var workingPath = dirName + '/working_files/compare/';
+		fs.removeSync(dirName + '/working_files/compare/');
+		var comp0, comp1;
+		$(".modal-overlay").fadeIn("fast");
+		let cacheCount = 0;
+		this.connections.cacheCompare(connectionIndex, path, workingPath, function(stream, index) {
+			let localPath = workingPath + 'comp-' + (index == 0 ? 0 : 1) + '.txt';
+			fs.ensureDirSync(workingPath);
+			stream.pipe(fs.createWriteStream(localPath)).on("finish", () => {
+				++cacheCount;
+				if(cacheCount == 2) {
+					comp0 = fs.readFileSync(workingPath + 'comp-0.txt', 'utf8');
+					comp1 = fs.readFileSync(workingPath + 'comp-1.txt', 'utf8');
+					callback(diff.diffLines(comp0, comp1, {ignoreWhitespace: false, newlineIsToken: true}));
+				}
+			});
+		});
 	}
 
 	syncRows(rowIds) {
