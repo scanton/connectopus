@@ -194,7 +194,13 @@ module.exports = class HtmlRenderer {
 				if(!added && !removed) {
 					s += '<tr><td class="unchanged"><pre>' + value + '</pre></td><td class="unchanged"><pre>' + value + '</pre></td></tr>';
 				} else if(added) {
-					s += '<tr><td></td><td class="removed"><pre>' + value + '</pre></td></tr>';
+					let nextD = data[i + 1];
+					if(nextD && nextD.removed) {
+						s += '<tr><td class="added"><pre>' + escape(nextD.value) + '</pre></td><td class="removed"><pre>' + value + '</pre></td></tr>';
+						skip = i + 1;
+					} else {
+						s += '<tr><td></td><td class="removed"><pre>' + value + '</pre></td></tr>';
+					}
 				} else if(removed) {
 					let nextD = data[i + 1];
 					if(nextD && nextD.added) {
