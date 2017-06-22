@@ -13,9 +13,11 @@ You can connect to an unlimited number of servers in one session (limited only o
 
 ## Installation Instructions
 
-You will need to install the latest version of [Node.js](https://nodejs.org/en/) to install this project.
+You will need to install the latest version of [Node.js](https://nodejs.org/en/) to install this project.  If you are new to Node.js, you can download the most recent Node installer from the home page of their website.
 
-Once Node.js is installed, clone this repository to your local machine, navigate to the directory you cloned this project into inside of a Terminal and type the following
+Once Node.js is installed, clone this repository to your local machine.  If you are new to Git and aren't sure how to 'clone' this repository, you can click on the green "Clone or download" button on top of this page and/or use [GitHub Desktop](https://desktop.github.com/).
+
+Once you have cloned this project to your local machine, open a Terminal/Command window and navigate to the directory you cloned this project to.  Then enter this command in the Terminal:
 
 ```bash
 sudo npm install
