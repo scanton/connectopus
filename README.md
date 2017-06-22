@@ -7,13 +7,9 @@ You can connect to an unlimited number of servers in one session (limited only o
 
 ## Connectopus Features
 
-* Compare tables across multiple databases across multiple environments.
-* Sync media folders across multiple SFTP endpoints.
-* Code compare and sync across multiple installations.
-
-## Project Status
-
-This project is in active development.  Core features are still being implemented.  Code management via SFTP now works.  SQL specific data sync is not fully implemented.
+* Code compare and sync code across multiple installations with line level code diff. (feature complete)
+* Compare and sync tables across multiple databases across multiple environments. (compare feature complete, sync in development)
+* Sync media folders across multiple SFTP endpoints. (compare feature complete, sync in development)
 
 ## Installation Instructions
 

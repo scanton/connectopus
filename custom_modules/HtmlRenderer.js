@@ -181,7 +181,10 @@ module.exports = class HtmlRenderer {
 		return s + '</div>';
 	}
 
-	renderTextDiff(data) {
+	renderTextDiff(data, index) {
+		if(!index) {
+			index = 1;
+		}
 		let escape = require('escape-html');
 		let s = '<table class="text-diffs">';
 		let skip = -1;
@@ -192,22 +195,22 @@ module.exports = class HtmlRenderer {
 				let removed = Boolean(d.removed);
 				let value = escape(d.value);
 				if(!added && !removed) {
-					s += '<tr><td class="unchanged"><pre>' + value + '</pre></td><td class="unchanged"><pre>' + value + '</pre></td></tr>';
+					s += '<tr><td class="unchanged index-0"><pre>' + value + '</pre></td><td class="unchanged index-' + index + '"><pre>' + value + '</pre></td></tr>';
 				} else if(added) {
 					let nextD = data[i + 1];
 					if(nextD && nextD.removed) {
-						s += '<tr><td class="added"><pre>' + escape(nextD.value) + '</pre></td><td class="removed"><pre>' + value + '</pre></td></tr>';
+						s += '<tr><td class="added index-0"><pre>' + escape(nextD.value) + '</pre></td><td class="removed index-' + index + '"><pre>' + value + '</pre></td></tr>';
 						skip = i + 1;
 					} else {
-						s += '<tr><td></td><td class="removed"><pre>' + value + '</pre></td></tr>';
+						s += '<tr><td class="index-0"></td><td class="removed index-' + index + '"><pre>' + value + '</pre></td></tr>';
 					}
 				} else if(removed) {
 					let nextD = data[i + 1];
 					if(nextD && nextD.added) {
-						s += '<tr><td class="added"><pre>' + value + '</pre></td><td class="removed"><pre>' + escape(nextD.value) + '</pre></td></tr>';
+						s += '<tr><td class="added index-0"><pre>' + value + '</pre></td><td class="removed index-' + index + '"><pre>' + escape(nextD.value) + '</pre></td></tr>';
 						skip = i + 1;
 					} else {
-						s += '<tr><td class="added"><pre>' + value + '</pre></td><td></td></tr>';
+						s += '<tr><td class="added index-0"><pre>' + value + '</pre></td><td class="index-' + index + '"></td></tr>';
 					}
 				}
 			}

@@ -304,7 +304,7 @@ table .cell-container.scrollable {
 	padding: .4em;
 }
 
-.diffs .index-0 {
+.diffs .index-0, .text-diffs .index-0 {
 	background-color: hsl(120, 100%, 95%);
 }
 .diffs tr.selected .index-0, .sftp-tree-view tr.selected .index-0 {
@@ -316,7 +316,7 @@ table .cell-container.scrollable {
 	border-color: hsl(120, 100%, 25%);
 }
 
-.diffs .index-1 {
+.diffs .index-1, .text-diffs .index-1 {
 	background-color: hsl(180, 100%, 95%);
 }
 .diffs tr.selected .index-1, .sftp-tree-view tr.selected .index-1 {
@@ -328,7 +328,7 @@ table .cell-container.scrollable {
 	border-color: hsl(180, 100%, 25%);
 }
 
-.diffs .index-2 {
+.diffs .index-2, .text-diffs .index-2 {
 	background-color: hsl(240, 100%, 95%);
 }
 .diffs tr.selected .index-2, .sftp-tree-view tr.selected .index-2 {
@@ -340,7 +340,7 @@ table .cell-container.scrollable {
 	border-color: hsl(240, 100%, 25%);
 }
 
-.diffs .index-3 {
+.diffs .index-3, .text-diffs .index-3 {
 	background-color: hsl(300, 100%, 95%);
 }
 .diffs tr.selected .index-3, .sftp-tree-view tr.selected .index-3 {
@@ -352,7 +352,7 @@ table .cell-container.scrollable {
 	border-color: hsl(300, 100%, 25%);
 }
 
-.diffs .index-4 {
+.diffs .index-4, .text-diffs .index-4 {
 	background-color: hsl(0, 100%, 95%);
 }
 .diffs tr.selected .index-4, .sftp-tree-view tr.selected .index-4 {
@@ -364,7 +364,7 @@ table .cell-container.scrollable {
 	border-color: hsl(0, 100%, 25%);
 }
 
-.diffs .index-5 {
+.diffs .index-5, .text-diffs .index-5 {
 	background-color: hsl(60, 100%, 95%);
 }
 .diffs tr.selected .index-5, .sftp-tree-view tr.selected .index-5 {
@@ -376,7 +376,7 @@ table .cell-container.scrollable {
 	border-color: hsl(60, 100%, 25%);
 }
 
-.diffs .index-6 {
+.diffs .index-6, .text-diffs .index-6 {
 	background-color: hsl(120, 100%, 90%);
 }
 .diffs tr.selected .index-6, .sftp-tree-view tr.selected .index-6 {
@@ -621,7 +621,7 @@ table.text-diffs td {
 	overflow: scroll;
 }
 table.text-diffs .added {
-	background: #CFC;
+	background: #AFA;
 	color: #090;
 }
 table.text-diffs .removed {

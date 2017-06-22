@@ -144,10 +144,10 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 	evt.preventDefault();
 	let $this = $(this);
 	let path = $this.attr("data-path");
-	let columnIndex = $this.attr("class").split("index-")[1].split(" ")[0];
+	var columnIndex = $this.attr("class").split("index-")[1].split(" ")[0];
 	controller.compareFiles(columnIndex, path, function(data) {
 		let $diffView = $(".code-diff-view");
-		$diffView.html(html.renderTextDiff(data));
+		$diffView.html(html.renderTextDiff(data, columnIndex));
 		$(".code-diff-container .title").text(path);
 		$(".modal-overlay").fadeOut("fast");
 
