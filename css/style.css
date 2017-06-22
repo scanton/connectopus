@@ -524,7 +524,7 @@ table .cell-container.scrollable {
 	top: 35px;
 	bottom: 0;
 	right: 0;
-	width: 420px;
+	width: 440px;
 	z-index: 2;
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, .15), 0 1px 5px rgba(0, 0, 0, .075);
 }
@@ -672,4 +672,16 @@ table.text-diffs pre {
 	border-radius: 10px;
 	padding: .25em .5em;
 	box-shadow: 3px 3px 3px rgba(0, 0, 0, .25);
+}
+.toots-my-goots-icon {
+	background: #8de5ff;
+	border: 1px solid #3992ad;
+	color: white;
+	padding: 0 .4em;
+	border-radius: 50%;
+	cursor: pointer;
+	float: right;
+	display: inline-block;
+	font-size: 9pt;
+	margin-right: 5px;
 }

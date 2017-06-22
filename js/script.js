@@ -17,6 +17,9 @@ const controller = new ConnectopusController(model, connections, html);
 const FileSystem = require(__dirname + '/custom_modules/FileSystem.js');
 const fs = new FileSystem();
 
+const TutorialData = require(__dirname + '/custom_modules/TutorialData.js');
+const tuts = new TutorialData();
+
 window.onerror = function(errorMsg, url, lineNumber) {
 	console.log("Error occured: " + errorMsg);
 	
@@ -715,20 +718,21 @@ $(document).ready(function() {
  		}
  	});
 
- 	var isBalloonVisible = false;
  	$(window).on("mousemove", function(evt) {
  		if(evt.target && evt.target.className.indexOf("different-size") > -1) {
  			let offset = 8;
  			$(".mouse-follow-balloon").css("top", (evt.clientY + offset) + "px").css("left", (evt.clientX + offset) + "px");
- 			if(!isBalloonVisible) {
- 				$(".mouse-follow-balloon").fadeIn("fast");
- 				isBalloonVisible = true;
- 			}
+ 			$(".mouse-follow-balloon").show();
  		} else {
- 			if(isBalloonVisible) {
-	 			$(".mouse-follow-balloon").fadeOut("fast");
-	 			isBalloonVisible = false;
- 			}
+ 			$(".mouse-follow-balloon").hide();
+ 		}
+ 	});
+
+ 	$(".toots-my-goots-icon").click(function(evt) {
+ 		let $this = $(this);
+ 		let tut = tuts.getTut($this.attr("data-subject"));
+ 		if(tut) {
+ 			$this.tut(tut.title, tut.message);
  		}
  	});
 
