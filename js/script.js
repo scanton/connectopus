@@ -70,6 +70,10 @@ let highlightCollumnDifferences = function(fields) {
 	});
 }
 
+let updateTableDiffStatus = function() {
+	$(".mysql-footer-toolbar .status").html($(".tools-column-0 .row-checkbox-0").length + " different rows");
+}
+
 let initialzeFilterDropDowns = function() {
 	let $headers = $(".diffs tr.table-headers");
 	//let $rows = $(".diffs tr").not(".table-headers");
@@ -191,6 +195,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 				highlightCollumnDifferences(tables[0].fields);
 				//hideUnaffectedColumns();
 				initialzeFilterDropDowns();
+				updateTableDiffStatus();
 			}
 			$(".modal-overlay").fadeOut("fast");
 		}, tableLimit);
@@ -710,6 +715,23 @@ $(document).ready(function() {
  		}
  	});
 
+ 	var isBalloonVisible = false;
+ 	$(window).on("mousemove", function(evt) {
+ 		if(evt.target && evt.target.className.indexOf("different-size") > -1) {
+ 			let offset = 8;
+ 			$(".mouse-follow-balloon").css("top", (evt.clientY + offset) + "px").css("left", (evt.clientX + offset) + "px");
+ 			if(!isBalloonVisible) {
+ 				$(".mouse-follow-balloon").fadeIn("fast");
+ 				isBalloonVisible = true;
+ 			}
+ 		} else {
+ 			if(isBalloonVisible) {
+	 			$(".mouse-follow-balloon").fadeOut("fast");
+	 			isBalloonVisible = false;
+ 			}
+ 		}
+ 	});
+
  	$('.close-code-diff-container-button').click(function(evt) {
  		$(".sftp-option-link").click();
  	});
@@ -794,7 +816,15 @@ $(document).ready(function() {
  		var $this = $(this);
  		let uri = $this.attr("data-target");
  		$this.load(uri, function() {
- 			$this.find("select").selectmenu();
+ 			$this.find(".database-type-select-box").selectmenu({
+ 				change: function() {
+ 					let $this = $(this);
+ 					let val = $this.val();
+ 					if(val != "MySQL") {
+ 						$(this).tut(val + " In Development", "Connectopus compare is compatable with any SQL and row-based databases.  A connector for " + val + " is a possible future enhancement.  If you are a developer interested in integrating " + val + " with Connectopus, we accept pull requests.");
+ 					}
+ 				}
+ 			});
  		});
  	});
 });

@@ -304,6 +304,9 @@ table .cell-container.scrollable {
 	padding: .4em;
 }
 
+.text-diffs {
+	width: 100%;
+}
 .diffs .index-0, .text-diffs .index-0 {
 	background-color: hsl(120, 100%, 95%);
 }
@@ -654,4 +657,19 @@ table.text-diffs pre {
 .close-code-diff-container-button {
 	margin-top: 10px;
 	margin-right: 10px;
+}
+.sftp-footer-toolbar, .mysql-footer-toolbar {
+	color: #555;
+}
+.sftp-footer-toolbar .status, .mysql-footer-toolbar .status {
+	padding: .5em;
+}
+.mouse-follow-balloon {
+	position: absolute;
+	background-color: #393;
+	border: 1px solid rgba(0, 0, 0, .1);
+	color: white;
+	border-radius: 10px;
+	padding: .25em .5em;
+	box-shadow: 3px 3px 3px rgba(0, 0, 0, .25);
 }

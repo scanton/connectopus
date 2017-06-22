@@ -287,7 +287,7 @@ module.exports = class ConnectopusController extends EventEmitter {
 				$(this).closest("tr").find(".sftp-row-checkbox").remove();
 			}
 		});
-		$sftpView.find(".listing-item.different-size").attr("title", "Click to see file diff");
+		//$sftpView.find(".listing-item.different-size").attr("title", "Click to see file diff");
 	}
 
 	_renderDirectories(connects, path, domQuery = ".directory-list") {
@@ -297,6 +297,12 @@ module.exports = class ConnectopusController extends EventEmitter {
 		this._moveDirectoryListToSideBar(domQuery);
 		this._removeMatches();
 		this._tabelizeFiles();
+		this._updateStatusBar();
+	}
+
+	_updateStatusBar() {
+		let totalChecks = $(".sftp-row-checkbox").length;
+		$(".sftp-footer-toolbar .status").html(totalChecks + " different code file" + (totalChecks != 1 ? 's' : '') + " found");
 	}
 
 	_removeMatches() {
