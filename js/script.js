@@ -148,9 +148,11 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 	controller.compareFiles(columnIndex, path, function(data) {
 		let $diffView = $(".code-diff-view");
 		$diffView.html(html.renderTextDiff(data));
-		$(".code-diff-container").slideDown("fast");
 		$(".code-diff-container .title").text(path);
 		$(".modal-overlay").fadeOut("fast");
+
+ 		$(".option-link-container").slideUp("fast");
+		$(".code-diff-container").slideDown("fast", function() { $(window).resize(); });
 	});
 
 }).on("click", ".database-tables li", function(evt) {
@@ -708,6 +710,10 @@ $(document).ready(function() {
  		}
  	});
 
+ 	$('.close-code-diff-container-button').click(function(evt) {
+ 		$(".sftp-option-link").click();
+ 	});
+
  	$(".refresh-browser-link").click(function(evt) {
  		evt.preventDefault();
  		location.reload();
@@ -720,7 +726,7 @@ $(document).ready(function() {
  	$(".nav .option-link").click(function(evt) {
  		evt.preventDefault();
  		let $this = $(this);
- 		$(".nav .option-link.active").removeClass("active")
+ 		$(".nav .option-link.active").removeClass("active");
  		$this.addClass("active");
  		$(".option-link-container").slideUp("fast");
  		$("." + $this.attr("data-target")).slideDown("fast", function() { $(window).resize(); });
