@@ -1,3 +1,16 @@
+.mouse-follow-balloon, .tool-tip-example {
+	position: absolute;
+	background-color: #3c3cbd;
+	border: 1px solid rgba(0, 0, 0, .1);
+	color: white;
+	border-radius: 10px;
+	padding: .25em .5em;
+	box-shadow: 3px 3px 3px rgba(0, 0, 0, .25);
+}
+.tool-tip-example {
+	position: inherit;
+}
+
 .blink-me {
   animation: blinker 1s linear infinite;
 }
@@ -602,7 +615,7 @@ form input.is-not-valid {
 
 .settings-list ul {
 	list-style: none;
-	padding: 0;
+	padding: 0 0 0 .75em;
 }
 .setting-details-container input[type='text'] {
 	margin: .25em 0;
@@ -664,16 +677,7 @@ table.text-diffs pre {
 .sftp-footer-toolbar .status, .mysql-footer-toolbar .status {
 	padding: .5em;
 }
-.mouse-follow-balloon {
-	position: absolute;
-	background-color: #393;
-	border: 1px solid rgba(0, 0, 0, .1);
-	color: white;
-	border-radius: 10px;
-	padding: .25em .5em;
-	box-shadow: 3px 3px 3px rgba(0, 0, 0, .25);
-}
-.toots-my-goots-icon {
+.tuts-my-goots-icon {
 	background: #8de5ff;
 	border: 1px solid #3992ad;
 	color: white;

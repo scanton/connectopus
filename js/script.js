@@ -640,7 +640,10 @@ var renderNewSettings = (settings) => {
 	$container.find("input[name='default_sftp_directory']").val(settings['default_sftp_directory']);
 	$container.find("input[name='max_rows_requested']").val(settings['max_rows_requested']);
 	if(settings['block_tables'] && settings['block_tables'].length) {
-		let s = '<ul class="block-tables-list"><li><button class="btn btn-warning remove-blocked-table-button" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>' + settings['block_tables'].join('</li><li><button class="btn btn-warning remove-blocked-table-button" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>') + "</li></ul>";
+		let removeButton = '<button class="btn btn-warning remove-blocked-table-button pull-right" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>';
+		let s = '<ul class="block-tables-list"><li>';
+		s += removeButton;
+		s += settings['block_tables'].join('<div class="clear-fix"></div></li><li>' + removeButton) + '<div class="clear-fix"></div></li></ul>';
 		$container.find(".block-tabels-list").html(s);
 	}
 	$container.find(".hide-dangerous-buttons-checkbox").prop("checked", settings.hide_dangerous_buttons);
@@ -728,7 +731,7 @@ $(document).ready(function() {
  		}
  	});
 
- 	$(".toots-my-goots-icon").click(function(evt) {
+ 	$(".tuts-my-goots-icon").click(function(evt) {
  		let $this = $(this);
  		let tut = tuts.getTut($this.attr("data-subject"));
  		if(tut) {
