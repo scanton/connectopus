@@ -103,7 +103,7 @@ module.exports = class ConnectopusController extends EventEmitter {
 		$(".modal-overlay").fadeIn("fast");
 		let $dialog = $(".modal-dialog");
 		
-		$dialog.find(".title").text(title);
+		$dialog.find(".title").html(title);
 		$dialog.find(".message").html(message);
 
 		if(options && options.buttons && options.buttons.length) {

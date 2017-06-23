@@ -569,7 +569,7 @@ ul.sftp-filtered-directories {
 }
 
 .add-new-server-container {
-	margin: 5em 5em;
+	margin: 2.5em 5em;
 }
 .add-new-server-container .input-group, .add-new-server-container .select-group {
 	margin-bottom: 10px;

@@ -316,7 +316,30 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 
 }).on("click", ".setting-details-container .remove-blocked-table-button", function(evt) {
 	evt.preventDefault();
-	model.removeSettingArrayItem("block_tables", $(this).closest("li").text());
+	let val = $(this).closest("li").text();
+	if(val) {
+		controller.showModal("Remove <strong>" + val + "</strong>", "<p>This will remove <strong>" + val + "</strong> from the list of blocked tables, enabling difference comparisons on this table.</p><p>You can always add <strong>" + val + "</strong> back to Blocked Tables in <span class=\"glyphicon glyphicon-cog\"></span>&nbsp;Settings.</p>", {
+			buttons: [
+				{
+					label: 'Remove <strong>' + val + '</strong> from Blocked Tables', 
+					class: "btn btn-danger ok-button pull-right", 
+					callback: function(evt) {
+						evt.preventDefault();
+						model.removeSettingArrayItem("block_tables", val);
+						controller.hideModal();
+					}
+				},
+				{
+					label: 'Cancel', 
+					class: "btn btn-default cancel-button pull-right", 
+					callback: function(evt) {
+						evt.preventDefault();
+						controller.hideModal();
+					}
+				}
+			]
+		});	
+	}
 
 }).on("change", ".setting-details-container input[name='default_sftp_directory']", function(evt) {
 	let val = $(this).val();
@@ -643,7 +666,7 @@ var renderNewSettings = (settings) => {
 		let removeButton = '<button class="btn btn-warning remove-blocked-table-button pull-right" title="Remove Table from Blocked List"><span class="glyphicon glyphicon-minus"></span></button>';
 		let s = '<ul class="block-tables-list"><li>';
 		s += removeButton;
-		s += settings['block_tables'].join('<div class="clear-fix"></div></li><li>' + removeButton) + '<div class="clear-fix"></div></li></ul>';
+		s += settings['block_tables'].sort().join('<div class="clear-fix"></div></li><li>' + removeButton) + '<div class="clear-fix"></div></li></ul>';
 		$container.find(".block-tabels-list").html(s);
 	}
 	$container.find(".hide-dangerous-buttons-checkbox").prop("checked", settings.hide_dangerous_buttons);
@@ -722,12 +745,15 @@ $(document).ready(function() {
  	});
 
  	$(window).on("mousemove", function(evt) {
+ 		let $balloon = $(".mouse-follow-balloon");
  		if(evt.target && evt.target.className.indexOf("different-size") > -1) {
  			let offset = 8;
- 			$(".mouse-follow-balloon").css("top", (evt.clientY + offset) + "px").css("left", (evt.clientX + offset) + "px");
- 			$(".mouse-follow-balloon").show();
+ 			let masterLabel = $(".server-avatars .server-avatar-0").text();
+ 			$balloon.css("top", (evt.clientY + offset) + "px").css("left", (evt.clientX + offset) + "px");
+ 			$balloon.html("Click to compare with " + masterLabel + " <span class=\"glyphicon glyphicon-king\"></span> (master)");
+ 			$balloon.show();
  		} else {
- 			$(".mouse-follow-balloon").hide();
+ 			$balloon.hide();
  		}
  	});
 
@@ -827,8 +853,8 @@ $(document).ready(function() {
  				change: function() {
  					let $this = $(this);
  					let val = $this.val();
- 					if(val != "MySQL") {
- 						$(this).tut(val + " In Development", "Connectopus compare is compatable with any SQL and row-based databases.  A connector for " + val + " is a possible future enhancement.  If you are a developer interested in integrating " + val + " with Connectopus, we accept pull requests.");
+ 					if(!(val == "MySQL" || val == "MariaDB")) {
+ 						$(this).tut(val + " Is In Development", "<p>Although we do not currently have a connector for " + val + ", it is a possible future enhancement.</p><p>Connectopus is compatable with any row-based data.  For example, lists of files, data trees, rows in a SQL table, Redis name/value data stores are all Connectopusable once a connector/adaptor for that data source has been implemented in Connectopus.</p><p>If you are a developer interested in integrating " + val + " with Connectopus, <a href=\"http://connectopus.org\" target=\"_blank\">we welcome pull requests</a>.</p>");
  					}
  				}
  			});
