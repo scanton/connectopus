@@ -126,9 +126,16 @@ module.exports = class ConnectopusController extends EventEmitter {
 		$(".modal-dialog").fadeOut("fast");
 	}
 
-	_constructSqlInserts(tableName, fields, rowIds, rowData) {
-		//console.log('_constructSqlInserts', tableName, fields, rowIds, rowData);
+	escapeSingleQuotes(str) {
+		let a = str.split("\\'");
+		let l = a.length;
+		for(let i = 0; i < l; i++) {
+			a[i] = a[i].split("'").join("\\'");
+		}
+		return a.join("\\'");
+	}
 
+	_constructSqlInserts(tableName, fields, rowIds, rowData) {
 		let fieldArray = [];
 		let l = fields.length;
 		for(let i = 0; i < l; i++) {
@@ -145,9 +152,9 @@ module.exports = class ConnectopusController extends EventEmitter {
 				let val = r[fieldArray[j]];
 				let type = typeof(val);
 				if(type == "string") {
-					val = '"' + this.escape(val) + '"';
+					val = '"' + this.escapeSingleQuotes(val) + '"';
 				} else if(type == "object"){
-					val = '"' + this.escape(val.toString()) + '"';
+					val = '"' + this.escapeSingleQuotes(val.toString()) + '"';
 				}
 				a.push(val);
 			}

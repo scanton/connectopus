@@ -307,6 +307,12 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 }).on("change", ".setting-details-container .hide-dangerous-buttons-checkbox", function(evt) {
 	model.updateSetting("hide_dangerous_buttons", $(this).is(":checked"));
 
+}).on("change", ".setting-details-container .hide-tuts-my-goots-checkbox", function(evt) {
+	model.updateSetting("hide_tuts_my_goots", $(this).is(":checked"));
+
+}).on("change", ".setting-details-container .hide-tooltip-balloons", function(evt) {
+	model.updateSetting("hide_tooltip_balloons", $(this).is(":checked"));
+
 }).on("click", ".setting-details-container .add-blocked-table-button", function(evt) {
 	evt.preventDefault();
 	let val = $(this).closest("td").find("input[type='text']").val();
@@ -669,7 +675,24 @@ var renderNewSettings = (settings) => {
 		s += settings['block_tables'].sort().join('<div class="clear-fix"></div></li><li>' + removeButton) + '<div class="clear-fix"></div></li></ul>';
 		$container.find(".block-tabels-list").html(s);
 	}
+	let style = '<style>';
 	$container.find(".hide-dangerous-buttons-checkbox").prop("checked", settings.hide_dangerous_buttons);
+	if(settings.hide_dangerous_buttons) {
+		style += '.btn-danger { display: none !important; } '
+	}
+	$container.find(".hide-tuts-my-goots-checkbox").prop("checked", settings.hide_tuts_my_goots);
+	if(settings.hide_tuts_my_goots) {
+		$(".tuts-my-goots-icon").fadeOut("slow");
+	} else {
+		$(".tuts-my-goots-icon").fadeIn("slow");
+	}
+	$container.find(".hide-tooltip-balloons").prop("checked", settings.hide_tooltip_balloons);
+	if(settings.hide_tooltip_balloons) {
+		style += '.mouse-follow-balloon { display: none !important; } '
+	}
+
+	style += '</style>';
+	$(".custom-settings-styles").html(style);
 }
 
 var dropServerOnFolderHandler = function(evt, ui) {
