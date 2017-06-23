@@ -667,7 +667,7 @@ table.text-diffs pre {
 .code-diff-view {
 	overflow: scroll;
 }
-.close-code-diff-container-button {
+.close-code-diff-container-button, .close-sql-view-container-button {
 	margin-top: 10px;
 	margin-right: 10px;
 }

@@ -54,29 +54,6 @@ module.exports = class ConnectopusController extends EventEmitter {
 		});
 	}
 
-	syncRows(rowIds) {
-		let rowData = [];
-		let results = this.connections.getLastResult();
-		
-		if(results && results.data && results.data[0] && results.data[0].results && results.data[0].results.length) {
-			let idFieldName = results.data[0].fields[0].name;
-			var table = results.data[0].fields[0].table;
-			let r = results.data[0].results;
-			let l = r.length;
-			for(let i = 0; i < l; i++) {
-				if(rowIds.indexOf(String(r[i][idFieldName])) > -1) {
-					rowData.push(r[i]);
-				}
-			}
-		}
-		if(rowIds.length != rowData.length) {
-			console.error("Missing row data in last results", rowIds, rowData);
-		} else {
-			let sql = this._constructSqlInserts(table, results.data[0].fields, rowIds, rowData);
-			console.log(sql);
-		}
-	}
-
 	syncFiles(paths) {
 		var fs = this.fs;
 		var dirName = __dirname.split("/custom_modules")[0];
@@ -135,6 +112,32 @@ module.exports = class ConnectopusController extends EventEmitter {
 		return a.join("\\'");
 	}
 
+	syncRows(rowIds) {
+		console.log(this.getMySqlExport(rowIds));
+	}
+
+	getMySqlExport(rowIds) {
+		let rowData = [];
+		let results = this.connections.getLastResult();
+		
+		if(results && results.data && results.data[0] && results.data[0].results && results.data[0].results.length) {
+			let idFieldName = results.data[0].fields[0].name;
+			var table = results.data[0].fields[0].table;
+			let r = results.data[0].results;
+			let l = r.length;
+			for(let i = 0; i < l; i++) {
+				if(rowIds.indexOf(String(r[i][idFieldName])) > -1) {
+					rowData.push(r[i]);
+				}
+			}
+		}
+		if(rowIds.length != rowData.length) {
+			console.error("Missing row data in last results", rowIds, rowData);
+		} else {
+			return this._constructSqlInserts(table, results.data[0].fields, rowIds, rowData);
+		}
+	}
+
 	_constructSqlInserts(tableName, fields, rowIds, rowData) {
 		let fieldArray = [];
 		let l = fields.length;
@@ -152,9 +155,9 @@ module.exports = class ConnectopusController extends EventEmitter {
 				let val = r[fieldArray[j]];
 				let type = typeof(val);
 				if(type == "string") {
-					val = '"' + this.escapeSingleQuotes(val) + '"';
+					val = "'" + this.escapeSingleQuotes(val) + "'";
 				} else if(type == "object"){
-					val = '"' + this.escapeSingleQuotes(val.toString()) + '"';
+					val = "'" + this.escapeSingleQuotes(val.toString()) + "'";
 				}
 				a.push(val);
 			}

@@ -792,6 +792,10 @@ $(document).ready(function() {
  		$(".sftp-option-link").click();
  	});
 
+ 	$('.close-sql-view-container-button').click(function(evt) {
+ 		$(".mysql-option-link").click();
+ 	});
+
  	$(".refresh-browser-link").click(function(evt) {
  		evt.preventDefault();
  		location.reload();
@@ -831,7 +835,7 @@ $(document).ready(function() {
  			rowIds.push($row.find(".field-id-0-0").text());
  		});
  		if(rowIds.length) {
- 			controller.showModal("Syncronize Selected Files", "Would you like to copy the selected files from the left-most server to all other servers?", {
+ 			controller.showModal("Syncronize Selected Rows", "Would you like to copy the selected rows from the left-most (master) server to all other servers?", {
 				buttons: [
 					{
 						label: 'Syncronize', 
@@ -840,6 +844,18 @@ $(document).ready(function() {
 							evt.preventDefault();
 							controller.syncRows(rowIds);
 							controller.hideModal();
+						}
+					},
+					{
+						label: 'View SQL Code', 
+						class: "btn btn-info view-sql-button pull-right", 
+						callback: function(evt) {
+							evt.preventDefault();
+							let sql = controller.getMySqlExport(rowIds);
+							$(".sql-view-container .sql-view").text(sql);//.html("<pre>" + sql + "</pre>");
+							controller.hideModal();
+							$(".option-link-container").slideUp("fast");
+							$(".sql-view-container").slideDown("fast", function() { $(window).resize(); });
 						}
 					},
 					{

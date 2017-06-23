@@ -311,6 +311,7 @@ module.exports = class ConnectionManager extends EventEmitter {
 		var mySqlClient = this.mysql;
 		var dispatch = this.dispatchEvent;
 		var setConnectionStatus = this.setConnectionStatus.bind(this);
+		var convertDates = this._convertDates.bind(this);
 
 		var setServer = (function(context) {
 			return function(server) {
@@ -325,7 +326,8 @@ module.exports = class ConnectionManager extends EventEmitter {
 				host: dbConn.host,
 				user: dbConn.username,
 				password: dbConn.password,
-				database: dbConn.database
+				database: dbConn.database,
+				timezone: 'utc'
 			}
 			let sshData = {
 				host: conn.host,
@@ -356,6 +358,9 @@ module.exports = class ConnectionManager extends EventEmitter {
 					} else {
 						setConnectionStatus(id, 'active');
 					}
+
+					results = convertDates(results, fields);
+
 					callback(error, results, fields);
 					server.close();
 				});
@@ -363,6 +368,32 @@ module.exports = class ConnectionManager extends EventEmitter {
 			});
 			this.server = sshCon;
 		}
+	}
+
+	_convertDates(results, fields) {
+		let l = fields.length;
+		while(l--) {
+			if(fields[l].type == 12) {
+				let l2 = results.length;
+				let name = fields[l].name;
+				while(l2--) {
+					results[l2][name] = this._convertLocalTimestampToMySql(results[l2][name]);
+				}
+			}
+		}
+		return results;
+	}
+	_convertLocalTimestampToMySql(stamp) {
+		let d = new Date(stamp);
+		if(d == 'Invalid Date') {
+			return stamp;
+		}
+		let twoDigits = (d) => {
+			if(0 <= d && d < 10) return "0" + d.toString();
+			if(-10 < d && d < 0) return "-0" + (-1*d).toString();
+			return d.toString();
+		}
+		return d.getUTCFullYear() + "-" + twoDigits(1 + d.getUTCMonth()) + "-" + twoDigits(d.getUTCDate()) + " " + twoDigits(d.getUTCHours()) + ":" + twoDigits(d.getUTCMinutes()) + ":" + twoDigits(d.getUTCSeconds());
 	}
 
 	getConnections() {
