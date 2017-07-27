@@ -282,6 +282,7 @@ module.exports = class ConnectopusController extends EventEmitter {
 		$sftpView.html(s);
 
 		$sftpView.find(".does-not-exist-in-main-data-set").closest("tr").find(".sftp-row-checkbox").remove();
+		/*
 		$sftpView.find(".listing-item.index-0").each(function() {
 			let fileName = $(this).text();
 			let supportedFileTypes = ['.php', '.js', '.css', '.htm', '.html', '.txt', '.xml', '.json'];
@@ -294,9 +295,10 @@ module.exports = class ConnectopusController extends EventEmitter {
 				}
 			}
 			if(!isSupported) {
-				$(this).closest("tr").find(".sftp-row-checkbox").remove();
+				//$(this).closest("tr").find(".sftp-row-checkbox").remove();
 			}
 		});
+		*/
 		//$sftpView.find(".listing-item.different-size").attr("title", "Click to see file diff");
 	}
 

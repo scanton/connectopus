@@ -204,7 +204,7 @@ module.exports = class ConnectionManager extends EventEmitter {
 				setConnectionStatus(conn.id, 'pending');
 				this.sftp.connect(sshData).then(() => {
 					for(let i = 0; i < fileListLength; i++) {
-						this.sftp.get(fileList[i]).then((stream) => {
+						this.sftp.get(fileList[i], null, null).then((stream) => {
 							filesLoaded++;
 							progressCallback(stream, fileList[i]);
 							if(filesLoaded == fileListLength) {
