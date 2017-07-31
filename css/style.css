@@ -664,6 +664,10 @@ table.text-diffs pre {
     white-space: -o-pre-wrap;    /* Opera 7 */
     word-wrap: break-word;       /* Internet Explorer 5.5+ */
 }
+table.text-diffs .total-added, table.text-diffs .total-removed {
+	text-align: center;
+	margin-top: 10px;
+}
 .code-diff-view {
 	overflow: scroll;
 }

@@ -186,8 +186,19 @@ module.exports = class HtmlRenderer {
 		if(!index) {
 			index = 1;
 		}
+		let addCount = 0;
+		let removeCount = 0;
+		for(let i in data) {
+			let d = data[i];
+			if(d.added) {
+				++addCount;
+			}
+			if(d.removed) {
+				++removeCount;
+			}
+		}
 		let escape = require('escape-html');
-		let s = '<table class="text-diffs">';
+		let s = '<table class="text-diffs"><tr><td class="total-added added"><h3>Total Added: ' + addCount + '</h3></td><td class="total-removed removed"><h3>Total Removed: ' + removeCount + '</h3></td></tr>';
 		let skip = -1;
 		for(let i in data) {
 			let d = data[i];
