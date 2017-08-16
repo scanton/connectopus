@@ -830,6 +830,8 @@ $(document).ready(function() {
  		evt.preventDefault();
  		let $checks = $(".row-checkbox-0:checked");
  		let rowIds = [];
+ 		var tableName = $(".table-toolbar .table-name-container").text();
+ 		var sql = controller.getMySqlExport(tableName, rowIds);
  		$checks.each(function() {
  			let $row = $(this).closest("tr");
  			rowIds.push($row.find(".field-id-0-0").text());
@@ -842,7 +844,7 @@ $(document).ready(function() {
 						class: "btn btn-danger ok-button pull-right", 
 						callback: function(evt) {
 							evt.preventDefault();
-							controller.syncRows(rowIds);
+							controller.syncRows(tableName, rowIds);
 							controller.hideModal();
 						}
 					},
@@ -851,8 +853,6 @@ $(document).ready(function() {
 						class: "btn btn-info view-sql-button pull-right", 
 						callback: function(evt) {
 							evt.preventDefault();
-							let tableName = $(".table-toolbar .table-name-container").text();
-							let sql = controller.getMySqlExport(tableName, rowIds);
 							$(".sql-view-container .sql-view").text(sql);//.html("<pre>" + sql + "</pre>");
 							controller.hideModal();
 							$(".option-link-container").slideUp("fast");

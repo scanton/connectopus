@@ -76,6 +76,10 @@ module.exports = class ConnectopusController extends EventEmitter {
 		});
 	}
 
+	syncRows(tableName, rowIds) {
+		console.log(this.getMySqlExport(tableName, rowIds));
+	}
+
 	showModal(title, message, options) {
 		$(".modal-overlay").fadeIn("fast");
 		let $dialog = $(".modal-dialog");
@@ -110,10 +114,6 @@ module.exports = class ConnectopusController extends EventEmitter {
 			a[i] = a[i].split("'").join("\\'");
 		}
 		return a.join("\\'");
-	}
-
-	syncRows(rowIds) {
-		console.log(this.getMySqlExport(rowIds));
 	}
 
 	getMySqlExport(tableName, rowIds) {
