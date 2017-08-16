@@ -161,7 +161,6 @@ module.exports = class ConnectionManager extends EventEmitter {
 	}
 
 	compareTables(tableName, callback, tableLimit, schema) {
-		console.log(schema);
 		if(!Number.isInteger(Number(tableLimit))) {
 			tableLimit = 100000;
 		}
@@ -174,7 +173,7 @@ module.exports = class ConnectionManager extends EventEmitter {
 			let a = [];
 			for(let i = 0; i < l; i++) {
 				let field = schema[i];
-				if(field.dataType == 'varchar' || field.dataType == 'text') {
+				if(field.dataType == 'varchar' || field.dataType == 'text' || field.dataType == 'mediumtext') {
 					a.push('CONVERT(BINARY CONVERT(' + field.columnName + ' USING latin1) USING utf8) as \'' + field.columnName + '\' ');
 				} else {
 					a.push(field.columnName);

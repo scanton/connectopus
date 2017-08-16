@@ -192,7 +192,6 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 			tableLimit = 100000;
 		}
 		connections.compareTables(tableName, function(tables) {
-			console.log(tables);
 			let diffResult = DataUtils.diff(tables);
 			$(".table-content-column .table-container").html(html.renderDiffs(diffResult, connections.getConnections()));
 			if(tables && tables[0] && tables[0].fields) {
@@ -852,7 +851,8 @@ $(document).ready(function() {
 						class: "btn btn-info view-sql-button pull-right", 
 						callback: function(evt) {
 							evt.preventDefault();
-							let sql = controller.getMySqlExport(rowIds);
+							let tableName = $(".table-toolbar .table-name-container").text();
+							let sql = controller.getMySqlExport(tableName, rowIds);
 							$(".sql-view-container .sql-view").text(sql);//.html("<pre>" + sql + "</pre>");
 							controller.hideModal();
 							$(".option-link-container").slideUp("fast");

@@ -116,13 +116,12 @@ module.exports = class ConnectopusController extends EventEmitter {
 		console.log(this.getMySqlExport(rowIds));
 	}
 
-	getMySqlExport(rowIds) {
+	getMySqlExport(tableName, rowIds) {
 		let rowData = [];
 		let results = this.connections.getLastResult();
-		
+		console.log(results);
 		if(results && results.data && results.data[0] && results.data[0].results && results.data[0].results.length) {
 			let idFieldName = results.data[0].fields[0].name;
-			var table = results.data[0].fields[0].table;
 			let r = results.data[0].results;
 			let l = r.length;
 			for(let i = 0; i < l; i++) {
@@ -134,7 +133,7 @@ module.exports = class ConnectopusController extends EventEmitter {
 		if(rowIds.length != rowData.length) {
 			console.error("Missing row data in last results", rowIds, rowData);
 		} else {
-			return this._constructSqlInserts(table, results.data[0].fields, rowIds, rowData);
+			return this._constructSqlInserts(tableName, results.data[0].fields, rowIds, rowData);
 		}
 	}
 
@@ -152,12 +151,31 @@ module.exports = class ConnectopusController extends EventEmitter {
 			let r = rowData[i];
 			let l2 = fieldArray.length;
 			for(let j = 0; j < l2; j++) {
-				let val = r[fieldArray[j]];
+				let colName = fieldArray[j];
+				let val = r[colName];
 				let type = typeof(val);
+
+				var isTextField = false;
+				for(let i in fields) {
+					if(fields[i].name == colName && fields[i].charsetNr != 63) {
+						isTextField == true;
+						console.log(colName, fields[i].charsetNr, fields[i].charsetNr != 63, isTextField);
+						break;
+					}
+				}
 				if(type == "string") {
-					val = "'" + this.escapeSingleQuotes(val) + "'";
+					//if(isTextField) {
+						val = " CONVERT(BINARY CONVERT('" + this.escapeSingleQuotes(val) + "' USING utf8) USING latin1) ";
+					//} else {
+					//	val = "'" + this.escapeSingleQuotes(val) + "'";
+					//}
 				} else if(type == "object"){
-					val = "'" + this.escapeSingleQuotes(val.toString()) + "'";
+					if(isTextField) {
+						val = " CONVERT(BINARY CONVERT('" + this.escapeSingleQuotes(val.toString()) + "' USING utf8) USING latin1) ";
+					} else {
+						val = "'" + this.escapeSingleQuotes(val.toString()) + "'";
+					}
+					
 				}
 				a.push(val);
 			}
@@ -172,6 +190,9 @@ module.exports = class ConnectopusController extends EventEmitter {
 		//s += ' SET FOREIGN_KEY_CHECKS = @PREVIOUS_FOREIGN_KEY_CHECKS; \n\r ';
 		//s += ' SET @PREVIOUS_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS; \n\r ';
 		//s += ' SET FOREIGN_KEY_CHECKS = 0; \n\r\n\r ' ;
+
+		//console.log(tableName, fields, rowIds, rowData);
+		//console.log(fieldArray, valuesArray);
 
 		s += ' DELETE FROM `' + tableName + '` WHERE `' + fieldArray[0] + '` IN ("' + rowIds.join('", "') + '"); \n\r\n\r ';
 
