@@ -6,7 +6,7 @@ const ConnectionManager = require(__dirname + '/custom_modules/ConnectionManager
 const connections = new ConnectionManager();
 
 const ConnectopusModel = require(__dirname + '/custom_modules/ConnectopusModel.js');
-const model = new ConnectopusModel();
+const model = new ConnectopusModel({}, connections);
 
 const HtmlRenderer = require(__dirname + '/custom_modules/HtmlRenderer.js');
 var html = new HtmlRenderer();
@@ -192,6 +192,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 			tableLimit = 100000;
 		}
 		connections.compareTables(tableName, function(tables) {
+			console.log(tables);
 			let diffResult = DataUtils.diff(tables);
 			$(".table-content-column .table-container").html(html.renderDiffs(diffResult, connections.getConnections()));
 			if(tables && tables[0] && tables[0].fields) {
@@ -201,7 +202,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 				updateTableDiffStatus();
 			}
 			$(".modal-overlay").fadeOut("fast");
-		}, tableLimit);
+		}, tableLimit, model.getSchema(tableName));
 	}
 
 }).on("click", ".server-folder .name", function(evt) {

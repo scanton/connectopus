@@ -1,7 +1,8 @@
 module.exports = class ConnectopusModel extends EventEmitter {
 
-	constructor(config = {}) {
+	constructor(config = {}, connectionManager = null) {
 		super();
+		this.connections = connectionManager;
 		this.md5 = require('md5');
 		this.config = config;
 		this._processConfig();
@@ -59,6 +60,14 @@ module.exports = class ConnectopusModel extends EventEmitter {
 
 	getConfig() {
 		return this.config;
+	}
+
+	getSchema(tableName) {
+		console.log(tableName);
+		let cons = this.connections.getConnections();
+		if(cons && cons[0] && cons[0].tables && cons[0].tables.schema) {
+			return cons[0].tables.schema[tableName];
+		} 
 	}
 
 	setSettings(settings) {

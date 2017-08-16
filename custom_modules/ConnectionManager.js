@@ -160,7 +160,8 @@ module.exports = class ConnectionManager extends EventEmitter {
 		}
 	}
 
-	compareTables(tableName, callback, tableLimit) {
+	compareTables(tableName, callback, tableLimit, schema) {
+		console.log(schema);
 		if(!Number.isInteger(Number(tableLimit))) {
 			tableLimit = 100000;
 		}
@@ -168,6 +169,19 @@ module.exports = class ConnectionManager extends EventEmitter {
 		let queue = [];
 		let cons = this.getConnections();
 		let query = ' SELECT * FROM ' + tableName + ' LIMIT ' + tableLimit; 
+		if(schema) {
+			let l = schema.length;
+			let a = [];
+			for(let i = 0; i < l; i++) {
+				let field = schema[i];
+				if(field.dataType == 'varchar' || field.dataType == 'text') {
+					a.push('CONVERT(BINARY CONVERT(' + field.columnName + ' USING latin1) USING utf8) as \'' + field.columnName + '\' ');
+				} else {
+					a.push(field.columnName);
+				}
+			}
+			query = ' SELECT ' + a.join(", ") + ' FROM ' + tableName + ' LIMIT ' + tableLimit;
+		}
 		let nextQueue = this._nextQueue.bind(this);
 		for(let i in cons) {
 			let c = cons[i];
