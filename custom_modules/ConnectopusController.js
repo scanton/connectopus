@@ -77,7 +77,28 @@ module.exports = class ConnectopusController extends EventEmitter {
 	}
 
 	syncRows(tableName, rowIds) {
-		console.log(this.getMySqlExport(tableName, rowIds));
+		$(".modal-overlay").fadeIn("fast");
+		console.log("hit 1");
+		this.connections.sqlSync(this.getMySqlExport(tableName, rowIds), () => {
+			console.log("hit 2");
+			let tableLimit = model.getSetting("max_rows_requested");
+			if(!tableLimit) {
+				console.warn("max_rows_requested (table limit) not found in custom settings.  Using 100000");
+				tableLimit = 100000;
+			}
+			connections.compareTables(tableName, function(tables) {
+				console.log("hit 3");
+				let diffResult = DataUtils.diff(tables);
+				$(".table-content-column .table-container").html(html.renderDiffs(diffResult, connections.getConnections()));
+				if(tables && tables[0] && tables[0].fields) {
+					highlightCollumnDifferences(tables[0].fields);
+					//hideUnaffectedColumns();
+					initialzeFilterDropDowns();
+					updateTableDiffStatus();
+				}
+				$(".modal-overlay").fadeOut("fast");
+			}, tableLimit, model.getSchema(tableName));
+		});
 	}
 
 	showModal(title, message, options) {
@@ -119,7 +140,6 @@ module.exports = class ConnectopusController extends EventEmitter {
 	getMySqlExport(tableName, rowIds) {
 		let rowData = [];
 		let results = this.connections.getLastResult();
-		console.log(results);
 		if(results && results.data && results.data[0] && results.data[0].results && results.data[0].results.length) {
 			let idFieldName = results.data[0].fields[0].name;
 			let r = results.data[0].results;
@@ -159,7 +179,6 @@ module.exports = class ConnectopusController extends EventEmitter {
 				for(let i in fields) {
 					if(fields[i].name == colName && fields[i].charsetNr != 63) {
 						isTextField == true;
-						console.log(colName, fields[i].charsetNr, fields[i].charsetNr != 63, isTextField);
 						break;
 					}
 				}

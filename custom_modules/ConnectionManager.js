@@ -24,56 +24,6 @@ module.exports = class ConnectionManager extends EventEmitter {
 		this.sftpQueueResults = [];
 	}
 
-	cacheCompare(connectionIndex, path, workingPath, callback, errorHandler) {
-		var setConnectionStatus = this.setConnectionStatus.bind(this);
-		if(connectionIndex && path) {
-			this.sftp = new this.Ssh2SftpClient();
-			var cons = this.getConnections();
-			if(cons && cons[connectionIndex]) {
-				var conn = cons[connectionIndex];
-				var sshData = this._getSshData(conn);
-				setConnectionStatus(conn.id, 'pending');
-				this.sftp.connect(sshData).then(() => {
-					this.sftp.get(path).then((stream) => {
-						setConnectionStatus(this.getConnections()[connectionIndex].id, 'active');
-						callback(stream, connectionIndex);
-						var conn = this.getConnections()[0];
-						var sshData = this._getSshData(conn);
-						setConnectionStatus(conn.id, 'pending');
-						this.sftp = new this.Ssh2SftpClient();
-						this.sftp.connect(sshData).then(() => {
-							this.sftp.get(path).then((stream) => {
-								setConnectionStatus(conn.id, 'active');
-								callback(stream, 0);
-							});
-						});
-					});
-				}).catch((err) => {
-					setConnectionStatus(this.getConnections()[connectionIndex].id, "error");
-					if(errorHandler) {
-						errorHandler(err);
-					}
-				});
-			}
-		}
-	}
-
-	hasPath(path) {
-		return this.paths.indexOf(path) > -1;
-	}
-
-	setActivePath(path) {
-		this.activePath = path;
-		if(!this.hasPath(path)) {
-			this.paths.push(path);
-		}
-		this.dispatchEvent("active-path-change", path);
-	}
-
-	getActivePath() {
-		return this.activePath;
-	}
-
 	addConnection(data, callback, defaultDirectory = 'www') {
 		var hasConnection = false;
 		if(data) {
@@ -117,88 +67,38 @@ module.exports = class ConnectionManager extends EventEmitter {
 		return this.connections.length;
 	}
 
-	getLastResult() {
-		return { name: this.activeTableName, data: this.queueResults };
-	}
-
-	getConnection(id) {
-		for(let i in this.connections) {
-			if(this.connections[i].id == id) {
-				return this.connections[i];
+	cacheCompare(connectionIndex, path, workingPath, callback, errorHandler) {
+		var setConnectionStatus = this.setConnectionStatus.bind(this);
+		if(connectionIndex && path) {
+			this.sftp = new this.Ssh2SftpClient();
+			var cons = this.getConnections();
+			if(cons && cons[connectionIndex]) {
+				var conn = cons[connectionIndex];
+				var sshData = this._getSshData(conn);
+				setConnectionStatus(conn.id, 'pending');
+				this.sftp.connect(sshData).then(() => {
+					this.sftp.get(path).then((stream) => {
+						setConnectionStatus(this.getConnections()[connectionIndex].id, 'active');
+						callback(stream, connectionIndex);
+						var conn = this.getConnections()[0];
+						var sshData = this._getSshData(conn);
+						setConnectionStatus(conn.id, 'pending');
+						this.sftp = new this.Ssh2SftpClient();
+						this.sftp.connect(sshData).then(() => {
+							this.sftp.get(path).then((stream) => {
+								setConnectionStatus(conn.id, 'active');
+								callback(stream, 0);
+							});
+						});
+					});
+				}).catch((err) => {
+					setConnectionStatus(this.getConnections()[connectionIndex].id, "error");
+					if(errorHandler) {
+						errorHandler(err);
+					}
+				});
 			}
 		}
-	}
-
-	getDirectories() {
-		return this.directories;
-	}
-
-	removeConnection(id) {
-		for(let i in this.connections) {
-			if(this.connections[i].id == id) {
-				this.dispatchEvent("remove-connection", this.connections.splice(i, 1));
-				this.dispatchEvent("change", this.connections);
-			}
-		}
-	}
-
-	setConnectionStatus(id, status) {
-		this.getConnection(id).status = status;
-		this.dispatchEvent("change", this.connections);
-	}
-
-	makeMaster(id) {
-		let cons = this.getConnections();
-		for(let i in cons) {
-			if(cons[i].id == id) {
-				let a = cons.splice(i, 1);
-				for(let i in cons) {
-					a.push(cons[i]);
-				}
-				return this.setConnections(a);
-			}
-		}
-	}
-
-	compareTables(tableName, callback, tableLimit, schema) {
-		if(!Number.isInteger(Number(tableLimit))) {
-			tableLimit = 100000;
-		}
-		this.activeTableName = tableName;
-		let queue = [];
-		let cons = this.getConnections();
-		let query = ' SELECT * FROM ' + tableName + ' LIMIT ' + tableLimit; 
-		if(schema) {
-			let l = schema.length;
-			let a = [];
-			for(let i = 0; i < l; i++) {
-				let field = schema[i];
-				if(field.dataType == 'varchar' || field.dataType == 'text' || field.dataType == 'mediumtext') {
-					a.push('CONVERT(BINARY CONVERT(' + field.columnName + ' USING latin1) USING utf8) as \'' + field.columnName + '\' ');
-				} else {
-					a.push(field.columnName);
-				}
-			}
-			query = ' SELECT ' + a.join(", ") + ' FROM ' + tableName + ' LIMIT ' + tableLimit;
-		}
-		let nextQueue = this._nextQueue.bind(this);
-		for(let i in cons) {
-			let c = cons[i];
-			queue.push(this._createQueueItem(c.id, query, nextQueue));
-		}
-		this._processQueue(queue, callback);
-	}
-
-	compareDirectory(path, callback) {
-		this.setActivePath(path);
-		let queue = [];
-		let cons = this.getConnections();
-		let nextSftpQueue = this._nextSftpQueue.bind(this);
-		for(let i in cons) {
-			let c = cons[i];
-			queue.push(this._createSftpQueueItem(c.id, path, nextSftpQueue));
-		}
-		this._processSftpQueue(queue, callback);
 	}
 
 	cacheFiles(fileList, completeCallback = null, progressCallback = null, errorHandler = null) {
@@ -236,6 +136,132 @@ module.exports = class ConnectionManager extends EventEmitter {
 		}
 	}
 
+	close() {
+		if(this.server && this.server.close) {
+			this.server.close();
+		}
+	}
+
+	compareDirectory(path, callback) {
+		this.setActivePath(path);
+		let queue = [];
+		let cons = this.getConnections();
+		let nextSftpQueue = this._nextSftpQueue.bind(this);
+		for(let i in cons) {
+			let c = cons[i];
+			queue.push(this._createSftpQueueItem(c.id, path, nextSftpQueue));
+		}
+		this._processSftpQueue(queue, callback);
+	}
+
+	compareTables(tableName, callback, tableLimit, schema) {
+		if(!Number.isInteger(Number(tableLimit))) {
+			tableLimit = 100000;
+		}
+		this.activeTableName = tableName;
+		let queue = [];
+		let cons = this.getConnections();
+		let query = ' SELECT * FROM ' + tableName + ' LIMIT ' + tableLimit; 
+		if(schema) {
+			let l = schema.length;
+			let a = [];
+			for(let i = 0; i < l; i++) {
+				let field = schema[i];
+				if(field.dataType == 'varchar' || field.dataType == 'text' || field.dataType == 'mediumtext') {
+					a.push('CONVERT(BINARY CONVERT(' + field.columnName + ' USING latin1) USING utf8) as \'' + field.columnName + '\' ');
+				} else {
+					a.push(field.columnName);
+				}
+			}
+			query = ' SELECT ' + a.join(", ") + ' FROM ' + tableName + ' LIMIT ' + tableLimit;
+		}
+		let nextQueue = this._nextQueue.bind(this);
+		for(let i in cons) {
+			let c = cons[i];
+			queue.push(this._createQueueItem(c.id, query, nextQueue));
+		}
+		this._processQueue(queue, callback);
+	}
+
+	hasPath(path) {
+		return this.paths.indexOf(path) > -1;
+	}
+
+	getActivePath() {
+		return this.activePath;
+	}
+
+	getConnection(id) {
+		for(let i in this.connections) {
+			if(this.connections[i].id == id) {
+				return this.connections[i];
+			}
+		}
+	}
+
+	getConnectionCount() {
+		return this.connections.length;
+	}
+
+	getConnections() {
+		return this.connections;
+	}
+
+	getLastResult() {
+		return { name: this.activeTableName, data: this.queueResults };
+	}
+
+	getDirectories() {
+		return this.directories;
+	}
+
+	makeMaster(id) {
+		let cons = this.getConnections();
+		for(let i in cons) {
+			if(cons[i].id == id) {
+				let a = cons.splice(i, 1);
+				for(let i in cons) {
+					a.push(cons[i]);
+				}
+				return this.setConnections(a);
+			}
+		}
+	}
+
+	parseSchema(schema) {
+		if(schema && schema.length) {
+			let o = {
+				names: [],
+				schema: {}
+			};
+			for(let i in schema) {
+				let table = schema[i];
+				if(o.names.indexOf(table.TABLE_NAME) == -1) {
+					o.names.push(table.TABLE_NAME);
+					o.schema[table.TABLE_NAME] = [];
+				}
+				let a = o.schema[table.TABLE_NAME];
+				a.push({
+					columnName: table.COLUMN_NAME,
+					columnType: table.COLUMN_TYPE,
+					dataType: table.DATA_TYPE,
+					isNullable: table.IS_NULLABLE !== 'NO',
+				});
+			}
+			return o;
+		}
+	}
+	
+	parseTables(data) {
+		let a = [];
+		for(let i in data) {
+			for(let i2 in data[i]) {
+				a.push(data[i][i2]);
+			}
+		}
+		return a;
+	}
+
 	putRemoteFilesFromCache(workingPath, fileList, callback = null, errorHandler = null) {
 		var handleFilePutComplete = this._handleFilePutComplete.bind(this);
 		var handleFilePutProgress = this._handleFilePutProgress.bind(this);
@@ -252,50 +278,32 @@ module.exports = class ConnectionManager extends EventEmitter {
 		}
 	}
 
-	_handleFilePutComplete(data) {
-		var handleFilePutComplete = this._handleFilePutComplete.bind(this);
-		var handleFilePutProgress = this._handleFilePutProgress.bind(this);
-
-		//console.log("on-file-put-complete", data);
-
-		let connections = this.getConnections();
-		++this.connectionIndex;
-		if(connections.length > this.connectionIndex) {
-			this._putFilesToConnection(connections[this.connectionIndex], this.remoteTransferDetails.workingPath, this.remoteTransferDetails.fileList, handleFilePutComplete, handleFilePutProgress, this.remoteTransferDetails.errorHandler);
-		} else {
-			//$(".modal-overlay").fadeIn("fast");
-			this.compareDirectory(this.getActivePath(), function(data) {
-				//$(".modal-overlay").fadeOut("fast");
-				//dispatch complete event?
-				$(".modal-overlay").fadeOut("fast");
-			});
+	removeConnection(id) {
+		for(let i in this.connections) {
+			if(this.connections[i].id == id) {
+				this.dispatchEvent("remove-connection", this.connections.splice(i, 1));
+				this.dispatchEvent("change", this.connections);
+			}
 		}
 	}
 
-	_handleFilePutProgress() {
-		console.log("file-progress");
+	setActivePath(path) {
+		this.activePath = path;
+		if(!this.hasPath(path)) {
+			this.paths.push(path);
+		}
+		this.dispatchEvent("active-path-change", path);
 	}
 
-	_putFilesToConnection(currentConnection, workingPath, fileList, callback, progressCallback, errorHandler = null) {
-		var setConnectionStatus = this.setConnectionStatus.bind(this);
-		var filesUploaded = 0;
-		let sshData = this._getSshData(currentConnection);
-		let fileListLength = fileList.length;
-		setConnectionStatus(currentConnection.id, 'pending');
-		this.sftp = new this.Ssh2SftpClient();
-		this.sftp.connect(sshData).then(() => {
-			for(let i = 0; i < fileListLength; i++) {
-				this.sftp.put(workingPath + fileList[i], fileList[i]).then((stream) => {
-					filesUploaded++;
-					progressCallback(stream, fileList[i]);
-					if(filesUploaded == fileListLength) {
-						setConnectionStatus(currentConnection.id, 'active');
-						callback(currentConnection.id);
-					}
-				});
-				
-			}
-		});
+	setConnections(connections) {
+		this.connections = connections;
+		this.dispatchEvent("change", this.connections);
+		return connections.length;
+	}
+
+	setConnectionStatus(id, status) {
+		this.getConnection(id).status = status;
+		this.dispatchEvent("change", this.connections);
 	}
 
 	sftpRequestDirectory(id, directory = 'www', callback = null, errorHandler = null) {
@@ -331,7 +339,7 @@ module.exports = class ConnectionManager extends EventEmitter {
 				context.server = server;
 			}
 		})(this);
-
+		
 		setConnectionStatus(id, 'pending');
 		if(conn && conn.connections[dbConnection]) {
 			let dbConn = conn.connections[dbConnection];
@@ -340,7 +348,8 @@ module.exports = class ConnectionManager extends EventEmitter {
 				user: dbConn.username,
 				password: dbConn.password,
 				database: dbConn.database,
-				timezone: 'utc'
+				timezone: 'utc',
+				multipleStatements: true
 			}
 			let sshData = {
 				host: conn.host,
@@ -359,6 +368,7 @@ module.exports = class ConnectionManager extends EventEmitter {
 				}
 				let connection = mySqlClient.createConnection(mySqlData);
 				connection.query(query, function(error, results, fields) {
+					console.log("hit 6", error);
 					/**
 					select * from information_schema.columns
 					where table_schema = 'ww2lpspl_content'
@@ -368,6 +378,7 @@ module.exports = class ConnectionManager extends EventEmitter {
 						console.error(error);
 						dispatchEvent("mysql-error", error);
 						setConnectionStatus(id, "error");
+						throw error;
 					} else {
 						setConnectionStatus(id, 'active');
 					}
@@ -383,102 +394,22 @@ module.exports = class ConnectionManager extends EventEmitter {
 		}
 	}
 
-	_convertDates(results, fields) {
-		let l = fields.length;
-		while(l--) {
-			if(fields[l].type == 12) {
-				let l2 = results.length;
-				let name = fields[l].name;
-				while(l2--) {
-					results[l2][name] = this._convertLocalTimestampToMySql(results[l2][name]);
-				}
-			}
+	sqlSync(query, callback) {
+		let queue = [];
+		let cons = JSON.parse(JSON.stringify(this.getConnections()));
+		cons.shift();
+		let nextQueue = this._nextQueue.bind(this);
+		for(let i in cons) {
+			let c = cons[i];
+			queue.push(this._createQueueItem(c.id, query, nextQueue));
 		}
-		return results;
-	}
-	_convertLocalTimestampToMySql(stamp) {
-		let d = new Date(stamp);
-		if(d == 'Invalid Date') {
-			return stamp;
-		}
-		let twoDigits = (d) => {
-			if(0 <= d && d < 10) return "0" + d.toString();
-			if(-10 < d && d < 0) return "-0" + (-1*d).toString();
-			return d.toString();
-		}
-		return d.getUTCFullYear() + "-" + twoDigits(1 + d.getUTCMonth()) + "-" + twoDigits(d.getUTCDate()) + " " + twoDigits(d.getUTCHours()) + ":" + twoDigits(d.getUTCMinutes()) + ":" + twoDigits(d.getUTCSeconds());
+		this._processQueue(queue, callback);
+
 	}
 
-	getConnections() {
-		return this.connections;
-	}
-
-	setConnections(connections) {
-		this.connections = connections;
-		this.dispatchEvent("change", this.connections);
-		return connections.length;
-	}
-
-	getConnectionCount() {
-		return this.connections.length;
-	}
-	/*
-	addListener(eventName, handler) {
-		if(eventName && handler) {
-			if(!this.listeners[eventName]) {
-				this.listeners[eventName] = [];
-			}
-			this.listeners[eventName].push(handler);
-		}
-	}
-
-	dispatchEvent(eventName, data) {
-		if(this.listeners[eventName]) {
-			for(let i in this.listeners[eventName]) {
-				this.listeners[eventName][i](data);
-			}
-		}
-	}
-	*/
-	parseTables(data) {
-		let a = [];
-		for(let i in data) {
-			for(let i2 in data[i]) {
-				a.push(data[i][i2]);
-			}
-		}
-		return a;
-	}
-
-	parseSchema(schema) {
-		if(schema && schema.length) {
-			let o = {
-				names: [],
-				schema: {}
-			};
-			for(let i in schema) {
-				let table = schema[i];
-				if(o.names.indexOf(table.TABLE_NAME) == -1) {
-					o.names.push(table.TABLE_NAME);
-					o.schema[table.TABLE_NAME] = [];
-				}
-				let a = o.schema[table.TABLE_NAME];
-				a.push({
-					columnName: table.COLUMN_NAME,
-					columnType: table.COLUMN_TYPE,
-					dataType: table.DATA_TYPE,
-					isNullable: table.IS_NULLABLE !== 'NO',
-				});
-			}
-			return o;
-		}
-	}
-
-	close() {
-		if(this.server && this.server.close) {
-			this.server.close();
-		}
-	}
+	/**
+	 * Private Methods
+	 **/
 
 	_addDirectory(id, directory, data) {
 		let dataItem = null;
@@ -510,6 +441,141 @@ module.exports = class ConnectionManager extends EventEmitter {
 		this.dispatchEvent("add-directory", {id: id, directory: directory, data: data});
 	}
 
+	_convertDates(results, fields) {
+		let l = fields.length;
+		while(l--) {
+			if(fields[l].type == 12) {
+				let l2 = results.length;
+				let name = fields[l].name;
+				while(l2--) {
+					results[l2][name] = this._convertLocalTimestampToMySql(results[l2][name]);
+				}
+			}
+		}
+		return results;
+	}
+	_convertLocalTimestampToMySql(stamp) {
+		let d = new Date(stamp);
+		if(d == 'Invalid Date') {
+			return stamp;
+		}
+		let twoDigits = (d) => {
+			if(0 <= d && d < 10) return "0" + d.toString();
+			if(-10 < d && d < 0) return "-0" + (-1*d).toString();
+			return d.toString();
+		}
+		return d.getUTCFullYear() + "-" + twoDigits(1 + d.getUTCMonth()) + "-" + twoDigits(d.getUTCDate()) + " " + twoDigits(d.getUTCHours()) + ":" + twoDigits(d.getUTCMinutes()) + ":" + twoDigits(d.getUTCSeconds());
+	}
+
+	_createQueueItem(id, query, callback, dbConnection = 0) {
+		return { id: id, query: query, callback: callback, dbConnection: dbConnection };
+	}
+
+	_createSftpQueueItem(id, path, callback) {
+		return { id: id, path: path, callback: callback };
+	}
+
+	_getSshData(conn) {
+		return {
+			host: conn.host,
+			port: conn.port,
+			username: conn.username,
+			password: conn.password
+		};
+	}
+
+	_handleFilePutComplete(data) {
+		var handleFilePutComplete = this._handleFilePutComplete.bind(this);
+		var handleFilePutProgress = this._handleFilePutProgress.bind(this);
+
+		//console.log("on-file-put-complete", data);
+
+		let connections = this.getConnections();
+		++this.connectionIndex;
+		if(connections.length > this.connectionIndex) {
+			this._putFilesToConnection(connections[this.connectionIndex], this.remoteTransferDetails.workingPath, this.remoteTransferDetails.fileList, handleFilePutComplete, handleFilePutProgress, this.remoteTransferDetails.errorHandler);
+		} else {
+			//$(".modal-overlay").fadeIn("fast");
+			this.compareDirectory(this.getActivePath(), function(data) {
+				//$(".modal-overlay").fadeOut("fast");
+				//dispatch complete event?
+				$(".modal-overlay").fadeOut("fast");
+			});
+		}
+	}
+
+	_handleFilePutProgress() {
+		console.log("file-progress");
+	}
+
+	_nextQueue(error, results, fields) {
+		//this.currentQueueItem;
+		this.queueResults.push({id: this.currentQueueItem.id, results: results, error: error, fields: fields});
+		if(this.pendingQueue.length) {
+			let q = this.currentQueueItem = this.pendingQueue.shift();
+			this.sqlRequest(q.id, q.query, q.callback, q.dbConnection);
+			this.dispatchEvent("queue-progress", this.pendingQueue);
+		} else {
+			this.dispatchEvent("queue-complete", this.queueResults);
+			this.queueCallback(this.queueResults);
+		}
+	}
+
+	_nextSftpQueue(id, directory, data) {
+		this.sftpQueueResults.push({id: id, directory: directory, data: data});
+		if(this.pendingSftpQueue.length) {
+			let q = this.currentSftpQueueItem = this.pendingSftpQueue.shift();
+			this.sftpRequestDirectory(q.id, q.path, q.callback);
+			this.dispatchEvent("sftp-queue-progress", this.pendingSftpQueue);
+		} else {
+			this.dispatchEvent("sftp-queue-complete", this.sftpQueueResults);
+			this.sftpQueueCallback(this.sftpQueueResults);
+		}
+	}
+
+	_processQueue(queue, callback) {
+		if(queue && queue.length) {
+			this.queueCallback = callback;
+			this.queueResults = [];
+			this.pendingQueue = queue;
+			this.dispatchEvent("queue-begin", queue);
+			let q = this.currentQueueItem = this.pendingQueue.shift();
+			this.sqlRequest(q.id, q.query, q.callback, q.dbConnection);
+		}
+	}
+
+	_processSftpQueue(queue, callback) {
+		if(queue && queue.length) {
+			this.sftpQueueCallback = callback;
+			this.sftpQueueResults = [];
+			this.pendingSftpQueue = queue;
+			this.dispatchEvent("sftp-queue-begin", queue);
+			let q = this.currentSftpQueueItem = this.pendingSftpQueue.shift();
+			this.sftpRequestDirectory(q.id, q.path, q.callback);
+		}
+	}
+
+	_putFilesToConnection(currentConnection, workingPath, fileList, callback, progressCallback, errorHandler = null) {
+		var setConnectionStatus = this.setConnectionStatus.bind(this);
+		var filesUploaded = 0;
+		let sshData = this._getSshData(currentConnection);
+		let fileListLength = fileList.length;
+		setConnectionStatus(currentConnection.id, 'pending');
+		this.sftp = new this.Ssh2SftpClient();
+		this.sftp.connect(sshData).then(() => {
+			for(let i = 0; i < fileListLength; i++) {
+				this.sftp.put(workingPath + fileList[i], fileList[i]).then((stream) => {
+					filesUploaded++;
+					progressCallback(stream, fileList[i]);
+					if(filesUploaded == fileListLength) {
+						setConnectionStatus(currentConnection.id, 'active');
+						callback(currentConnection.id);
+					}
+				});
+			}
+		});
+	}
+
 	_sortByName(a, b) {
 		if(a.name.toLowerCase() > b.name.toLowerCase()) {
 			return 1;
@@ -525,68 +591,6 @@ module.exports = class ConnectionManager extends EventEmitter {
 			return -1;
 		}
 		return 0;
-	}
-
-	_createSftpQueueItem(id, path, callback) {
-		return { id: id, path: path, callback: callback };
-	}
-	_processSftpQueue(queue, callback) {
-		if(queue && queue.length) {
-			this.sftpQueueCallback = callback;
-			this.sftpQueueResults = [];
-			this.pendingSftpQueue = queue;
-			this.dispatchEvent("sftp-queue-begin", queue);
-			let q = this.currentSftpQueueItem = this.pendingSftpQueue.shift();
-			this.sftpRequestDirectory(q.id, q.path, q.callback);
-		}
-	}
-	_nextSftpQueue(id, directory, data) {
-		this.sftpQueueResults.push({id: id, directory: directory, data: data});
-		if(this.pendingSftpQueue.length) {
-			let q = this.currentSftpQueueItem = this.pendingSftpQueue.shift();
-			this.sftpRequestDirectory(q.id, q.path, q.callback);
-			this.dispatchEvent("sftp-queue-progress", this.pendingSftpQueue);
-		} else {
-			this.dispatchEvent("sftp-queue-complete", this.sftpQueueResults);
-			this.sftpQueueCallback(this.sftpQueueResults);
-		}
-	}
-
-	_createQueueItem(id, query, callback, dbConnection = 0) {
-		return { id: id, query: query, callback: callback, dbConnection: dbConnection };
-	}
-
-	_getSshData(conn) {
-		return {
-			host: conn.host,
-			port: conn.port,
-			username: conn.username,
-			password: conn.password
-		};
-	}
-
-	_processQueue(queue, callback) {
-		if(queue && queue.length) {
-			this.queueCallback = callback;
-			this.queueResults = [];
-			this.pendingQueue = queue;
-			this.dispatchEvent("queue-begin", queue);
-			let q = this.currentQueueItem = this.pendingQueue.shift();
-			this.sqlRequest(q.id, q.query, q.callback, q.dbConnection);
-		}
-	}
-
-	_nextQueue(error, results, fields) {
-		//this.currentQueueItem;
-		this.queueResults.push({id: this.currentQueueItem.id, results: results, error: error, fields: fields});
-		if(this.pendingQueue.length) {
-			let q = this.currentQueueItem = this.pendingQueue.shift();
-			this.sqlRequest(q.id, q.query, q.callback, q.dbConnection);
-			this.dispatchEvent("queue-progress", this.pendingQueue);
-		} else {
-			this.dispatchEvent("queue-complete", this.queueResults);
-			this.queueCallback(this.queueResults);
-		}
 	}
 
 }
