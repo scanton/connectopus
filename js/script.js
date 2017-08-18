@@ -740,7 +740,6 @@ $(document).ready(function() {
 	 	},
  		error: function(err) {
  			console.warn("Handling Error: -- (no config.json file found). Welcoming new user with introduction help screen.");
- 			console.log("Welcome new user :)");
  			$(".add-new-server-container").tut("Welcome to Connectopus!", "It appears this is your first time using Connectopus.  To get started, you'll want to add some connections.  These are the SSH connections to your web server(s) and the MySQL database connection used once the SSH connection is established.");
  			let config = model.getConfig();
  			renderNewConfig(config);
@@ -831,11 +830,11 @@ $(document).ready(function() {
  		let $checks = $(".row-checkbox-0:checked");
  		let rowIds = [];
  		var tableName = $(".table-toolbar .table-name-container").text();
- 		var sql = controller.getMySqlExport(tableName, rowIds);
  		$checks.each(function() {
  			let $row = $(this).closest("tr");
  			rowIds.push($row.find(".field-id-0-0").text());
  		});
+ 		var sql = controller.getMySqlExport(tableName, rowIds);
  		if(rowIds.length) {
  			controller.showModal("Syncronize Selected Rows", "Would you like to copy the selected rows from the left-most (master) server to all other servers?", {
 				buttons: [

@@ -25,7 +25,6 @@ module.exports = class ConnectopusController extends EventEmitter {
 		} else {
 			$(".modal-overlay").fadeIn("fast");
 			this.connections.compareDirectory(path, function(data) {
-				//console.log(data);
 				$(".modal-overlay").fadeOut("fast");
 			});
 		}
@@ -78,16 +77,13 @@ module.exports = class ConnectopusController extends EventEmitter {
 
 	syncRows(tableName, rowIds) {
 		$(".modal-overlay").fadeIn("fast");
-		console.log("hit 1");
 		this.connections.sqlSync(this.getMySqlExport(tableName, rowIds), () => {
-			console.log("hit 2");
 			let tableLimit = model.getSetting("max_rows_requested");
 			if(!tableLimit) {
 				console.warn("max_rows_requested (table limit) not found in custom settings.  Using 100000");
 				tableLimit = 100000;
 			}
 			connections.compareTables(tableName, function(tables) {
-				console.log("hit 3");
 				let diffResult = DataUtils.diff(tables);
 				$(".table-content-column .table-container").html(html.renderDiffs(diffResult, connections.getConnections()));
 				if(tables && tables[0] && tables[0].fields) {
@@ -209,9 +205,6 @@ module.exports = class ConnectopusController extends EventEmitter {
 		//s += ' SET FOREIGN_KEY_CHECKS = @PREVIOUS_FOREIGN_KEY_CHECKS; \n\r ';
 		//s += ' SET @PREVIOUS_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS; \n\r ';
 		//s += ' SET FOREIGN_KEY_CHECKS = 0; \n\r\n\r ' ;
-
-		//console.log(tableName, fields, rowIds, rowData);
-		//console.log(fieldArray, valuesArray);
 
 		s += ' DELETE FROM `' + tableName + '` WHERE `' + fieldArray[0] + '` IN ("' + rowIds.join('", "') + '"); \n\r\n\r ';
 

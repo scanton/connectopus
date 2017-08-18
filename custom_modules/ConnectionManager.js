@@ -58,7 +58,6 @@ module.exports = class ConnectionManager extends EventEmitter {
 				callback(results);
 			});
 			this.sftpRequestDirectory(data.id, defaultDirectory, function(list) {
-				//console.log(list, 'list');
 				/**
 				 * This event is handled in ConnectopusController "add-directory" handler
 				 **/
@@ -366,29 +365,56 @@ module.exports = class ConnectionManager extends EventEmitter {
 					dispatchEvent("ssh-error", error);
 					setConnectionStatus(id, "error");
 				}
-				let connection = mySqlClient.createConnection(mySqlData);
-				connection.query(query, function(error, results, fields) {
-					console.log("hit 6", error);
-					/**
-					select * from information_schema.columns
-					where table_schema = 'ww2lpspl_content'
-					order by table_name,ordinal_position
-					 **/
-					if(error) {
-						console.error(error);
-						dispatchEvent("mysql-error", error);
-						setConnectionStatus(id, "error");
-						throw error;
-					} else {
-						setConnectionStatus(id, 'active');
+				var connection = mySqlClient.createConnection(mySqlData);
+
+				var queryArray = query.split(";");
+				var lineCount = queryArray.length;
+				console.log(lineCount);
+				if(lineCount > 1) {
+					var errorArray = [];
+					var resultArray = [];
+					var fieldArray = [];
+					var callCount = 0;
+
+					var callQuery = () => {
+						console.log("call", callCount);
+						let q = queryArray[callCount];
+						connection.query(q, function(error, results, fields) {
+							errorArray.push(error);
+							resultArray.push(results);
+							fieldArray.push(fields);
+							++callCount;
+							if(callCount < lineCount) {
+								callQuery();
+							} else {
+								callback(errorArray, resultArray, fieldArray);
+								connection.end();
+								server.close();
+							}
+						});
 					}
+					callQuery();
+				} else {
+					connection.query(query, function(error, results, fields) {
+						if(error) {
+							console.error(error);
+							dispatchEvent("mysql-error", error);
+							setConnectionStatus(id, "error");
+							throw error;
+						} else {
+							setConnectionStatus(id, 'active');
+						}
 
-					results = convertDates(results, fields);
+						results = convertDates(results, fields);
 
-					callback(error, results, fields);
-					server.close();
-				});
-				connection.end();
+						callback(error, results, fields);
+						server.close();
+					});
+					connection.end();
+				}
+
+
+				
 			});
 			this.server = sshCon;
 		}
@@ -487,8 +513,6 @@ module.exports = class ConnectionManager extends EventEmitter {
 	_handleFilePutComplete(data) {
 		var handleFilePutComplete = this._handleFilePutComplete.bind(this);
 		var handleFilePutProgress = this._handleFilePutProgress.bind(this);
-
-		//console.log("on-file-put-complete", data);
 
 		let connections = this.getConnections();
 		++this.connectionIndex;
