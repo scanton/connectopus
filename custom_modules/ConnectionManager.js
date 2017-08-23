@@ -369,7 +369,7 @@ module.exports = class ConnectionManager extends EventEmitter {
 
 				var queryArray = query.split(";");
 				var lineCount = queryArray.length;
-				console.log(lineCount);
+				
 				if(lineCount > 1) {
 					var errorArray = [];
 					var resultArray = [];

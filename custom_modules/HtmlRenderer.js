@@ -230,6 +230,11 @@ module.exports = class HtmlRenderer {
 		return s + '</table>';
 	}
 
+	renderImageDiff(data, index) {
+		console.log(data, index);
+		return '<h1>Image comparison view in development</h1>';
+	}
+
 	renderServerLinks(data, isVisible = 1) {
 		var s = '';
 		if(data) {

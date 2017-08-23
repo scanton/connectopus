@@ -151,13 +151,21 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 	evt.preventDefault();
 	let $this = $(this);
 	let path = $this.attr("data-path");
+	var extension = path.slice(path.length - 4);
+	var isImage = false;
+	if(extension == ".jpg" || extension == ".gif" || extension == ".png") {
+		isImage = true;
+	}
 	var columnIndex = $this.attr("class").split("index-")[1].split(" ")[0];
 	controller.compareFiles(columnIndex, path, function(data) {
 		let $diffView = $(".code-diff-view");
-		$diffView.html(html.renderTextDiff(data, columnIndex));
+		if(isImage) {
+			$diffView.html(html.renderImageDiff(data, columnIndex));
+		} else {
+			$diffView.html(html.renderTextDiff(data, columnIndex));
+		}
 		$(".code-diff-container .title").text(path);
 		$(".modal-overlay").fadeOut("fast");
-
  		$(".option-link-container").slideUp("fast");
 		$(".code-diff-container").slideDown("fast", function() { $(window).resize(); });
 	});
@@ -615,6 +623,7 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 	}
 	
 }).on("change", ".diffs .filter-select", function(evt) {
+	/*
 	let $this = $(this);
 	let val = $this.val();
 	let fieldId = $this.closest("th").attr("data-field-id");
@@ -629,6 +638,12 @@ $(document).on("click", ".connect-to-db-button", function(evt) {
 			$row.removeClass("filter-match");
 		}
 	});
+	*/
+	evt.preventDefault();
+	controller.filterContentResults();
+}).on("keyup", ".diffs .search-column-input", function(evt) {
+	evt.preventDefault();
+	controller.filterContentResults();
 });
 
 $(window).resize(function() {

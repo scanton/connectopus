@@ -133,6 +133,31 @@ module.exports = class ConnectopusController extends EventEmitter {
 		return a.join("\\'");
 	}
 
+	filterContentResults() {
+		let $table = $(".table-container .diffs table");
+		let $rows = $table.find("tr");
+		let $header = $($rows[0]);
+		$table.find(".not-filter-match").removeClass("not-filter-match");
+		let $columns = $header.find("th");
+		let l = $columns.length;
+		for(let i = 0; i < l; i++) {
+			let $col = $($columns[i]);
+			let $select = $col.find(".filter-select");
+			let $text = $col.find(".search-column-input");
+			let val = $select.val() || $text.val();
+			if(val) {
+				let l2 = $rows.length;
+				for(let j = 1; j < l2; j++) {
+					let $row = $($rows[j]);
+					let text = $($row.find("td")[i]).text();
+					if(text.indexOf(val) == -1) {
+						$row.addClass("not-filter-match");
+					}
+				}
+			}
+		}
+	}
+
 	getMySqlExport(tableName, rowIds) {
 		let rowData = [];
 		let results = this.connections.getLastResult();
@@ -398,7 +423,16 @@ module.exports = class ConnectopusController extends EventEmitter {
 						}
 						let sizeDiff = Number($target.attr("data-size")) - Number($this.attr("data-size"));
 						if(sizeDiff != 0) {
-							$this.addClass("different-size");
+							let supportedFileTypes = ['.php', '.js', '.css', '.htm', '.html', '.txt', '.xml', '.json'];
+							let l = supportedFileTypes.length;
+							while(l--) {
+								let t = $this.text();
+								let type = supportedFileTypes[l];
+								if(t.slice(t.length - type.length) == type) {
+									$this.addClass("different-size");
+									break;
+								}
+							}
 						}
 					}
 				}
