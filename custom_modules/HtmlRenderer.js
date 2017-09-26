@@ -198,7 +198,7 @@ module.exports = class HtmlRenderer {
 			}
 		}
 		let escape = require('escape-html');
-		let s = '<table class="text-diffs"><tr><td class="total-added added"><h3>Total Added: ' + addCount + '</h3></td><td class="total-removed removed"><h3>Total Removed: ' + removeCount + '</h3></td></tr>';
+		let s = '<table class="text-diffs"><tr><td class="total-added added"><h3>Total Added: ' + removeCount + '</h3></td><td class="total-removed removed"><h3>Total Removed: ' + addCount + '</h3></td></tr>';
 		let skip = -1;
 		for(let i in data) {
 			let d = data[i];
